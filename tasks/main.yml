@@ -1,0 +1,16 @@
+---
+- name: Include OS specific configuration
+  include_vars: "{{ item }}"
+  with_first_found:
+   - "{{ ansible_distribution }}.yml"
+   - "{{ ansible_os_family }}.yml"
+   - default.yml
+
+- name: sshd configuration
+  template:
+    src: sshd_config.j2
+    dest: "{{ sshd_config_file }}"
+    owner: root
+    group: root
+    mode: 600
+  notify: check and reload sshd

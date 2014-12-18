@@ -1,0 +1,394 @@
+# {{ ansible_managed }}
+{% if sshd_HostKey is defined %}
+{%   for i in sshd_HostKey %}
+HostKey {{ i }}
+{%   endfor %}
+{% endif %}
+{% if sshd_ListenAddress is defined %}
+{%   for i in sshd_ListenAddress %}
+ListenAddress {{ i }}
+{%   endfor %}
+{% endif %}
+{% if sshd_Subsystem is defined %}
+{%   for i in sshd_Subsystem %}
+Subsystem {{ i }}
+{%   endfor %}
+{% endif %}
+{% if sshd_AcceptEnv is defined %}AcceptEnv {{ sshd_AcceptEnv }}{% endif %}
+{% if sshd_AddressFamily is defined %}AddressFamily {{ sshd_AddressFamily }}{% endif %}
+{% if sshd_AllowGroups is defined %}AllowGroups {{ sshd_AllowGroups }}{% endif %}
+{% if sshd_AllowUsers is defined %}AllowUsers {{ sshd_AllowUsers }}{% endif %}
+{% if sshd_AuthenticationMethods is defined %}AuthenticationMethods {{ sshd_AuthenticationMethods }}{% endif %}
+{% if sshd_AuthorizedKeysCommand is defined %}AuthorizedKeysCommand {{ sshd_AuthorizedKeysCommand }}{% endif %}
+{% if sshd_AuthorizedKeysCommandUser is defined %}AuthorizedKeysCommandUser {{ sshd_AuthorizedKeysCommandUser }}{% endif %}
+{% if sshd_AuthorizedKeysFile is defined %}AuthorizedKeysFile {{ sshd_AuthorizedKeysFile }}{% endif %}
+{% if sshd_AuthorizedPrincipalsFile is defined %}AuthorizedPrincipalsFile {{ sshd_AuthorizedPrincipalsFile }}{% endif %}
+{% if sshd_Banner is defined %}Banner {{ sshd_Banner }}{% endif %}
+{% if sshd_ChrootDirectory is defined %}ChrootDirectory {{ sshd_ChrootDirectory }}{% endif %}
+{% if sshd_Ciphers is defined %}Ciphers {{ sshd_Ciphers }}{% endif %}
+{% if sshd_ClientAliveCountMax is defined %}ClientAliveCountMax {{ sshd_ClientAliveCountMax }}{% endif %}
+{% if sshd_ClientAliveInterval is defined %}ClientAliveInterval {{ sshd_ClientAliveInterval }}{% endif %}
+{% if sshd_DenyGroups is defined %}DenyGroups {{ sshd_DenyGroups }}{% endif %}
+{% if sshd_DenyUsers is defined %}DenyUsers {{ sshd_DenyUsers }}{% endif %}
+{% if sshd_ForceCommand is defined %}ForceCommand {{ sshd_ForceCommand }}{% endif %}
+{% if sshd_GSSAPIAuthentication is defined %}GSSAPIAuthentication {{ sshd_GSSAPIAuthentication }}{% endif %}
+{% if sshd_GSSAPIKeyExchange is defined %}GSSAPIKeyExchange {{ sshd_GSSAPIKeyExchange }}{% endif %}
+{% if sshd_HPNBufferSize is defined %}HPNBufferSize {{ sshd_HPNBufferSize }}{% endif %}
+{% if sshd_HostCertificate is defined %}HostCertificate {{ sshd_HostCertificate }}{% endif %}
+{% if sshd_HostKeyAgent is defined %}HostKeyAgent {{ sshd_HostKeyAgent }}{% endif %}
+{% if sshd_IPQoS is defined %}IPQoS {{ sshd_IPQoS }}{% endif %}
+{% if sshd_KbdInteractiveAuthentication is defined %}KbdInteractiveAuthentication {{ sshd_KbdInteractiveAuthentication }}{% endif %}
+{% if sshd_KexAlgorithms is defined %}KexAlgorithms {{ sshd_KexAlgorithms }}{% endif %}
+{% if sshd_KeyRegenerationInterval is defined %}KeyRegenerationInterval {{ sshd_KeyRegenerationInterval }}{% endif %}
+{% if sshd_LogLevel is defined %}LogLevel {{ sshd_LogLevel }}{% endif %}
+{% if sshd_LoginGraceTime is defined %}LoginGraceTime {{ sshd_LoginGraceTime }}{% endif %}
+{% if sshd_MACs is defined %}MACs {{ sshd_MACs }}{% endif %}
+{% if sshd_MaxAuthTries is defined %}MaxAuthTries {{ sshd_MaxAuthTries }}{% endif %}
+{% if sshd_MaxSessions is defined %}MaxSessions {{ sshd_MaxSessions }}{% endif %}
+{% if sshd_MaxStartups is defined %}MaxStartups {{ sshd_MaxStartups }}{% endif %}
+{% if sshd_PermitOpen is defined %}PermitOpen {{ sshd_PermitOpen }}{% endif %}
+{% if sshd_PermitTTY is defined %}PermitTTY {{ sshd_PermitTTY }}{% endif %}
+{% if sshd_PidFile is defined %}PidFile {{ sshd_PidFile }}{% endif %}
+{% if sshd_Port is defined %}Port {{ sshd_Port }}{% endif %}
+{% if sshd_Protocol is defined %}Protocol {{ sshd_Protocol }}{% endif %}
+{% if sshd_RekeyLimit is defined %}RekeyLimit {{ sshd_RekeyLimit }}{% endif %}
+{% if sshd_RevokedKeys is defined %}RevokedKeys {{ sshd_RevokedKeys }}{% endif %}
+{% if sshd_ServerKeyBits is defined %}ServerKeyBits {{ sshd_ServerKeyBits }}{% endif %}
+{% if sshd_SyslogFacility is defined %}SyslogFacility {{ sshd_SyslogFacility }}{% endif %}
+{% if sshd_TrustedUserCAKeys is defined %}TrustedUserCAKeys {{ sshd_TrustedUserCAKeys }}{% endif %}
+{% if sshd_VersionAddendum is defined %}VersionAddendum {{ sshd_VersionAddendum }}{% endif %}
+{% if sshd_X11DisplayOffset is defined %}X11DisplayOffset {{ sshd_X11DisplayOffset }}{% endif %}
+{% if sshd_XAuthLocation is defined %}XAuthLocation {{ sshd_XAuthLocation }}{% endif %}
+{% if sshd_AllowAgentForwarding is defined %}
+{%   if sshd_AllowAgentForwarding == true %}
+AllowAgentForwarding yes
+{%   elif sshd_AllowAgentForwarding == false %}
+AllowAgentForwarding no
+{%   else %}
+AllowAgentForwarding {{ AllowAgentForwarding }}
+{%   endif %}
+{% endif %}
+{% if sshd_AllowTcpForwarding is defined %}
+{%   if sshd_AllowTcpForwarding == true %}
+AllowTcpForwarding yes
+{%   elif sshd_AllowTcpForwarding == false %}
+AllowTcpForwarding no
+{%   else %}
+AllowTcpForwarding {{ AllowTcpForwarding }}
+{%   endif %}
+{% endif %}
+{% if sshd_ChallengeResponseAuthentication is defined %}
+{%   if sshd_ChallengeResponseAuthentication == true %}
+ChallengeResponseAuthentication yes
+{%   elif sshd_ChallengeResponseAuthentication == false %}
+ChallengeResponseAuthentication no
+{%   else %}
+ChallengeResponseAuthentication {{ ChallengeResponseAuthentication }}
+{%   endif %}
+{% endif %}
+{% if sshd_Compression is defined %}
+{%   if sshd_Compression == true %}
+Compression yes
+{%   elif sshd_Compression == false %}
+Compression no
+{%   else %}
+Compression {{ Compression }}
+{%   endif %}
+{% endif %}
+{% if sshd_GSSAPICleanupCredentials is defined %}
+{%   if sshd_GSSAPICleanupCredentials == true %}
+GSSAPICleanupCredentials yes
+{%   elif sshd_GSSAPICleanupCredentials == false %}
+GSSAPICleanupCredentials no
+{%   else %}
+GSSAPICleanupCredentials {{ GSSAPICleanupCredentials }}
+{%   endif %}
+{% endif %}
+{% if sshd_GSSAPIStoreCredentialsOnRekey is defined %}
+{%   if sshd_GSSAPIStoreCredentialsOnRekey == true %}
+GSSAPIStoreCredentialsOnRekey yes
+{%   elif sshd_GSSAPIStoreCredentialsOnRekey == false %}
+GSSAPIStoreCredentialsOnRekey no
+{%   else %}
+GSSAPIStoreCredentialsOnRekey {{ GSSAPIStoreCredentialsOnRekey }}
+{%   endif %}
+{% endif %}
+{% if sshd_GSSAPIStrictAcceptorCheck is defined %}
+{%   if sshd_GSSAPIStrictAcceptorCheck == true %}
+GSSAPIStrictAcceptorCheck yes
+{%   elif sshd_GSSAPIStrictAcceptorCheck == false %}
+GSSAPIStrictAcceptorCheck no
+{%   else %}
+GSSAPIStrictAcceptorCheck {{ GSSAPIStrictAcceptorCheck }}
+{%   endif %}
+{% endif %}
+{% if sshd_GatewayPorts is defined %}
+{%   if sshd_GatewayPorts == true %}
+GatewayPorts yes
+{%   elif sshd_GatewayPorts == false %}
+GatewayPorts no
+{%   else %}
+GatewayPorts {{ GatewayPorts }}
+{%   endif %}
+{% endif %}
+{% if sshd_HPNDisabled is defined %}
+{%   if sshd_HPNDisabled == true %}
+HPNDisabled yes
+{%   elif sshd_HPNDisabled == false %}
+HPNDisabled no
+{%   else %}
+HPNDisabled {{ HPNDisabled }}
+{%   endif %}
+{% endif %}
+{% if sshd_HostbasedAuthentication is defined %}
+{%   if sshd_HostbasedAuthentication == true %}
+HostbasedAuthentication yes
+{%   elif sshd_HostbasedAuthentication == false %}
+HostbasedAuthentication no
+{%   else %}
+HostbasedAuthentication {{ HostbasedAuthentication }}
+{%   endif %}
+{% endif %}
+{% if sshd_HostbasedUsesNameFromPacketOnly is defined %}
+{%   if sshd_HostbasedUsesNameFromPacketOnly == true %}
+HostbasedUsesNameFromPacketOnly yes
+{%   elif sshd_HostbasedUsesNameFromPacketOnly == false %}
+HostbasedUsesNameFromPacketOnly no
+{%   else %}
+HostbasedUsesNameFromPacketOnly {{ HostbasedUsesNameFromPacketOnly }}
+{%   endif %}
+{% endif %}
+{% if sshd_IgnoreRhosts is defined %}
+{%   if sshd_IgnoreRhosts == true %}
+IgnoreRhosts yes
+{%   elif sshd_IgnoreRhosts == false %}
+IgnoreRhosts no
+{%   else %}
+IgnoreRhosts {{ IgnoreRhosts }}
+{%   endif %}
+{% endif %}
+{% if sshd_IgnoreUserKnownHosts is defined %}
+{%   if sshd_IgnoreUserKnownHosts == true %}
+IgnoreUserKnownHosts yes
+{%   elif sshd_IgnoreUserKnownHosts == false %}
+IgnoreUserKnownHosts no
+{%   else %}
+IgnoreUserKnownHosts {{ IgnoreUserKnownHosts }}
+{%   endif %}
+{% endif %}
+{% if sshd_KerberosAuthentication is defined %}
+{%   if sshd_KerberosAuthentication == true %}
+KerberosAuthentication yes
+{%   elif sshd_KerberosAuthentication == false %}
+KerberosAuthentication no
+{%   else %}
+KerberosAuthentication {{ KerberosAuthentication }}
+{%   endif %}
+{% endif %}
+{% if sshd_KerberosGetAFSToken is defined %}
+{%   if sshd_KerberosGetAFSToken == true %}
+KerberosGetAFSToken yes
+{%   elif sshd_KerberosGetAFSToken == false %}
+KerberosGetAFSToken no
+{%   else %}
+KerberosGetAFSToken {{ KerberosGetAFSToken }}
+{%   endif %}
+{% endif %}
+{% if sshd_KerberosOrLocalPasswd is defined %}
+{%   if sshd_KerberosOrLocalPasswd == true %}
+KerberosOrLocalPasswd yes
+{%   elif sshd_KerberosOrLocalPasswd == false %}
+KerberosOrLocalPasswd no
+{%   else %}
+KerberosOrLocalPasswd {{ KerberosOrLocalPasswd }}
+{%   endif %}
+{% endif %}
+{% if sshd_KerberosTicketCleanup is defined %}
+{%   if sshd_KerberosTicketCleanup == true %}
+KerberosTicketCleanup yes
+{%   elif sshd_KerberosTicketCleanup == false %}
+KerberosTicketCleanup no
+{%   else %}
+KerberosTicketCleanup {{ KerberosTicketCleanup }}
+{%   endif %}
+{% endif %}
+{% if sshd_NoneEnabled is defined %}
+{%   if sshd_NoneEnabled == true %}
+NoneEnabled yes
+{%   elif sshd_NoneEnabled == false %}
+NoneEnabled no
+{%   else %}
+NoneEnabled {{ NoneEnabled }}
+{%   endif %}
+{% endif %}
+{% if sshd_PasswordAuthentication is defined %}
+{%   if sshd_PasswordAuthentication == true %}
+PasswordAuthentication yes
+{%   elif sshd_PasswordAuthentication == false %}
+PasswordAuthentication no
+{%   else %}
+PasswordAuthentication {{ PasswordAuthentication }}
+{%   endif %}
+{% endif %}
+{% if sshd_PermitEmptyPasswords is defined %}
+{%   if sshd_PermitEmptyPasswords == true %}
+PermitEmptyPasswords yes
+{%   elif sshd_PermitEmptyPasswords == false %}
+PermitEmptyPasswords no
+{%   else %}
+PermitEmptyPasswords {{ PermitEmptyPasswords }}
+{%   endif %}
+{% endif %}
+{% if sshd_PermitRootLogin is defined %}
+{%   if sshd_PermitRootLogin == true %}
+PermitRootLogin yes
+{%   elif sshd_PermitRootLogin == false %}
+PermitRootLogin no
+{%   else %}
+PermitRootLogin {{ PermitRootLogin }}
+{%   endif %}
+{% endif %}
+{% if sshd_PermitTunnel is defined %}
+{%   if sshd_PermitTunnel == true %}
+PermitTunnel yes
+{%   elif sshd_PermitTunnel == false %}
+PermitTunnel no
+{%   else %}
+PermitTunnel {{ PermitTunnel }}
+{%   endif %}
+{% endif %}
+{% if sshd_PermitUserEnvironment is defined %}
+{%   if sshd_PermitUserEnvironment == true %}
+PermitUserEnvironment yes
+{%   elif sshd_PermitUserEnvironment == false %}
+PermitUserEnvironment no
+{%   else %}
+PermitUserEnvironment {{ PermitUserEnvironment }}
+{%   endif %}
+{% endif %}
+{% if sshd_PrintLastLog is defined %}
+{%   if sshd_PrintLastLog == true %}
+PrintLastLog yes
+{%   elif sshd_PrintLastLog == false %}
+PrintLastLog no
+{%   else %}
+PrintLastLog {{ PrintLastLog }}
+{%   endif %}
+{% endif %}
+{% if sshd_PrintMotd is defined %}
+{%   if sshd_PrintMotd == true %}
+PrintMotd yes
+{%   elif sshd_PrintMotd == false %}
+PrintMotd no
+{%   else %}
+PrintMotd {{ PrintMotd }}
+{%   endif %}
+{% endif %}
+{% if sshd_PubkeyAuthentication is defined %}
+{%   if sshd_PubkeyAuthentication == true %}
+PubkeyAuthentication yes
+{%   elif sshd_PubkeyAuthentication == false %}
+PubkeyAuthentication no
+{%   else %}
+PubkeyAuthentication {{ PubkeyAuthentication }}
+{%   endif %}
+{% endif %}
+{% if sshd_RSAAuthentication is defined %}
+{%   if sshd_RSAAuthentication == true %}
+RSAAuthentication yes
+{%   elif sshd_RSAAuthentication == false %}
+RSAAuthentication no
+{%   else %}
+RSAAuthentication {{ RSAAuthentication }}
+{%   endif %}
+{% endif %}
+{% if sshd_RhostsRSAAuthentication is defined %}
+{%   if sshd_RhostsRSAAuthentication == true %}
+RhostsRSAAuthentication yes
+{%   elif sshd_RhostsRSAAuthentication == false %}
+RhostsRSAAuthentication no
+{%   else %}
+RhostsRSAAuthentication {{ RhostsRSAAuthentication }}
+{%   endif %}
+{% endif %}
+{% if sshd_StrictModes is defined %}
+{%   if sshd_StrictModes == true %}
+StrictModes yes
+{%   elif sshd_StrictModes == false %}
+StrictModes no
+{%   else %}
+StrictModes {{ StrictModes }}
+{%   endif %}
+{% endif %}
+{% if sshd_TCPKeepAlive is defined %}
+{%   if sshd_TCPKeepAlive == true %}
+TCPKeepAlive yes
+{%   elif sshd_TCPKeepAlive == false %}
+TCPKeepAlive no
+{%   else %}
+TCPKeepAlive {{ TCPKeepAlive }}
+{%   endif %}
+{% endif %}
+{% if sshd_TcpRcvBufPoll is defined %}
+{%   if sshd_TcpRcvBufPoll == true %}
+TcpRcvBufPoll yes
+{%   elif sshd_TcpRcvBufPoll == false %}
+TcpRcvBufPoll no
+{%   else %}
+TcpRcvBufPoll {{ TcpRcvBufPoll }}
+{%   endif %}
+{% endif %}
+{% if sshd_UseDNS is defined %}
+{%   if sshd_UseDNS == true %}
+UseDNS yes
+{%   elif sshd_UseDNS == false %}
+UseDNS no
+{%   else %}
+UseDNS {{ UseDNS }}
+{%   endif %}
+{% endif %}
+{% if sshd_UseLogin is defined %}
+{%   if sshd_UseLogin == true %}
+UseLogin yes
+{%   elif sshd_UseLogin == false %}
+UseLogin no
+{%   else %}
+UseLogin {{ UseLogin }}
+{%   endif %}
+{% endif %}
+{% if sshd_UsePAM is defined %}
+{%   if sshd_UsePAM == true %}
+UsePAM yes
+{%   elif sshd_UsePAM == false %}
+UsePAM no
+{%   else %}
+UsePAM {{ UsePAM }}
+{%   endif %}
+{% endif %}
+{% if sshd_UsePrivilegeSeparation is defined %}
+{%   if sshd_UsePrivilegeSeparation == true %}
+UsePrivilegeSeparation yes
+{%   elif sshd_UsePrivilegeSeparation == false %}
+UsePrivilegeSeparation no
+{%   else %}
+UsePrivilegeSeparation {{ UsePrivilegeSeparation }}
+{%   endif %}
+{% endif %}
+{% if sshd_X11Forwarding is defined %}
+{%   if sshd_X11Forwarding == true %}
+X11Forwarding yes
+{%   elif sshd_X11Forwarding == false %}
+X11Forwarding no
+{%   else %}
+X11Forwarding {{ X11Forwarding }}
+{%   endif %}
+{% endif %}
+{% if sshd_X11UseLocalhost is defined %}
+{%   if sshd_X11UseLocalhost == true %}
+X11UseLocalhost yes
+{%   elif sshd_X11UseLocalhost == false %}
+X11UseLocalhost no
+{%   else %}
+X11UseLocalhost {{ X11UseLocalhost }}
+{%   endif %}
+{% endif %}

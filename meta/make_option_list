@@ -1,0 +1,30 @@
+#!/bin/sh
+echo "# {{ ansible_managed }}"
+
+cat ssh_multi_options |
+  sort |
+  awk '{
+print "{% if sshd_"$1" is defined %}"
+print "{%   for i in sshd_"$1" %}"
+print $1" {{ i }}"
+print "{%   endfor %}"
+print "{% endif %}"
+}'
+
+cat ssh_kv_options |
+  sort |
+  awk '{print "{% if sshd_"$1" is defined %}"$1" {{ sshd_"$1" }}{% endif %}"}'
+
+cat ssh_boolean_options |
+  sort |
+  awk '{
+print "{% if sshd_"$1" is defined %}"
+print "{%   if sshd_"$1" == true %}"
+print $1" yes"
+print "{%   elif sshd_"$1" == false %}"
+print $1" no"
+print "{%   else %}"
+print $1" {{ "$1" }}"
+print "{%   endif %}"
+print "{% endif %}"
+}'
