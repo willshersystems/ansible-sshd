@@ -1,4 +1,8 @@
 ---
-sshd_config_file: /etc/ssh/sshd_config
 sshd_service: ssh
-sshd_binary: /usr/sbin/sshd
+sshd_packages:
+  - openssh-server
+  - openssh-blacklist
+  - openssh-blacklist-extra
+  - openssh-sftp-server
+sshd_sftp_server: /usr/lib/openssh/sftp-server

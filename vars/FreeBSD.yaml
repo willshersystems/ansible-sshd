@@ -1,4 +1,0 @@
----
-sshd_config_file: /etc/ssh/sshd_config
-sshd_service: sshd
-sshd_binary: /usr/sbin/sshd

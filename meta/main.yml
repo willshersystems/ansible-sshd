@@ -1,0 +1,20 @@
+---
+galaxy_info:
+  author: Matt Willsher
+  description: OpenSSH Deamon configuration
+  company: Willsher Systems
+  license: MIT 
+  min_ansible_version: 1.8
+  platforms:
+  - name: Ubuntu
+    versions:
+    - all
+  - name: Debian
+    versions:
+    - all
+  - name: FreeBSD
+    version:
+    - all
+  categories:
+  - system
+dependencies: []

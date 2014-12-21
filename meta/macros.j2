@@ -1,0 +1,46 @@
+# {{ ansible_managed }}
+{% macro sshd_multiline(key,override) %}
+{%   if override is defined %}
+{%     set value = override %}
+{%   elif sshd[key] is defined %}
+{%     set value = sshd[key] %}
+{%   endif %}
+{%   if value is defined %}
+{%     if value is string %}
+{{ key }} {{ value }}
+{%     else %}
+{%       for i in value %}
+{{ key }} {{ i }}
+{%       endfor %}
+{%     endif %}
+{%   endif %}
+{% endmacro %}
+{% macro sshd_boolean(key,override) %}
+{%   if override is defined %}
+{%     set value = override %}
+{%   elif sshd[key] is defined %}
+{%     set value = sshd[key] %}
+{%   endif %}
+{%   if value is defined %}
+{%     if value == true %}
+{{ key }} yes
+{%     elif value == false %}
+{{ key }} no
+{%     else %}
+{{ key }} {{ value }}
+{%     endif %}
+{%   endif %}
+{% endmacro %}
+{% macro sshd_value(key,override) %}
+{%   if override is defined %}
+{%     set value = override %}
+{%   elif sshd[key] is defined %}
+{%     set value = sshd[key] %}
+{%   endif %}
+{%   if value is defined %}
+{{ key }} {{ value }}
+{%   endif %}
+{% endmacro %}
+{% if sshd_force_sftp == true %}
+Subsystem sftp {{ sshd_sftp_server }}
+{% endif %}
