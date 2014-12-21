@@ -1,5 +1,5 @@
 ---
-sshd_service: sshd
 sshd_packages: []
 sshd_group: wheel
 sshd_sftp_server: /usr/libexec/sftp-server
+sshd_defaults: {}

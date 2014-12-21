@@ -3,7 +3,7 @@ galaxy_info:
   author: Matt Willsher
   description: OpenSSH Deamon configuration
   company: Willsher Systems
-  license: MIT 
+  license: MIT
   min_ansible_version: 1.8
   platforms:
   - name: Ubuntu

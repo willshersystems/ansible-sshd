@@ -13,6 +13,10 @@
     state=installed
   with_items: sshd_packages
 
+- name: Debug config
+  debug: var=sshd
+  when: sshd_debug is defined
+
 - name: Configured
   template:
     src: sshd_config.j2

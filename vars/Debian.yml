@@ -5,4 +5,10 @@ sshd_packages:
   - openssh-blacklist
   - openssh-blacklist-extra
   - openssh-sftp-server
-sshd_sftp_server: /usr/lib/openssh/sftp-server
+sshd_defaults:
+  ChallengeResponseAuthentication: no
+  X11Forwarding: yes
+  PrintMotd: no
+  AcceptEnv: LANG LC_*
+  Subsystem: sftp {{ sshd_sftp_server }}
+  UsePAM: yes

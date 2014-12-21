@@ -4,5 +4,5 @@ sshd_group: root
 sshd_binary: /usr/sbin/sshd
 sshd_config_file: /etc/ssh/sshd_config
 sshd_service: sshd
-sshd_force_sftp: true
-sshd: {}
+sshd_sftp_server: /usr/lib/openssh/sftp-server
+sshd: "{{ sshd_defaults }}"

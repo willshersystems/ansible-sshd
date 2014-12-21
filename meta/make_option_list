@@ -1,20 +1,8 @@
 #!/bin/sh
 cat macros.j2
 
-cat ssh_multi_options |
+cat ssh_options |
   sort |
   awk '{
-print "{{ sshd_multiline(\""$1"\",sshd_"$1") -}}"
-}'
-
-cat ssh_kv_options |
-  sort |
-  awk '{
-print "{{ sshd_value(\""$1"\",sshd_"$1") -}}"
-}'
-
-cat ssh_boolean_options |
-  sort |
-  awk '{
-print "{{ sshd_boolean(\""$1"\",sshd_"$1") -}}"
+print "{{ render_option(\""$1"\",sshd_"$1") -}}"
 }'

@@ -1,124 +1,106 @@
 # {{ ansible_managed }}
-{% macro sshd_multiline(key,override) %}
+{% macro render_option(key,override) %}
 {%   if override is defined %}
 {%     set value = override %}
 {%   elif sshd[key] is defined %}
 {%     set value = sshd[key] %}
 {%   endif %}
 {%   if value is defined %}
-{%     for i in value %}
-{{ key }} {{ i }}
-{%     endfor %}
-{%   endif %}
-{% endmacro %}
-{% macro sshd_boolean(key,override) %}
-{%   if override is defined %}
-{%     set value = override %}
-{%   elif sshd[key] is defined %}
-{%     set value = sshd[key] %}
-{%   endif %}
-{%   if value is defined %}
-{%     if value == true %}
+{%     if value is sameas true %}
 {{ key }} yes
-{%     elif value == false %}
+{%     elif value is sameas false %}
 {{ key }} no
-{%     else %}
+{%     elif value is string or value is number %}
 {{ key }} {{ value }}
+{%     else %}
+{%       for i in value %}
+{{ key }} {{ i }}
+{%       endfor %}
 {%     endif %}
 {%   endif %}
-{% endmacro -%}
-{% macro sshd_value(key,override) -%}
-{%   if override is defined -%}
-{%     set value = override -%}
-{%   elif sshd[key] is defined -%}
-{%     set value = sshd[key] -%}
-{%   endif -%}
-{%   if value is defined -%}
-{{ key }} {{ value }}
-{%   endif -%}
-{% endmacro -%}
-{{ sshd_multiline("HostKey",sshd_HostKey) }}
-{{ sshd_multiline("ListenAddress",sshd_ListenAddress) }}
-{{ sshd_multiline("Subsystem",sshd_Subsystem) }}
-{{ sshd_value("AcceptEnv",sshd_AcceptEnv) }}
-{{ sshd_value("AddressFamily",sshd_AddressFamily) }}
-{{ sshd_value("AllowGroups",sshd_AllowGroups) }}
-{{ sshd_value("AllowUsers",sshd_AllowUsers) }}
-{{ sshd_value("AuthenticationMethods",sshd_AuthenticationMethods) }}
-{{ sshd_value("AuthorizedKeysCommand",sshd_AuthorizedKeysCommand) }}
-{{ sshd_value("AuthorizedKeysCommandUser",sshd_AuthorizedKeysCommandUser) }}
-{{ sshd_value("AuthorizedKeysFile",sshd_AuthorizedKeysFile) }}
-{{ sshd_value("AuthorizedPrincipalsFile",sshd_AuthorizedPrincipalsFile) }}
-{{ sshd_value("Banner",sshd_Banner) }}
-{{ sshd_value("ChrootDirectory",sshd_ChrootDirectory) }}
-{{ sshd_value("Ciphers",sshd_Ciphers) }}
-{{ sshd_value("ClientAliveCountMax",sshd_ClientAliveCountMax) }}
-{{ sshd_value("ClientAliveInterval",sshd_ClientAliveInterval) }}
-{{ sshd_value("DenyGroups",sshd_DenyGroups) }}
-{{ sshd_value("DenyUsers",sshd_DenyUsers) }}
-{{ sshd_value("ForceCommand",sshd_ForceCommand) }}
-{{ sshd_value("GSSAPIAuthentication",sshd_GSSAPIAuthentication) }}
-{{ sshd_value("GSSAPIKeyExchange",sshd_GSSAPIKeyExchange) }}
-{{ sshd_value("HPNBufferSize",sshd_HPNBufferSize) }}
-{{ sshd_value("HostCertificate",sshd_HostCertificate) }}
-{{ sshd_value("HostKeyAgent",sshd_HostKeyAgent) }}
-{{ sshd_value("IPQoS",sshd_IPQoS) }}
-{{ sshd_value("KbdInteractiveAuthentication",sshd_KbdInteractiveAuthentication) }}
-{{ sshd_value("KexAlgorithms",sshd_KexAlgorithms) }}
-{{ sshd_value("KeyRegenerationInterval",sshd_KeyRegenerationInterval) }}
-{{ sshd_value("LogLevel",sshd_LogLevel) }}
-{{ sshd_value("LoginGraceTime",sshd_LoginGraceTime) }}
-{{ sshd_value("MACs",sshd_MACs) }}
-{{ sshd_value("MaxAuthTries",sshd_MaxAuthTries) }}
-{{ sshd_value("MaxSessions",sshd_MaxSessions) }}
-{{ sshd_value("MaxStartups",sshd_MaxStartups) }}
-{{ sshd_value("PermitOpen",sshd_PermitOpen) }}
-{{ sshd_value("PermitTTY",sshd_PermitTTY) }}
-{{ sshd_value("PidFile",sshd_PidFile) }}
-{{ sshd_value("Port",sshd_Port) }}
-{{ sshd_value("Protocol",sshd_Protocol) }}
-{{ sshd_value("RekeyLimit",sshd_RekeyLimit) }}
-{{ sshd_value("RevokedKeys",sshd_RevokedKeys) }}
-{{ sshd_value("ServerKeyBits",sshd_ServerKeyBits) }}
-{{ sshd_value("SyslogFacility",sshd_SyslogFacility) }}
-{{ sshd_value("TrustedUserCAKeys",sshd_TrustedUserCAKeys) }}
-{{ sshd_value("VersionAddendum",sshd_VersionAddendum) }}
-{{ sshd_value("X11DisplayOffset",sshd_X11DisplayOffset) }}
-{{ sshd_value("XAuthLocation",sshd_XAuthLocation) }}
-{{ sshd_boolean("AllowAgentForwarding",sshd_AllowAgentForwarding) }}
-{{ sshd_boolean("AllowTcpForwarding",sshd_AllowTcpForwarding) }}
-{{ sshd_boolean("ChallengeResponseAuthentication",sshd_ChallengeResponseAuthentication) }}
-{{ sshd_boolean("Compression",sshd_Compression) }}
-{{ sshd_boolean("GSSAPICleanupCredentials",sshd_GSSAPICleanupCredentials) }}
-{{ sshd_boolean("GSSAPIStoreCredentialsOnRekey",sshd_GSSAPIStoreCredentialsOnRekey) }}
-{{ sshd_boolean("GSSAPIStrictAcceptorCheck",sshd_GSSAPIStrictAcceptorCheck) }}
-{{ sshd_boolean("GatewayPorts",sshd_GatewayPorts) }}
-{{ sshd_boolean("HPNDisabled",sshd_HPNDisabled) }}
-{{ sshd_boolean("HostbasedAuthentication",sshd_HostbasedAuthentication) }}
-{{ sshd_boolean("HostbasedUsesNameFromPacketOnly",sshd_HostbasedUsesNameFromPacketOnly) }}
-{{ sshd_boolean("IgnoreRhosts",sshd_IgnoreRhosts) }}
-{{ sshd_boolean("IgnoreUserKnownHosts",sshd_IgnoreUserKnownHosts) }}
-{{ sshd_boolean("KerberosAuthentication",sshd_KerberosAuthentication) }}
-{{ sshd_boolean("KerberosGetAFSToken",sshd_KerberosGetAFSToken) }}
-{{ sshd_boolean("KerberosOrLocalPasswd",sshd_KerberosOrLocalPasswd) }}
-{{ sshd_boolean("KerberosTicketCleanup",sshd_KerberosTicketCleanup) }}
-{{ sshd_boolean("NoneEnabled",sshd_NoneEnabled) }}
-{{ sshd_boolean("PasswordAuthentication",sshd_PasswordAuthentication) }}
-{{ sshd_boolean("PermitEmptyPasswords",sshd_PermitEmptyPasswords) }}
-{{ sshd_boolean("PermitRootLogin",sshd_PermitRootLogin) }}
-{{ sshd_boolean("PermitTunnel",sshd_PermitTunnel) }}
-{{ sshd_boolean("PermitUserEnvironment",sshd_PermitUserEnvironment) }}
-{{ sshd_boolean("PrintLastLog",sshd_PrintLastLog) }}
-{{ sshd_boolean("PrintMotd",sshd_PrintMotd) }}
-{{ sshd_boolean("PubkeyAuthentication",sshd_PubkeyAuthentication) }}
-{{ sshd_boolean("RSAAuthentication",sshd_RSAAuthentication) }}
-{{ sshd_boolean("RhostsRSAAuthentication",sshd_RhostsRSAAuthentication) }}
-{{ sshd_boolean("StrictModes",sshd_StrictModes) }}
-{{ sshd_boolean("TCPKeepAlive",sshd_TCPKeepAlive) }}
-{{ sshd_boolean("TcpRcvBufPoll",sshd_TcpRcvBufPoll) }}
-{{ sshd_boolean("UseDNS",sshd_UseDNS) }}
-{{ sshd_boolean("UseLogin",sshd_UseLogin) }}
-{{ sshd_boolean("UsePAM",sshd_UsePAM) }}
-{{ sshd_boolean("UsePrivilegeSeparation",sshd_UsePrivilegeSeparation) }}
-{{ sshd_boolean("X11Forwarding",sshd_X11Forwarding) }}
-{{ sshd_boolean("X11UseLocalhost",sshd_X11UseLocalhost) }}
+{% endmacro %}
+{{ render_option("AcceptEnv",sshd_AcceptEnv) -}}
+{{ render_option("AddressFamily",sshd_AddressFamily) -}}
+{{ render_option("AllowAgentForwarding",sshd_AllowAgentForwarding) -}}
+{{ render_option("AllowGroups",sshd_AllowGroups) -}}
+{{ render_option("AllowTcpForwarding",sshd_AllowTcpForwarding) -}}
+{{ render_option("AllowUsers",sshd_AllowUsers) -}}
+{{ render_option("AuthenticationMethods",sshd_AuthenticationMethods) -}}
+{{ render_option("AuthorizedKeysCommand",sshd_AuthorizedKeysCommand) -}}
+{{ render_option("AuthorizedKeysCommandUser",sshd_AuthorizedKeysCommandUser) -}}
+{{ render_option("AuthorizedKeysFile",sshd_AuthorizedKeysFile) -}}
+{{ render_option("AuthorizedPrincipalsFile",sshd_AuthorizedPrincipalsFile) -}}
+{{ render_option("Banner",sshd_Banner) -}}
+{{ render_option("ChallengeResponseAuthentication",sshd_ChallengeResponseAuthentication) -}}
+{{ render_option("ChrootDirectory",sshd_ChrootDirectory) -}}
+{{ render_option("Ciphers",sshd_Ciphers) -}}
+{{ render_option("ClientAliveCountMax",sshd_ClientAliveCountMax) -}}
+{{ render_option("ClientAliveInterval",sshd_ClientAliveInterval) -}}
+{{ render_option("Compression",sshd_Compression) -}}
+{{ render_option("DenyGroups",sshd_DenyGroups) -}}
+{{ render_option("DenyUsers",sshd_DenyUsers) -}}
+{{ render_option("ForceCommand",sshd_ForceCommand) -}}
+{{ render_option("GSSAPIAuthentication",sshd_GSSAPIAuthentication) -}}
+{{ render_option("GSSAPICleanupCredentials",sshd_GSSAPICleanupCredentials) -}}
+{{ render_option("GSSAPIKeyExchange",sshd_GSSAPIKeyExchange) -}}
+{{ render_option("GSSAPIStoreCredentialsOnRekey",sshd_GSSAPIStoreCredentialsOnRekey) -}}
+{{ render_option("GSSAPIStrictAcceptorCheck",sshd_GSSAPIStrictAcceptorCheck) -}}
+{{ render_option("GatewayPorts",sshd_GatewayPorts) -}}
+{{ render_option("HPNBufferSize",sshd_HPNBufferSize) -}}
+{{ render_option("HPNDisabled",sshd_HPNDisabled) -}}
+{{ render_option("HostCertificate",sshd_HostCertificate) -}}
+{{ render_option("HostKey",sshd_HostKey) -}}
+{{ render_option("HostKeyAgent",sshd_HostKeyAgent) -}}
+{{ render_option("HostbasedAuthentication",sshd_HostbasedAuthentication) -}}
+{{ render_option("HostbasedUsesNameFromPacketOnly",sshd_HostbasedUsesNameFromPacketOnly) -}}
+{{ render_option("IPQoS",sshd_IPQoS) -}}
+{{ render_option("IgnoreRhosts",sshd_IgnoreRhosts) -}}
+{{ render_option("IgnoreUserKnownHosts",sshd_IgnoreUserKnownHosts) -}}
+{{ render_option("KbdInteractiveAuthentication",sshd_KbdInteractiveAuthentication) -}}
+{{ render_option("KerberosAuthentication",sshd_KerberosAuthentication) -}}
+{{ render_option("KerberosGetAFSToken",sshd_KerberosGetAFSToken) -}}
+{{ render_option("KerberosOrLocalPasswd",sshd_KerberosOrLocalPasswd) -}}
+{{ render_option("KerberosTicketCleanup",sshd_KerberosTicketCleanup) -}}
+{{ render_option("KexAlgorithms",sshd_KexAlgorithms) -}}
+{{ render_option("KeyRegenerationInterval",sshd_KeyRegenerationInterval) -}}
+{{ render_option("ListenAddress",sshd_ListenAddress) -}}
+{{ render_option("LogLevel",sshd_LogLevel) -}}
+{{ render_option("LoginGraceTime",sshd_LoginGraceTime) -}}
+{{ render_option("MACs",sshd_MACs) -}}
+{{ render_option("MaxAuthTries",sshd_MaxAuthTries) -}}
+{{ render_option("MaxSessions",sshd_MaxSessions) -}}
+{{ render_option("MaxStartups",sshd_MaxStartups) -}}
+{{ render_option("NoneEnabled",sshd_NoneEnabled) -}}
+{{ render_option("PasswordAuthentication",sshd_PasswordAuthentication) -}}
+{{ render_option("PermitEmptyPasswords",sshd_PermitEmptyPasswords) -}}
+{{ render_option("PermitOpen",sshd_PermitOpen) -}}
+{{ render_option("PermitRootLogin",sshd_PermitRootLogin) -}}
+{{ render_option("PermitTTY",sshd_PermitTTY) -}}
+{{ render_option("PermitTunnel",sshd_PermitTunnel) -}}
+{{ render_option("PermitUserEnvironment",sshd_PermitUserEnvironment) -}}
+{{ render_option("PidFile",sshd_PidFile) -}}
+{{ render_option("Port",sshd_Port) -}}
+{{ render_option("PrintLastLog",sshd_PrintLastLog) -}}
+{{ render_option("PrintMotd",sshd_PrintMotd) -}}
+{{ render_option("Protocol",sshd_Protocol) -}}
+{{ render_option("PubkeyAuthentication",sshd_PubkeyAuthentication) -}}
+{{ render_option("RSAAuthentication",sshd_RSAAuthentication) -}}
+{{ render_option("RekeyLimit",sshd_RekeyLimit) -}}
+{{ render_option("RevokedKeys",sshd_RevokedKeys) -}}
+{{ render_option("RhostsRSAAuthentication",sshd_RhostsRSAAuthentication) -}}
+{{ render_option("ServerKeyBits",sshd_ServerKeyBits) -}}
+{{ render_option("StrictModes",sshd_StrictModes) -}}
+{{ render_option("Subsystem",sshd_Subsystem) -}}
+{{ render_option("SyslogFacility",sshd_SyslogFacility) -}}
+{{ render_option("TCPKeepAlive",sshd_TCPKeepAlive) -}}
+{{ render_option("TcpRcvBufPoll",sshd_TcpRcvBufPoll) -}}
+{{ render_option("TrustedUserCAKeys",sshd_TrustedUserCAKeys) -}}
+{{ render_option("UseDNS",sshd_UseDNS) -}}
+{{ render_option("UseLogin",sshd_UseLogin) -}}
+{{ render_option("UsePAM",sshd_UsePAM) -}}
+{{ render_option("UsePrivilegeSeparation",sshd_UsePrivilegeSeparation) -}}
+{{ render_option("VersionAddendum",sshd_VersionAddendum) -}}
+{{ render_option("X11DisplayOffset",sshd_X11DisplayOffset) -}}
+{{ render_option("X11Forwarding",sshd_X11Forwarding) -}}
+{{ render_option("X11UseLocalhost",sshd_X11UseLocalhost) -}}
+{{ render_option("XAuthLocation",sshd_XAuthLocation) -}}
