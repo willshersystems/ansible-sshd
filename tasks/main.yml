@@ -3,6 +3,7 @@
   include_vars: "{{ item }}"
   with_first_found:
    - "{{ ansible_distribution }}.yml"
+   - "{{ ansible_os_family }}_{{ ansible_distribution_major_version }}.yml"
    - "{{ ansible_os_family }}.yml"
    - default.yml
 
@@ -23,7 +24,7 @@
     dest: "{{ sshd_config_file }}"
     owner: "{{ sshd_config_owner }}"
     group: "{{ sshd_config_group }}"
-    mode: 644
+    mode: "{{ sshd_config_mode }}"
   notify: check and reload sshd
 
 - name: Service enabled and running
