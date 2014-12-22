@@ -21,9 +21,9 @@
   template:
     src: sshd_config.j2
     dest: "{{ sshd_config_file }}"
-    owner: "{{ sshd_user }}"
-    group: "{{ sshd_group }}"
-    mode: 600
+    owner: "{{ sshd_config_owner }}"
+    group: "{{ sshd_config_group }}"
+    mode: 644
   notify: check and reload sshd
 
 - name: Service enabled and running

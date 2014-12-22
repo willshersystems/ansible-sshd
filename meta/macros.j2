@@ -4,6 +4,8 @@
 {%     set value = override %}
 {%   elif sshd[key] is defined %}
 {%     set value = sshd[key] %}
+{%   elif sshd_defaults[key] is defined and sshd_skip_defaults != true %}
+{%     set value = sshd_defaults[key] %}
 {%   endif %}
 {%   if value is defined %}
 {%     if value is sameas true %}
