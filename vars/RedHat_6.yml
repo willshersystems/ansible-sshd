@@ -1,5 +1,6 @@
 ---
 sshd_packages:
+  - openssh
   - openssh-server
 sshd_sftp_server: /usr/libexec/openssh/sftp-server
 sshd_defaults:
