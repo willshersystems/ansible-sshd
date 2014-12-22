@@ -1,20 +1,21 @@
 ---
 galaxy_info:
   author: Matt Willsher
-  description: OpenSSH Deamon configuration
+  description: OpenSSH SSH deamon configuration
   company: Willsher Systems
-  license: MIT
+  license: GPLv3
   min_ansible_version: 1.8
   platforms:
   - name: Ubuntu
     versions:
-    - all
-  - name: Debian
-    versions:
-    - all
+    - trusty
   - name: FreeBSD
     version:
-    - all
+    - 10.1
+  - name: EL
+    versions:
+    - 6
+    - 7
   categories:
   - system
 dependencies: []

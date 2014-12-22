@@ -21,4 +21,4 @@ sshd_defaults:
     - LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
     - LC_IDENTIFICATION LC_ALL LANGUAGE
     - XMODIFIERS
-  Subsystem: sftp {{ sshd_sftp_server }}
+  Subsystem: "sftp {{ sshd_sftp_server }}"

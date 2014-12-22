@@ -1,20 +1,24 @@
 # Ansible OpenSSH Daemon Role
 
-This role configures OpenSSH. It:
+This role configures the OpenSSH daemon. It:
 
-- By default, with no set options, creates an empty configuration file.
-- Can use a dict of the form:
-```
+- By default configures the SSH daemon with the normal OS defaults. Defaults can be disabled by setting `sshd_skip_defaults: true`
+- Supports use of a dict to configure items:
+
+```yaml
 sshd:
   Compression: delayed
   ListenAddress:
     - 0.0.0.0
-    - ::
 ```
-- Can also use scalar variables of the form `sshd_ListenAddress`
-- Scalar override dict values.
-- Allows the use of booleans for keys with yes/no values, including those with additional non-boolean values such as `Compression`, which has the additional `delayed` option
-- Tests the sshd_config before reloading sshd
-- Template is programmatically generated. See the files in the meta folder.
 
-It should cover all valid SSH options.
+- Can use scalars rather than a dict. Scalar values override dict values:
+
+```yaml
+sshd_Compression: off
+```
+
+- Correctly interprets booleans as yes and no in sshd configuration
+- Supports lists for multi line configuration items
+- Tests the sshd_config before reloading sshd
+- Template is programmatically generated. See the files in the meta folder. It should cover all valid SSH options.

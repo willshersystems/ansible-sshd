@@ -8,7 +8,7 @@ sshd_packages:
 sshd_defaults:
   Port: 22
   Protocol: 2
-  HostKey: 
+  HostKey:
     - /etc/ssh/ssh_host_rsa_key
     - /etc/ssh/ssh_host_dsa_key
     - /etc/ssh/ssh_host_ecdsa_key
@@ -34,5 +34,5 @@ sshd_defaults:
   PrintLastLog: yes
   TCPKeepAlive: yes
   AcceptEnv: LANG LC_*
-  Subsystem: sftp {{ sshd_sftp_server }}
+  Subsystem: "sftp {{ sshd_sftp_server }}"
   UsePAM: yes
