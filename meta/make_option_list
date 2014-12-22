@@ -2,7 +2,6 @@
 cat macros.j2
 
 cat ssh_options |
-  sort |
   awk '{
 print "{{ render_option(\""$1"\",sshd_"$1") -}}"
 }'

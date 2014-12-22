@@ -21,6 +21,10 @@
 {%     endif %}
 {%   endif %}
 {% endmacro %}
+{{ render_option("Port",sshd_Port) -}}
+{{ render_option("ListenAddress",sshd_ListenAddress) -}}
+{{ render_option("Protocol",sshd_Protocol) -}}
+{{ render_option("HostKey",sshd_HostKey) -}}
 {{ render_option("AcceptEnv",sshd_AcceptEnv) -}}
 {{ render_option("AddressFamily",sshd_AddressFamily) -}}
 {{ render_option("AllowAgentForwarding",sshd_AllowAgentForwarding) -}}
@@ -51,7 +55,6 @@
 {{ render_option("HPNBufferSize",sshd_HPNBufferSize) -}}
 {{ render_option("HPNDisabled",sshd_HPNDisabled) -}}
 {{ render_option("HostCertificate",sshd_HostCertificate) -}}
-{{ render_option("HostKey",sshd_HostKey) -}}
 {{ render_option("HostKeyAgent",sshd_HostKeyAgent) -}}
 {{ render_option("HostbasedAuthentication",sshd_HostbasedAuthentication) -}}
 {{ render_option("HostbasedUsesNameFromPacketOnly",sshd_HostbasedUsesNameFromPacketOnly) -}}
@@ -65,7 +68,6 @@
 {{ render_option("KerberosTicketCleanup",sshd_KerberosTicketCleanup) -}}
 {{ render_option("KexAlgorithms",sshd_KexAlgorithms) -}}
 {{ render_option("KeyRegenerationInterval",sshd_KeyRegenerationInterval) -}}
-{{ render_option("ListenAddress",sshd_ListenAddress) -}}
 {{ render_option("LogLevel",sshd_LogLevel) -}}
 {{ render_option("LoginGraceTime",sshd_LoginGraceTime) -}}
 {{ render_option("MACs",sshd_MACs) -}}
@@ -81,10 +83,8 @@
 {{ render_option("PermitTunnel",sshd_PermitTunnel) -}}
 {{ render_option("PermitUserEnvironment",sshd_PermitUserEnvironment) -}}
 {{ render_option("PidFile",sshd_PidFile) -}}
-{{ render_option("Port",sshd_Port) -}}
 {{ render_option("PrintLastLog",sshd_PrintLastLog) -}}
 {{ render_option("PrintMotd",sshd_PrintMotd) -}}
-{{ render_option("Protocol",sshd_Protocol) -}}
 {{ render_option("PubkeyAuthentication",sshd_PubkeyAuthentication) -}}
 {{ render_option("RSAAuthentication",sshd_RSAAuthentication) -}}
 {{ render_option("RekeyLimit",sshd_RekeyLimit) -}}

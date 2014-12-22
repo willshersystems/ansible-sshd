@@ -1,3 +1,7 @@
+Port
+ListenAddress
+Protocol
+HostKey
 AcceptEnv
 AddressFamily
 AllowAgentForwarding
@@ -28,7 +32,6 @@ GatewayPorts
 HPNBufferSize
 HPNDisabled
 HostCertificate
-HostKey
 HostKeyAgent
 HostbasedAuthentication
 HostbasedUsesNameFromPacketOnly
@@ -42,7 +45,6 @@ KerberosOrLocalPasswd
 KerberosTicketCleanup
 KexAlgorithms
 KeyRegenerationInterval
-ListenAddress
 LogLevel
 LoginGraceTime
 MACs
@@ -58,10 +60,8 @@ PermitTTY
 PermitTunnel
 PermitUserEnvironment
 PidFile
-Port
 PrintLastLog
 PrintMotd
-Protocol
 PubkeyAuthentication
 RSAAuthentication
 RekeyLimit
