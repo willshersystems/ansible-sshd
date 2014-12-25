@@ -6,6 +6,9 @@ galaxy_info:
   license: GPLv3
   min_ansible_version: 1.8
   platforms:
+  - name: Debian
+    versions:
+    - wheezy
   - name: Ubuntu
     versions:
     - trusty
