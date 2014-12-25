@@ -12,6 +12,7 @@ sshd: {}
 sshd_packages: []
 sshd_config_owner: root
 sshd_config_group: root
+sshd_config_mode: "0600"
 sshd_config_file: /etc/ssh/sshd_config
 sshd_binary: /usr/sbin/sshd
 sshd_service: sshd

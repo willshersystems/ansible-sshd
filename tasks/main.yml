@@ -2,6 +2,7 @@
 - name: Role set up
   include_vars: "{{ item }}"
   with_first_found:
+   - "{{ ansible_os_family }}_{{ ansible_distribution_major_version }}.yml"
    - "{{ ansible_distribution }}.yml"
    - "{{ ansible_os_family }}.yml"
    - default.yml
@@ -13,17 +14,13 @@
     state=installed
   with_items: sshd_packages
 
-- name: Debug config
-  debug: var=sshd
-  when: sshd_debug is defined
-
 - name: Configured
   template:
     src: sshd_config.j2
     dest: "{{ sshd_config_file }}"
     owner: "{{ sshd_config_owner }}"
     group: "{{ sshd_config_group }}"
-    mode: 644
+    mode: "{{ sshd_config_mode }}"
   notify: check and reload sshd
 
 - name: Service enabled and running
@@ -31,3 +28,4 @@
     name: "{{ sshd_service }}"
     enabled: true
     state: running
+
