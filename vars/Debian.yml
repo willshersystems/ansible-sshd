@@ -36,3 +36,6 @@ sshd_defaults:
   AcceptEnv: LANG LC_*
   Subsystem: "sftp {{ sshd_sftp_server }}"
   UsePAM: yes
+  Match:
+    - Condition: User vagrant
+      MaxSessions: 10
