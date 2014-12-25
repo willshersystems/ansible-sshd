@@ -22,3 +22,4 @@ sshd_Compression: off
 - Supports lists for multi line configuration items
 - Tests the sshd_config before reloading sshd
 - Template is programmatically generated. See the files in the meta folder. It should cover all valid SSH options.
+- Support match section either via Match in the sshd dict, sshd_match and any of sshd_match_1 through sshd_match_9.
