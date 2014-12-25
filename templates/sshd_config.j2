@@ -26,7 +26,10 @@
 {{ render_option(key,value) -}}
 {% endmacro %}
 {% macro match_block(match_list) %}
-{%   if match_list is defined %}
+{%   if match_list["Condition"] is defined %}
+{%     set match_list = [ match_list ]%}
+{%   endif %}
+{%   if match_list is iterable %}
 {%     for match in match_list %}
 Match {{ match["Condition"] }}
 {{       render_option("AllowAgentForwarding",match["AllowAgentForwarding"],true) -}}
@@ -172,5 +175,14 @@ Match {{ match["Condition"] }}
 {{ match_block(sshd_match) -}}
 {% endif %}
 {% if sshd_match_6 is defined %}
+{{ match_block(sshd_match) -}}
+{% endif %}
+{% if sshd_match_7 is defined %}
+{{ match_block(sshd_match) -}}
+{% endif %}
+{% if sshd_match_8 is defined %}
+{{ match_block(sshd_match) -}}
+{% endif %}
+{% if sshd_match_9 is defined %}
 {{ match_block(sshd_match) -}}
 {% endif %}

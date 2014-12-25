@@ -26,6 +26,9 @@
 {{ render_option(key,value) -}}
 {% endmacro %}
 {% macro match_block(match_list) %}
-{%   if match_list is defined %}
+{%   if match_list["Condition"] is defined %}
+{%     set match_list = [ match_list ]%}
+{%   endif %}
+{%   if match_list is iterable %}
 {%     for match in match_list %}
 Match {{ match["Condition"] }}
