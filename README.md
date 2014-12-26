@@ -63,3 +63,8 @@ Match Group user
 Match Group xusers
   X11Forwarding yes
 ```
+### Author
+
+Copyright 2014 Matt Willsher
+
+Code in this repository is licensed under the LGPLv3 license. See LICENSE for full details.
