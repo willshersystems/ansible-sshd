@@ -2,9 +2,6 @@
 sshd_service: ssh
 sshd_packages:
   - openssh-server
-  - openssh-blacklist
-  - openssh-blacklist-extra
-  - openssh-sftp-server
 sshd_config_mode: "0644"
 sshd_defaults:
   Port: 22

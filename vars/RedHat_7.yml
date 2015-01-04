@@ -15,7 +15,7 @@ sshd_defaults:
   GSSAPICleanupCredentials: yes
   UsePAM: yes
   X11Forwarding: yes
-  UsePrivilegeSeperation: sandbox
+  UsePrivilegeSeparation: sandbox
   AcceptEnv:
     - LANG LC_TYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
     - LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT

@@ -38,7 +38,7 @@ sshd_ListenAddress:
 sshd_skip_defaults: true
 sshd:
   Compression: true
-  ListenAddres:
+  ListenAddress:
     - "0.0.0.0"
     - "::"
   GSSAPIAuthentication: no
@@ -63,3 +63,8 @@ Match Group user
 Match Group xusers
   X11Forwarding yes
 ```
+### Author
+
+Copyright 2014 Matt Willsher
+
+Code in this repository is licensed under the LGPLv3 license. See LICENSE for full details.

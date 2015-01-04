@@ -2,10 +2,13 @@
 - name: Role set up
   include_vars: "{{ item }}"
   with_first_found:
-   - "{{ ansible_os_family }}_{{ ansible_distribution_major_version }}.yml"
+   - "{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml"
    - "{{ ansible_distribution }}.yml"
+   - "{{ ansible_os_family }}_{{ ansible_distribution_major_version }}.yml"
    - "{{ ansible_os_family }}.yml"
    - default.yml
+  tags:
+    - sshd
 
 - name: Installed
   action: >
@@ -13,6 +16,8 @@
     name="{{ item }}"
     state=installed
   with_items: sshd_packages
+  tags:
+    - sshd
 
 - name: Configured
   template:
@@ -22,10 +27,13 @@
     group: "{{ sshd_config_group }}"
     mode: "{{ sshd_config_mode }}"
   notify: check and reload sshd
+  tags:
+    - sshd
 
 - name: Service enabled and running
   service:
     name: "{{ sshd_service }}"
     enabled: true
     state: running
-
+  tags:
+    - sshd
