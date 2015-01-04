@@ -38,7 +38,7 @@ sshd_ListenAddress:
 sshd_skip_defaults: true
 sshd:
   Compression: true
-  ListenAddres:
+  ListenAddress:
     - "0.0.0.0"
     - "::"
   GSSAPIAuthentication: no
