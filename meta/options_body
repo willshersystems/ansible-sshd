@@ -1,9 +1,9 @@
 Port
+AddressFamily
 ListenAddress
 Protocol
 HostKey
 AcceptEnv
-AddressFamily
 AllowAgentForwarding
 AllowGroups
 AllowTcpForwarding
