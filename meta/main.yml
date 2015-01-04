@@ -3,7 +3,7 @@ galaxy_info:
   author: Matt Willsher
   description: OpenSSH SSH deamon configuration
   company: Willsher Systems
-  license: GPLv3
+  license: LGPLv3
   min_ansible_version: 1.8
   platforms:
   - name: Debian

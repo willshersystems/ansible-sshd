@@ -5,6 +5,7 @@ sshd_packages:
   - openssh-blacklist
   - openssh-blacklist-extra
   - openssh-sftp-server
+sshd_config_mode: "0644"
 sshd_defaults:
   Port: 22
   Protocol: 2
@@ -13,7 +14,7 @@ sshd_defaults:
     - /etc/ssh/ssh_host_dsa_key
     - /etc/ssh/ssh_host_ecdsa_key
     - /etc/ssh/ssh_host_ed25519_key
-  UsePrivilegeSeperation: yes
+  UsePrivilegeSeparation: yes
   KeyRegenerationInterval: 3600
   ServerKeyBits: 1024
   SyslogFacility: AUTH
@@ -25,7 +26,7 @@ sshd_defaults:
   PubkeyAuthentication: yes
   IgnoreRhosts: yes
   RhostsRSAAuthentication: no
-  HostbaseAuthentication: no
+  HostbasedAuthentication: no
   PermitEmptyPasswords: no
   ChallengeResponseAuthentication: no
   X11Forwarding: yes
