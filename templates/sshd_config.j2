@@ -69,11 +69,11 @@ Match {{ match["Condition"] }}
 {%   endif %}
 {% endmacro %}
 {{ body_option("Port",sshd_Port) -}}
+{{ body_option("AddressFamily",sshd_AddressFamily) -}}
 {{ body_option("ListenAddress",sshd_ListenAddress) -}}
 {{ body_option("Protocol",sshd_Protocol) -}}
 {{ body_option("HostKey",sshd_HostKey) -}}
 {{ body_option("AcceptEnv",sshd_AcceptEnv) -}}
-{{ body_option("AddressFamily",sshd_AddressFamily) -}}
 {{ body_option("AllowAgentForwarding",sshd_AllowAgentForwarding) -}}
 {{ body_option("AllowGroups",sshd_AllowGroups) -}}
 {{ body_option("AllowTcpForwarding",sshd_AllowTcpForwarding) -}}
