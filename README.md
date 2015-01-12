@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/WillsherSystems/ansible-sshd.svg?branch=master)](https://travis-ci.org/WillsherSystems/ansible-sshd) [![Ansible Galaxy](http://img.shields.io/badge/galaxy-willshersystems.sshd-660198.svg?style=flat)](https://galaxy.ansible.com/list#/roles/2488)
+
+
 OpenSSH Server
 ==============
 
