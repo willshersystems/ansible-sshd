@@ -1,3 +1,7 @@
+0.2.1 12 January 2014 Matt Willsher <matt@willsher.systems>
+- Standardise README.md format
+- Add basic Travis CI testing
+- Add networking metadata type
 0.2.0 04 January 2014 Matt Willsher <matt@willsher.systems>
 - Change var file search order
 - Add Arch Linux defaults (thanks GitHub user @brenix).
