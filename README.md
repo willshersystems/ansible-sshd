@@ -39,12 +39,24 @@ It will likely work on other flavours and more direct support via suitable
 Role variables
 ---------------
 
-* Unconfigured, this role will provide a sshd_config that matches the OS default,
+Unconfigured, this role will provide a sshd_config that matches the OS default,
 minus the comments and in a different order.
 
-* Defaults can be disabled by setting `sshd_skip_defaults: true`
+* sshd_skip_defaults
 
-* Supports use of a dict to configure items:
+If set to True, don't apply default values. This means that you must have a
+complete set of configuration defaults via either the sshd dict, or sshd_Key
+variables. Defaults to *False*.
+
+* sshd_allow_reload
+
+If set to False, a reload of sshd wont happen on change. This can help with 
+troubleshooting. You'll need to manually reload sshd if you want to apply the
+changed configuration. Defaults to *True*.
+
+* sshd
+
+A dict containing configuration.  e.g.
 
 ```yaml
 sshd:
@@ -53,15 +65,17 @@ sshd:
     - 0.0.0.0
 ```
 
-* Simple variables can be used rather than a dict. Simple values override dict
-values:
+* ssh_...
+
+Simple variables can be used rather than a dict. Simple values override dict
+values. e.g.:
 
 ```yaml
 sshd_Compression: off
 ```
 
-* Correctly interprets booleans as yes and no in sshd configuration
-* Supports lists for multi line configuration items:
+In all cases, booleans correctly rendered as yes and no in sshd configuration.
+Lists can be used for multiline configuration items. e.g.
 
 ```yaml
 sshd_ListenAddress:
@@ -69,11 +83,24 @@ sshd_ListenAddress:
   - '::'
 ```
 
-* Supports match section either via Match in the sshd dict, sshd_match and any of sshd_match_1 through sshd_match_9. Match items can either be a dict or an array.
+Renders as:
+
+```
+ListenAddress 0.0.0.0
+ListenAddress ::
+```
+
+* sshd_match
+
+A list of dicts for a match section. See the example playbook.
+
+* sshd_match_1 through sshd_match_9
+
+A list of dicts or just a dict for a Match section.
 
 Example Playbook
 ----------------
-
+ 
 ```yaml
 ---
 - hosts: all
@@ -98,7 +125,7 @@ Example Playbook
 
 Results in:
 
-```
+``` 
 # Ansible managed: ...
 Compression yes
 GSSAPIAuthentication no

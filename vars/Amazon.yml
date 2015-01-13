@@ -20,3 +20,4 @@ sshd:
     - LC_IDENTIFICATION LC_ALL LANGUAGE
     - XMODIFIERS
   Subsystem: "sftp {{ sshd_sftp_server }}"
+sshd_os_supported: yes

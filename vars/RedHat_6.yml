@@ -18,3 +18,4 @@ sshd_defaults:
     - XMODIFIERS
   X11Forwarding: yes
   Subsystem: "sftp {{ sshd_sftp_server }}"
+sshd_os_supported: yes
