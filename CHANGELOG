@@ -1,3 +1,7 @@
+0.2.2 13 January 2014 Matt Willsher <matt@willsher.systems>
+- Add warnings to README
+- Tidy up naming
+- Remove blacklist packages from Debian based distros
 0.2.1 12 January 2014 Matt Willsher <matt@willsher.systems>
 - Standardise README.md format
 - Add basic Travis CI testing
