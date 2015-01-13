@@ -51,7 +51,8 @@ variables. Defaults to *False*.
 * sshd_allow_reload
 
 If set to False, a reload of sshd wont happen on change. This can help with 
-troubleshooting. Defaults to *True*.
+troubleshooting. You'll need to manually reload sshd if you want to apply the
+changed configuration. Defaults to *True*.
 
 * sshd
 
