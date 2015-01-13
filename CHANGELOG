@@ -1,3 +1,5 @@
+0.2.3 13 January 2014 Matt Willsher <matt@willsher.systems>
+- Fixed HostbasedAuthentication typo
 0.2.2 13 January 2014 Matt Willsher <matt@willsher.systems>
 - Add warnings to README
 - Tidy up naming
