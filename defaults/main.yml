@@ -2,6 +2,8 @@
 ### USER OPTIONS
 # Don't apply OS defaults when set to true
 sshd_skip_defaults: false
+# If the below is false, don't reload the ssh deamon on change
+sshd_allow_reload: yes
 # Empty dicts to avoid errors
 sshd: {}
 
@@ -18,3 +20,4 @@ sshd_binary: /usr/sbin/sshd
 sshd_service: sshd
 sshd_sftp_server: /usr/lib/openssh/sftp-server
 sshd_defaults: {}
+sshd_os_supported: no
