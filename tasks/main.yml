@@ -6,9 +6,12 @@
    - "{{ ansible_distribution }}.yml"
    - "{{ ansible_os_family }}_{{ ansible_distribution_major_version }}.yml"
    - "{{ ansible_os_family }}.yml"
-   - default.yml
   tags:
     - sshd
+
+- name: OS is supported
+  assert:
+    that: sshd_os_supported == True
 
 - name: Installed
   action: >
@@ -37,4 +40,3 @@
     state: running
   tags:
     - sshd
-

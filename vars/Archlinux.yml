@@ -12,3 +12,4 @@ sshd_defaults:
   Subsystem: "sftp {{ sshd_sftp_server }}"
   UsePAM: yes
   UsePrivilegeSeparation: sandbox
+sshd_os_supported: yes
