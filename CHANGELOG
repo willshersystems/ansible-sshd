@@ -1,3 +1,7 @@
+0.2.4 13 January 2014 Matt Willsher <matt@willsher.systems>
+- Allow reload to be skipped
+- Test for OS support
+- Documentation improvements
 0.2.3 13 January 2014 Matt Willsher <matt@willsher.systems>
 - Fixed HostbasedAuthentication typo
 0.2.2 13 January 2014 Matt Willsher <matt@willsher.systems>
