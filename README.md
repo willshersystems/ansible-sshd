@@ -1,6 +1,5 @@
 [![Build Status](https://travis-ci.org/WillsherSystems/ansible-sshd.svg?branch=master)](https://travis-ci.org/WillsherSystems/ansible-sshd) [![Ansible Galaxy](http://img.shields.io/badge/galaxy-willshersystems.sshd-660198.svg?style=flat)](https://galaxy.ansible.com/list#/roles/2488)
 
-
 OpenSSH Server
 ==============
 
@@ -13,6 +12,16 @@ This role configures the OpenSSH daemon. It:
 * Supports all sshd_config options. Templates are programmatically generated.
   (see [meta/make_option_list](meta/make_option_list))
 * Tests the sshd_config before reloading sshd.
+
+**WARNING** Misconfiguration of this role can lock you out of your server!
+Please test your configuration and its interaction with your users configuration
+before using in production!
+
+**WARNING** Digital Ocean allows root with passwords via SSH on Debian and
+Ubuntu. This is not the default assigned by this module - it will set
+`PermitRootLogin without-password` which will allow access via SSH key but not
+via simple password. If you need this functionality, be sure to set
+`ssh_PermitRootLogin yes` for those hosts.
 
 Requirements
 ------------
