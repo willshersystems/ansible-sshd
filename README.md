@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/WillsherSystems/ansible-sshd.svg?branch=master)](https://travis-ci.org/WillsherSystems/ansible-sshd) [![Ansible Galaxy](http://img.shields.io/badge/galaxy-willshersystems.sshd-660198.svg?style=flat)](https://galaxy.ansible.com/list#/roles/2488)
+[![Build Status](https://travis-ci.org/willshersystems/ansible-sshd.svg?branch=master)](https://travis-ci.org/willshersystems/ansible-sshd) [![Ansible Galaxy](http://img.shields.io/badge/galaxy-willshersystems.sshd-660198.svg?style=flat)](https://galaxy.ansible.com/list#/roles/2488)
 
 OpenSSH Server
 ==============
@@ -50,7 +50,7 @@ variables. Defaults to *False*.
 
 * sshd_allow_reload
 
-If set to False, a reload of sshd wont happen on change. This can help with 
+If set to False, a reload of sshd wont happen on change. This can help with
 troubleshooting. You'll need to manually reload sshd if you want to apply the
 changed configuration. Defaults to *True*.
 
@@ -125,7 +125,7 @@ Example Playbook
 
 Results in:
 
-``` 
+```
 # Ansible managed: ...
 Compression yes
 GSSAPIAuthentication no
