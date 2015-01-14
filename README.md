@@ -152,4 +152,4 @@ Author
 
 Matt Willsher <matt@willsher.systems>
 
-Copyright 2014,2015 Willsher Systems
+&copy; 2014,2015 Willsher Systems
