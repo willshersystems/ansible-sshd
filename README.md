@@ -98,6 +98,11 @@ A list of dicts for a match section. See the example playbook.
 
 A list of dicts or just a dict for a Match section.
 
+Dependencies
+------------
+
+- willshersystems.apt
+
 Example Playbook
 ----------------
  
