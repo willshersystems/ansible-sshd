@@ -40,3 +40,7 @@
     state: running
   tags:
     - sshd
+
+- name: Register that this role has run
+  set_fact: sshd_has_run=true
+  when: sshd_has_run is not defined
