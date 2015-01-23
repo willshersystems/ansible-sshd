@@ -1,3 +1,6 @@
+0.2.5 23 January 2014 Matt Willsher <matt@willsher.systems>
+- Fix for sftp-server install on Debian removing openssh-sftp-server. Thanks to @ricbra 
+- Reinstate defaults.yml as fall through
 0.2.4 13 January 2014 Matt Willsher <matt@willsher.systems>
 - Allow reload to be skipped
 - Test for OS support

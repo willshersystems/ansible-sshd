@@ -24,4 +24,6 @@ galaxy_info:
   categories:
   - networking
   - system
-dependencies: []
+dependencies:
+  - role: willshersystems.apt
+    when: ansible_pkg_mgr == 'apt' and apt_has_run is not defined

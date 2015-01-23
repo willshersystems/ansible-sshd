@@ -6,6 +6,7 @@
    - "{{ ansible_distribution }}.yml"
    - "{{ ansible_os_family }}_{{ ansible_distribution_major_version }}.yml"
    - "{{ ansible_os_family }}.yml"
+   - default.yml
   tags:
     - sshd
 
@@ -40,3 +41,7 @@
     state: running
   tags:
     - sshd
+
+- name: Register that this role has run
+  set_fact: sshd_has_run=true
+  when: sshd_has_run is not defined
