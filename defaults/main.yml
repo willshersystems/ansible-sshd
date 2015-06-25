@@ -2,8 +2,11 @@
 ### USER OPTIONS
 # Don't apply OS defaults when set to true
 sshd_skip_defaults: false
+# If the below is false, don't manage the service or reload the SSH
+# daemon at all
+sshd_manage_service: "{{ False if ansible_virtualization_type == 'docker' else True }}"
 # If the below is false, don't reload the ssh deamon on change
-sshd_allow_reload: yes
+sshd_allow_reload: "{{ sshd_manage_service }}"
 # Empty dicts to avoid errors
 sshd: {}
 
