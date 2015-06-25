@@ -23,6 +23,14 @@
   tags:
     - sshd
 
+- name: Run directory
+  file:
+    path: /var/run/sshd
+    state: directory
+    mode: 0755
+  tags:
+    - sshd
+
 - name: Configuration
   template:
     src: sshd_config.j2
@@ -39,6 +47,7 @@
     name: "{{ sshd_service }}"
     enabled: true
     state: running
+  when: sshd_manage_service
   tags:
     - sshd
 

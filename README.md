@@ -48,11 +48,18 @@ If set to True, don't apply default values. This means that you must have a
 complete set of configuration defaults via either the sshd dict, or sshd_Key
 variables. Defaults to *False*.
 
+* sshd_manage_service
+
+If set to False, the service/daemon won't be touched at all, i.e. will not try
+to enable on boot or start or reload the service.  Defaults to *True* unless
+running inside a docker container (it is assumed ansible is used during build
+phase).
+
 * sshd_allow_reload
 
 If set to False, a reload of sshd wont happen on change. This can help with
 troubleshooting. You'll need to manually reload sshd if you want to apply the
-changed configuration. Defaults to *True*.
+changed configuration. Defaults to the same value as ``sshd_manage_service``.
 
 * sshd
 
