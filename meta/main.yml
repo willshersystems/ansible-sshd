@@ -21,6 +21,10 @@ galaxy_info:
     versions:
     - 6
     - 7
+  - name: Fedora
+    versions:
+    - 20
+    - 22
   categories:
   - networking
   - system
