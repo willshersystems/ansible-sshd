@@ -1,8 +1,4 @@
 ---
-- name: check_and_reload_sshd
-  command: "{{ sshd_binary }} -t"
-  notify: reload_sshd
-
 - name: reload_sshd
   service:
     name: "{{ sshd_service }}"
