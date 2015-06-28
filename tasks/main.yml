@@ -13,6 +13,8 @@
 - name: OS is supported
   assert:
     that: sshd_os_supported == True
+  tags:
+    - sshd
 
 - name: Installed
   action: >
@@ -55,3 +57,5 @@
 - name: Register that this role has run
   set_fact: sshd_has_run=true
   when: sshd_has_run is not defined
+  tags:
+    - sshd

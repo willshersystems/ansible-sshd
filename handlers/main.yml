@@ -3,4 +3,4 @@
   service:
     name: "{{ sshd_service }}"
     state: reloaded
-  when: sshd_allow_reload == True
+  when: sshd_allow_reload
