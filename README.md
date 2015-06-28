@@ -32,6 +32,7 @@ Tested on:
 * Debian wheezy, jessie
 * FreeBSD 10.1
 * EL 6,7 derived distributions
+* Fedora 20, 22
 
 It will likely work on other flavours and more direct support via suitable
 [vars/](vars/) files is welcome.
