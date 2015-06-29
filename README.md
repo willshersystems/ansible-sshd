@@ -109,7 +109,7 @@ A list of dicts or just a dict for a Match section.
 Dependencies
 ------------
 
-- willshersystems.apt
+None
 
 Example Playbook
 ----------------
