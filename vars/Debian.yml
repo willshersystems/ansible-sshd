@@ -22,7 +22,7 @@ sshd_defaults:
   PubkeyAuthentication: yes
   IgnoreRhosts: yes
   RhostsRSAAuthentication: no
-  HostbaseAuthentication: no
+  HostbasedAuthentication: no
   PermitEmptyPasswords: no
   ChallengeResponseAuthentication: no
   X11Forwarding: yes

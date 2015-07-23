@@ -20,6 +20,7 @@ Ciphers
 ClientAliveCountMax
 ClientAliveInterval
 Compression
+DebianBanner
 DenyGroups
 DenyUsers
 ForceCommand
