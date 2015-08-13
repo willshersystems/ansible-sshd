@@ -30,6 +30,7 @@
     path: /var/run/sshd
     state: directory
     mode: 0755
+  when: sshd_manage_var_run
   tags:
     - sshd
 
