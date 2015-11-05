@@ -34,6 +34,14 @@
   tags:
     - sshd
 
+- name: Remove existing host keys
+  shell: rm -f /etc/ssh/ssh_host_*
+  when: sshd_regenerate_host_keys
+
+- name: Generate host keys
+  shell: ssh-keygen -A
+  when: sshd_generate_host_keys or sshd_regenerate_host_keys
+
 - name: Configuration
   template:
     src: sshd_config.j2
