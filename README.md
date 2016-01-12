@@ -114,6 +114,9 @@ None
 Example Playbook
 ----------------
 
+**DANGER!** This example is to show the range of configuration this role
+provides. Running it will likely break your SSH access to the server!
+
 ```yaml
 ---
 - hosts: all
@@ -128,7 +131,7 @@ Example Playbook
       Match:
         - Condition: "Group user"
           GSSAPIAuthentication: yes
-    sshd_UsePrivilegeSeparation: sandbox
+    sshd_UsePrivilegeSeparation: no
     sshd_match:
         - Condition: "Group xusers"
           X11Forwarding: yes
@@ -142,7 +145,7 @@ Results in:
 # Ansible managed: ...
 Compression yes
 GSSAPIAuthentication no
-UsePrivilegeSeparation sandbox
+UsePrivilegeSeparation no
 Match Group user
   GSSAPIAuthentication yes
 Match Group xusers
