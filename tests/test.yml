@@ -1,5 +1,5 @@
 ---
 - hosts: localhost
-  sudo: true
+  become: true
   roles:
   - ansible-sshd
