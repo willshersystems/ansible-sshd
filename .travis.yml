@@ -10,8 +10,6 @@ install:
   # Add ansible.cfg to pick up roles path.
   - "{ echo '[defaults]'; echo 'roles_path = ../'; } >> ansible.cfg"
 
-  - "ansible-galaxy install willshersystems.apt"
-
 script:
   # Check the roles syntax
   - "ansible-playbook -i tests/inventory tests/test.yml --syntax-check"
