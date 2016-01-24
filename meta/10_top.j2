@@ -16,6 +16,7 @@
 {%   endif %}
 {% endmacro %}
 {% macro body_option(key,override) %}
+{%   set value = undefined %}
 {%   if override is defined %}
 {%     set value = override %}
 {%   elif sshd[key] is defined %}

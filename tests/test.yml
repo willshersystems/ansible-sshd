@@ -1,6 +1,5 @@
 ---
 - hosts: localhost
-  remote_user: root
+  become: true
   roles:
   - ansible-sshd
-
