@@ -1,7 +1,6 @@
 ---
 language: c
 sudo: required
-dist: trusty
 
 before_install:
   - sudo add-apt-repository -y ppa:ansible/ansible
