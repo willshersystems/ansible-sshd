@@ -1,4 +1,4 @@
-# -*- mode: ruby -*-
+
 # vi: set ft=ruby :
 
 VAGRANTFILE_API_VERSION = "2"
@@ -15,13 +15,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "centos6" do |centos|
     centos.vm.box = "bento/centos-6.7"
-    centos.vm.provision "shell", inline: <<-SHELL
-      sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
-      sudo yum install -y ansible libselinux-python
-    SHELL
   end
 
-  config.vm.synced_folder ".", "/etc/ansible/roles/ansible-sshd"
-  config.vm.provision :ansibleLocal, :playbook => "tests/test.yml"
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo yum install -y libselinux-python
+  SHELL
+
+  config.vm.provision "ansible_local" do |ansible|
+    ansible.playbook = "tests/test.yml"
+    ansible.install  = true
+  end
 
 end
