@@ -23,7 +23,9 @@
 {%   elif sshd_defaults[key] is defined and sshd_skip_defaults != true %}
 {%     set value = sshd_defaults[key] %}
 {%   endif %}
+{%   if value is defined %}
 {{ render_option(key,value) -}}
+{%   endif %}
 {% endmacro %}
 {% macro match_block(match_list) %}
 {%   if match_list["Condition"] is defined %}
