@@ -2,6 +2,9 @@
 language: c
 sudo: required
 
+notifications:
+    webhooks: https://galaxy.ansible.com/api/v1/notifications/
+
 before_install:
   - sudo add-apt-repository -y ppa:ansible/ansible
   - sudo apt-get update -qq
