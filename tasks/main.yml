@@ -21,7 +21,7 @@
     {{ ansible_pkg_mgr }}
     name="{{ item }}"
     state=installed
-  with_items: sshd_packages
+  with_items: "{{ sshd_packages }}"
   tags:
     - sshd
 
