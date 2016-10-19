@@ -26,10 +26,13 @@ galaxy_info:
     versions:
     - 22
     - 23
+  - name: OpenBSD
+    versions:
+    - 6.0
   galaxy_tags:
   - networking
   - system
-  - SSH 
+  - SSH
   - OpenSSH
   - sshd
   - server
@@ -38,4 +41,5 @@ galaxy_info:
   - centos
   - redhat
   - freebsd
+  - openbsd
 dependencies: []
