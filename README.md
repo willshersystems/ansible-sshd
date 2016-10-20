@@ -33,6 +33,7 @@ Tested on:
 * FreeBSD 10.1
 * EL 6,7 derived distributions
 * Fedora 22, 23
+* OpenBSD 6.0
 
 It will likely work on other flavours and more direct support via suitable
 [vars/](vars/) files is welcome.
