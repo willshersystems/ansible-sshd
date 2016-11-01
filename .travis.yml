@@ -24,7 +24,7 @@ script:
   - "ansible-playbook -i tests/inventory tests/test.yml --syntax-check"
 
   # Run the role for multiple distros
-  - "ansible-playbook -i tests/inventory tests/test.yml"
+  - "ansible-playbook -D -i tests/inventory tests/test.yml"
 
   # Run the role/playbook again, checking to make sure it's idempotent.
   - >
