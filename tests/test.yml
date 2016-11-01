@@ -1,5 +1,13 @@
 ---
-- hosts: localhost
+- name: Bring up docker containers
+  hosts: localhost
+  roles:
+    - role: provision_docker
+      provision_docker_privileged: true,
+      provision_docker_inventory_group: "{{ groups['distros'] }}"
+      provision_docker_use_docker_connection: true
+
+- hosts: distros
   become: true
   roles:
   - ansible-sshd

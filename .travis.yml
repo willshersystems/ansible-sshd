@@ -1,29 +1,34 @@
 ---
-language: c
 sudo: required
+language: python
+python: "2.7"
+services:
+  - docker
 
 notifications:
     webhooks: https://galaxy.ansible.com/api/v1/notifications/
 
 before_install:
-  - sudo add-apt-repository -y ppa:ansible/ansible
   - sudo apt-get update -qq
-  - sudo apt-get -qq install ansible
 
 install:
+  - sudo apt-get install sshpass
+  - pip install ansible
+  - pip install docker-py
+  - ansible-galaxy install -r tests/requirements.yml -p tests/roles/
   # Add ansible.cfg to pick up roles path.
-  - "{ echo '[defaults]'; echo 'roles_path = ../'; } >> ansible.cfg"
+  - "{ echo '[defaults]'; echo 'roles_path = ../'; echo 'deprecation_warnings = False'; } >> ansible.cfg"
 
 script:
   # Check the roles syntax
   - "ansible-playbook -i tests/inventory tests/test.yml --syntax-check"
 
-  # Run the role
-  - "ansible-playbook -i tests/inventory tests/test.yml --connection=local --sudo"
+  # Run the role for multiple distros
+  - "ansible-playbook -i tests/inventory tests/test.yml"
 
   # Run the role/playbook again, checking to make sure it's idempotent.
   - >
-    ansible-playbook -i tests/inventory tests/test.yml --connection=local --sudo
+    ansible-playbook -i tests/inventory -e provision_docker_state=started tests/test.yml
     | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
