@@ -22,6 +22,7 @@
     name="{{ item }}"
     state=installed
   with_items: "{{ sshd_packages }}"
+  when: ansible_pkg_mgr != 'unknown'
   tags:
     - sshd
 
