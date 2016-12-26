@@ -63,6 +63,18 @@ If set to False, a reload of sshd wont happen on change. This can help with
 troubleshooting. You'll need to manually reload sshd if you want to apply the
 changed configuration. Defaults to the same value as ``sshd_manage_service``.
 
+* sshd_generate_host_keys
+
+If set to True, host keys will be generated with ``ssh-keygen -A``. Defaults to
+*False*.
+
+* sshd_regenerate_host_keys
+
+This options implies ``sshd_generate_host_keys``.
+
+If set to True, host keys will be deleted and and rengenerated with
+``ssh-keygen -A``. Defaults to *False*.
+
 * sshd
 
 A dict containing configuration.  e.g.

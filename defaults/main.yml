@@ -9,6 +9,10 @@ sshd_manage_service: "{{ false if ansible_virtualization_type == 'docker' else t
 sshd_allow_reload: "{{ sshd_manage_service }}"
 # If the below is false, don't manage /var/run/sshd directory
 sshd_manage_var_run: "{{ false if ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7' else true }}"
+# Don't generate host keys
+sshd_generate_host_keys: false
+# Don't regenerate host keys
+sshd_regenerate_host_keys: false
 # Empty dicts to avoid errors
 sshd: {}
 
