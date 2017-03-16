@@ -51,7 +51,7 @@
   service:
     name: "{{ sshd_service }}"
     enabled: true
-    state: running
+    state: started
   when: sshd_manage_service
   tags:
     - sshd
