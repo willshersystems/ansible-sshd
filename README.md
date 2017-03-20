@@ -1,7 +1,7 @@
 OpenSSH Server
 ==============
 
-[![Build Status](https://travis-ci.org/willshersystems/ansible-sshd.svg?branch=master)](https://travis-ci.org/willshersystems/ansible-sshd) [![Ansible Galaxy](http://img.shields.io/badge/galaxy-mattwillsher.sshd-660198.svg?style=flat)](https://galaxy.ansible.com/mattwillsher/sshd/)
+[![Build Status](https://travis-ci.org/willshersystems/ansible-sshd.svg?branch=master)](https://travis-ci.org/willshersystems/ansible-sshd) [![Ansible Galaxy](http://img.shields.io/badge/galaxy-willshersystems.sshd-660198.svg?style=flat)](https://galaxy.ansible.com/willshersystems/sshd/)
 
 This role configures the OpenSSH daemon. It:
 
@@ -137,7 +137,7 @@ provides. Running it will likely break your SSH access to the server!
         - Condition: "Group xusers"
           X11Forwarding: yes
   roles:
-    - role: mattwillsher.sshd
+    - role: willshersystems.sshd
 ```
 
 Results in:
