@@ -1,1 +1,7 @@
-localhost
+localhost ansible_connection=local
+
+[distros]
+ubuntu12 image="chrismeyers/ubuntu12.04"
+ubuntu14 image="ubuntu-upstart:14.04"
+centos6 image="chrismeyers/centos6"
+centos7 image="chrismeyers/centos7"
