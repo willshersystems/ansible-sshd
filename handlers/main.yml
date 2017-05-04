@@ -2,5 +2,5 @@
 - name: reload_sshd
   service:
     name: "{{ sshd_service }}"
-    state: reloaded
+    state: restarted
   when: sshd_allow_reload
