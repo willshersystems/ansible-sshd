@@ -22,15 +22,7 @@
     name="{{ item }}"
     state=installed
   with_items: "{{ sshd_packages }}"
-  tags:
-    - sshd
-
-- name: Run directory
-  file:
-    path: /var/run/sshd
-    state: directory
-    mode: 0755
-  when: sshd_manage_var_run
+  when: ansible_pkg_mgr != 'unknown'
   tags:
     - sshd
 
@@ -50,8 +42,8 @@
   service:
     name: "{{ sshd_service }}"
     enabled: true
-    state: running
-  when: sshd_manage_service
+    state: started
+  when: sshd_manage_service and ansible_virtualization_type != 'docker'
   tags:
     - sshd
 
