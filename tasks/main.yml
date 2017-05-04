@@ -26,15 +26,6 @@
   tags:
     - sshd
 
-- name: Run directory
-  file:
-    path: /var/run/sshd
-    state: directory
-    mode: 0755
-  when: sshd_manage_var_run
-  tags:
-    - sshd
-
 - name: Configuration
   template:
     src: sshd_config.j2
