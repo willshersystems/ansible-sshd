@@ -1,15 +1,11 @@
 ---
-sshd_service: sshd
 sshd_packages:
   - openssh
 sshd_sftp_server: /usr/lib/ssh/sftp-server
 sshd_defaults:
-  Port: 22
-  Protocol: 2
   AuthorizedKeysFile: .ssh/authorized_keys
   ChallengeResponseAuthentication: no
   PrintMotd: no
   Subsystem: "sftp {{ sshd_sftp_server }}"
   UsePAM: yes
-  UsePrivilegeSeparation: sandbox
 sshd_os_supported: yes
