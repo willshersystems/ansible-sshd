@@ -22,7 +22,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 #  end
 
   config.vm.provision "shell", inline: <<-SHELL
-    ln -s /vagrant /vagrant/tests/roles/ansible-sshd || true
+    test -e /vagrant/tests/roles/ansible-sshd || ln -s /vagrant /vagrant/tests/roles/ansible-sshd 
   SHELL
 
   config.vm.provision "ansible_local" do |ansible|
