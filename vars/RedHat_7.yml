@@ -14,6 +14,8 @@ sshd_defaults:
   ChallengeResponseAuthentication: no
   GSSAPIAuthentication: yes
   GSSAPICleanupCredentials: yes
+# Note that UsePAM: no is not supported under RHEL/CentOS. See
+# https://github.com/willshersystems/ansible-sshd/pull/51#issuecomment-287333218
   UsePAM: yes
   X11Forwarding: yes
   UsePrivilegeSeparation: sandbox
