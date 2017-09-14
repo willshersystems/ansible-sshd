@@ -8,13 +8,15 @@ sshd_defaults:
   Port: 22
   Protocol: 2
   HostKey:
-    - /etc/ssh/ssh_host_ed25519_key
     - /etc/ssh/ssh_host_rsa_key
-  UsePrivilegeSeparation: sandbox
+    - /etc/ssh/ssh_host_dsa_key
+    - /etc/ssh/ssh_host_ecdsa_key
+    - /etc/ssh/ssh_host_ed25519_key
+  UsePrivilegeSeparation: yes
   KeyRegenerationInterval: 3600
   ServerKeyBits: 1024
   SyslogFacility: AUTH
-  LogLevel: VERBOSE
+  LogLevel: INFO
   LoginGraceTime: 120
   PermitRootLogin: without-password
   StrictModes: yes
@@ -25,16 +27,12 @@ sshd_defaults:
   HostbasedAuthentication: no
   PermitEmptyPasswords: no
   ChallengeResponseAuthentication: no
-  X11Forwarding: no
+  X11Forwarding: yes
   X11DisplayOffset: 10
-  PrintMotd: yes
+  PrintMotd: no
   PrintLastLog: yes
   TCPKeepAlive: yes
   AcceptEnv: LANG LC_*
-  Subsystem: "sftp {{ sshd_sftp_server }} -f AUTHPRIV -l INFO"
+  Subsystem: "sftp {{ sshd_sftp_server }}"
   UsePAM: yes
-  KexAlgorithms: curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
-  Ciphers: chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
-  MACs: hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com
-  AuthenticationMethods: publickey
 sshd_os_supported: yes
