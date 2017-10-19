@@ -12,13 +12,11 @@
   assert:
     that: sshd_os_supported == True
 
-- name: Installed
-  action: >
-    {{ ansible_pkg_mgr }}
-    name="{{ item }}"
-    state=installed
+- name: Install ssh packages
+  package:
+    name: "{{ item }}"
+    state: present
   with_items: "{{ sshd_packages }}"
-  when: ansible_pkg_mgr != 'unknown'
 
 - name: Configuration
   template:
