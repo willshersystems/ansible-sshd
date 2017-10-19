@@ -1,6 +1,7 @@
 ---
-- name: reload_sshd
+- name: Reload the SSH service
   service:
     name: "{{ sshd_service }}"
     state: reloaded
   when: sshd_allow_reload and ansible_virtualization_type != 'docker'
+  listen: reload_sshd
