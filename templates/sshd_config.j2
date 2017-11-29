@@ -6,6 +6,8 @@
 {{ key }} yes
 {%     elif value is sameas false %}
 {{ key }} no
+{%     elif value == 'absent' %}
+#{{ key }}
 {%     elif value is string or value is number %}
 {{ key }} {{ value }}
 {%     else %}
