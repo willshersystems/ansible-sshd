@@ -29,7 +29,7 @@ Requirements
 Tested on:
 
 * Ubuntu precise, trusty
-* Debian wheezy, jessie
+* Debian wheezy, jessie, stretch
 * FreeBSD 10.1
 * EL 6,7 derived distributions
 * Fedora 22, 23
