@@ -17,12 +17,11 @@
     - sshd
 
 - name: Installed
-  action: >
-    {{ ansible_pkg_mgr }}
-    name="{{ item }}"
-    state=installed
-  with_items: "{{ sshd_packages }}"
-  when: ansible_pkg_mgr != 'unknown'
+  package:
+    name: "{{ sshd_packages }}"
+    state: installed
+    update_cache: yes
+    cache_valid_time: "{{apt_cache_valid_time | default (3600)}}"
   tags:
     - sshd
 
