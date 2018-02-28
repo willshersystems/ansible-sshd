@@ -18,8 +18,10 @@
 
 - name: Installed
   package:
-    name="{{ sshd_packages }}"
-    state=installed
+    name: "{{ sshd_packages }}"
+    state: installed
+    update_cache: yes
+    cache_valid_time: 86400
   tags:
     - sshd
 
