@@ -69,6 +69,7 @@ RekeyLimit
 RevokedKeys
 RhostsRSAAuthentication
 ServerKeyBits
+StreamLocalBindUnlink
 StrictModes
 Subsystem
 SyslogFacility
