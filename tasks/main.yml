@@ -33,7 +33,7 @@
     name: "{{ sshd_service }}"
     enabled: true
     state: started
-  when: sshd_manage_service and ansible_virtualization_type != 'docker'
+  when: "sshd_manage_service and ansible_virtualization_type|default(None) != 'docker'"
 
 - name: Register that this role has run
   set_fact: sshd_has_run=true

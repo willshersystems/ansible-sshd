@@ -3,5 +3,5 @@
   service:
     name: "{{ sshd_service }}"
     state: reloaded
-  when: sshd_allow_reload and ansible_virtualization_type != 'docker'
+  when: "sshd_allow_reload and ansible_virtualization_type|default(None) != 'docker'"
   listen: reload_sshd
