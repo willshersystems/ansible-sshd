@@ -4,7 +4,7 @@ sshd_packages:
   - openssh
   - openssh-server
 sshd_sftp_server: /usr/libexec/openssh/sftp-server
-sshd:
+sshd_defaults:
   SyslogFacility: AUTHPRIV
   PermitRootLogin: forced-commands-only
   AuthorizedKeysFile: .ssh/authorized_keys
