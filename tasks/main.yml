@@ -19,7 +19,7 @@
 - name: Installed
   package:
     name: "{{ sshd_packages }}"
-    state: installed
+    state: present
     update_cache: yes
     cache_valid_time: "{{apt_cache_valid_time | default (3600)}}"
   tags:
