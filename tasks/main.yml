@@ -25,6 +25,7 @@
     owner: "{{ sshd_config_owner }}"
     group: "{{ sshd_config_group }}"
     mode: "{{ sshd_config_mode }}"
+    backup: "{{ sshd_backup }}"
     validate: "{{ sshd_binary }} -t -f %s"
   notify: reload_sshd
 
