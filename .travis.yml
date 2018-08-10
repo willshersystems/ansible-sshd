@@ -16,10 +16,10 @@ install:
 
 script:
   # Check the roles syntax
-  - "ansible-playbook -i tests/inventory tests/test.yml --syntax-check"
+  - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test.yml --syntax-check"
 
   # Run the role
-  - "ansible-playbook -i tests/inventory tests/test.yml --connection=local --sudo"
+  - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test.yml --connection=local --sudo -v"
 
   # Run the role/playbook again, checking to make sure it's idempotent.
   - >
