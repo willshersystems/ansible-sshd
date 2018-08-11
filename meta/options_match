@@ -12,8 +12,8 @@ ChrootDirectory
 DenyGroups
 DenyUsers
 ForceCommand
-GatewayPorts
 GSSAPIAuthentication
+GatewayPorts
 HostbasedAuthentication
 HostbasedUsesNameFromPacketOnly
 KbdInteractiveAuthentication
@@ -26,8 +26,9 @@ PermitOpen
 PermitRootLogin
 PermitTunnel
 PubkeyAuthentication
-RhostsRSAAuthentication
 RSAAuthentication
+RhostsRSAAuthentication
+TrustedUserCAKeys
 X11DisplayOffset
 X11Forwarding
 X11UseLocalHost
