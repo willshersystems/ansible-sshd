@@ -1,0 +1,31 @@
+---
+# Test some of the multi-value code
+- name: Save the ansible-sshd/vars path.
+  set_fact:
+    vars_path: "{{ lookup('config', 'roles_path') }}/ansible-sshd/vars"
+- name: Set OS dependent variables
+  include_vars: "{{ item }}"
+  with_first_found:
+  - "{{ vars_path }}/{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml"
+  - "{{ vars_path }}/{{ ansible_distribution }}.yml"
+  - "{{ vars_path }}/{{ ansible_os_family }}_{{ ansible_distribution_major_version }}.yml"
+  - "{{ vars_path }}/{{ ansible_os_family }}.yml"
+  - "{{ vars_path }}/default.yml"
+- name: Retrieve sshd variables.
+  include_vars: "{{ vars_path }}/main.yml"
+- name: Munge some lists into single-lines.
+  set_fact:
+    "sshd_{{ item.key }}": "{{ [sshd_defaults[item.key]]|flatten|unique|join(item.value) }}"
+  loop: "{{ sshd_options_multi|dict2items }}"
+  when:
+  - item.value ne "line"
+  - sshd_defaults[item.key] is defined
+- name: Duplicate some single-value options.
+  set_fact:
+    "sshd_{{ item }}":
+    - "{{ sshd_defaults[item] }}"
+    - "{{ sshd_defaults[item] }} Copy"
+  loop: "{{ sshd_options_body }}"
+  when:
+  - sshd_options_multi[item] is not defined
+  - sshd_defaults[item] is defined

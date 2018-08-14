@@ -1,5 +1,11 @@
 ---
 - hosts: all
   become: true
+  tasks:
+  - name: Run optional tests.
+    include_tasks: "{{ optional }}.yml"
+    when: optional is defined
+- hosts: all
+  become: true
   roles:
   - ansible-sshd

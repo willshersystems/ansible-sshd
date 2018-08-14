@@ -1,0 +1,176 @@
+---
+
+sshd_options_body: # Options which may be specified anywhere in /etc/ssh/sshd_config file.
+- AcceptEnv
+- AddressFamily
+- AllowAgentForwarding
+- AllowGroups
+- AllowStreamLocalForwarding
+- AllowTcpForwarding
+- AllowUsers
+- AuthenticationMethods
+- AuthorizedKeysCommand
+- AuthorizedKeysCommandUser
+- AuthorizedKeysFile
+- AuthorizedPrincipalsCommand
+- AuthorizedPrincipalsCommandUser
+- AuthorizedPrincipalsFile
+- Banner
+- ChallengeResponseAuthentication
+- ChrootDirectory
+- Ciphers
+- ClientAliveCountMax
+- ClientAliveInterval
+- Compression
+- DebianBanner
+- DenyGroups
+- DenyUsers
+- DisableForwarding
+- ExposeAuthInfo
+- FingerprintHash
+- ForceCommand
+- GSSAPIAuthentication
+- GSSAPICleanupCredentials
+- GSSAPIKeyExchange
+- GSSAPIStoreCredentialsOnRekey
+- GSSAPIStrictAcceptorCheck
+- GatewayPorts
+- GatewayPorts
+- HPNBufferSize
+- HPNDisabled
+- HostCertificate
+- HostKey
+- HostKeyAgent
+- HostKeyAlgorithms
+- HostbasedAcceptedKeyTypes
+- HostbasedAuthentication
+- HostbasedUsesNameFromPacketOnly
+- IPQoS
+- IgnoreRhosts
+- IgnoreUserKnownHosts
+- KbdInteractiveAuthentication
+- KerberosAuthentication
+- KerberosGetAFSToken
+- KerberosOrLocalPasswd
+- KerberosTicketCleanup
+- KexAlgorithms
+- KeyRegenerationInterval
+- ListenAddress
+- LogLevel
+- LoginGraceTime
+- MACs
+- MaxAuthTries
+- MaxSessions
+- MaxStartups
+- NoneEnabled
+- PasswordAuthentication
+- PermitEmptyPasswords
+- PermitOpen
+- PermitRootLogin
+- PermitTTY
+- PermitTunnel
+- PermitUserEnvironment
+- PermitUserRC
+- PidFile
+- Port
+- PrintLastLog
+- PrintMotd
+- Protocol
+- PubkeyAcceptedKeyTypes
+- PubkeyAuthentication
+- RDomain
+- RSAAuthentication
+- RekeyLimit
+- RevokedKeys
+- RhostsRSAAuthentication
+- ServerKeyBits
+- StreamLocalBindMask
+- StreamLocalBindUnlink
+- StrictModes
+- Subsystem
+- SyslogFacility
+- TCPKeepAlive
+- TcpRcvBufPoll
+- TrustedUserCAKeys
+- UseDNS
+- UseLogin
+- UsePAM
+- UsePrivilegeSeparation
+- VersionAddendum
+- X11DisplayOffset
+- X11Forwarding
+- X11UseLocalhost
+- XAuthLocation
+
+sshd_options_match: # Options which may occur within a Match statement.
+- AcceptEnv
+- AllowAgentForwarding
+- AllowGroups
+- AllowStreamLocalForwarding
+- AllowTcpForwarding
+- AllowUsers
+- AuthenticationMethods
+- AuthorizedKeysCommand
+- AuthorizedKeysCommandUser
+- AuthorizedKeysFile
+- AuthorizedPrincipalsCommand
+- AuthorizedPrincipalsCommandUser
+- AuthorizedPrincipalsFile
+- Banner
+- ChrootDirectory
+- ClientAliveCountMax
+- ClientAliveInterval
+- DenyGroups
+- DenyUsers
+- ForceCommand
+- GSSAPIAuthentication
+- GatewayPorts
+- HostbasedAcceptedKeyTypes
+- HostbasedAuthentication
+- HostbasedUsesNameFromPacketOnly
+- IPQoS
+- KbdInteractiveAuthentication
+- KerberosAuthentication
+- LogLevel
+- MaxAuthTries
+- MaxSessions
+- PasswordAuthentication
+- PermitEmptyPasswords
+- PermitOpen
+- PermitRootLogin
+- PermitTTY
+- PermitTunnel
+- PermitUserRC
+- PubkeyAcceptedKeyTypes
+- PubkeyAuthentication
+- RDomain
+- RSAAuthentication
+- RekeyLimit
+- RevokedKeys
+- RhostsRSAAuthentication
+- StreamLocalBindMask
+- StreamLocalBindUnlink
+- TrustedUserCAKeys
+- X11DisplayOffset
+- X11Forwarding
+- X11UseLocalHost
+
+sshd_options_multi: # Options which allow multiple values, separated by:
+  AcceptEnv:                 " "
+  AllowGroups:               " "
+  AllowUsers:                " "
+  AuthenticationMethods:     ","
+  Ciphers:                   ","
+  DenyGroups:                " "
+  DenyUsers:                 " "
+  HostKey:                   line
+  HostKeyAlgorithms:         ","
+  HostbasedAcceptedKeyTypes: ","
+  KexAlgorithms:             ","
+  ListenAddress:             line
+  MACs:                      ","
+  Match:                     ","
+  PermitOpen:                " "
+  Port:                      line
+  PubkeyAcceptedKeyTypes:    ","
+  Subsystem:                 line
