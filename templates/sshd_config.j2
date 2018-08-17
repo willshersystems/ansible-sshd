@@ -41,7 +41,7 @@
 {%   endif %}
 {%   if match_list is iterable %}
 {%     for match in match_list %}
-Match {{ [match["Condition"]]|flatten|unique|join(' ') }}
+Match {{ [match["Condition"]]|flatten|unique|join(" ") }}
 {%       for option in sshd_options_match %}
 {{       render_option(option,match[option],true) -}}
 {%       endfor %}
@@ -49,7 +49,9 @@ Match {{ [match["Condition"]]|flatten|unique|join(' ') }}
 {%   endif %}
 {% endmacro %}
 {% for option in sshd_options_body %}
-{{ body_option(option,lookup("config","sshd_"~option)) -}}
+{%   set optname = "sshd_"~option %}
+{%   set optval = optname|eval %}
+{{ body_option(option,optval) -}}
 {% endfor %}
 {% if sshd.Match is defined %}
 {{ match_block(sshd.Match) -}}

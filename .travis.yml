@@ -25,18 +25,18 @@ script:
   - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test.yml --syntax-check"
 
   # Run the role
-  - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test.yml --connection=local --sudo -v"
+  - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test.yml --connection=local --sudo -vvvvv"
 
   # Run the role/playbook again, checking to make sure it's idempotent.
   - >
-    ansible-playbook -i tests/inventory tests/test.yml --connection=local --sudo
+    ansible-playbook -i tests/inventory tests/test.yml --connection=local --sudo -vvvvv
     | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
 
   # Run the role/playbook again, with alternate list syntax, to make sure it's idempotent.
   - >
-    ansible-playbook -i tests/inventory -e optional=multie tests/test.yml --connection=local --sudo
+    ansible-playbook -i tests/inventory -e optional=multie tests/test.yml --connection=local --sudo -vvvvv
     | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
