@@ -17,17 +17,41 @@
     name: "{{ item }}"
     state: present
   with_items: "{{ sshd_packages }}"
+  register: ssh_installation
+
+- name: Compute configuration
+  set_fact:
+    sshd_configuration: "{{ lookup('template', 'sshd_config.j2') }}"
 
 - name: Configuration
-  template:
-    src: sshd_config.j2
+  copy:
+    content: "{{ sshd_configuration }}"
     dest: "{{ sshd_config_file }}"
+    owner: "{{ sshd_config_owner }}"
+    group: "{{ sshd_config_group }}"
+    mode: "{{ sshd_config_mode }}"
+    validate: "{{ sshd_binary }} -t -f %s"
+  notify: reload_sshd
+  when: not sshd_append_configuration
+
+- name: Remove default configuration
+  file:
+    path: "{{ sshd_config_file }}"
+    state: absent
+  when: sshd_append_configuration and ssh_installation | changed
+
+- name: Append configuration
+  blockinfile:
+    block: "{{ sshd_configuration }}"
+    dest: "{{ sshd_config_file }}"
+    create: true
     owner: "{{ sshd_config_owner }}"
     group: "{{ sshd_config_group }}"
     mode: "{{ sshd_config_mode }}"
     backup: "{{ sshd_backup }}"
     validate: "{{ sshd_binary }} -t -f %s"
   notify: reload_sshd
+  when: sshd_append_configuration
 
 - name: Service enabled and running
   service:

@@ -25,3 +25,7 @@ sshd_service: sshd
 sshd_sftp_server: /usr/lib/openssh/sftp-server
 sshd_defaults: {}
 sshd_os_supported: no
+
+# Override whole SSH configuration or just append to existing one.
+# This allows the use of other roles that update SSH configuration (e.g sftp roles, ...) while preserving idempotency.
+sshd_append_configuration: false

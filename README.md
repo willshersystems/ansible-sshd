@@ -63,6 +63,11 @@ If set to False, a reload of sshd wont happen on change. This can help with
 troubleshooting. You'll need to manually reload sshd if you want to apply the
 changed configuration. Defaults to the same value as ``sshd_manage_service``.
 
+* sshd_append_configuration
+
+If set to True, configuration will be append to existing one instead of overriding it.
+This allows the use of other roles that update SSH configuration (e.g sftp roles, ...) while preserving idempotency.
+
 * sshd
 
 A dict containing configuration.  e.g.
