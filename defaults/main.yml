@@ -17,6 +17,9 @@ sshd_service_template_socket: sshd.socket.j2
 # If the below is false, don't reload the ssh daemon on change
 sshd_allow_reload: true
 
+# If the below is true, create a backup of the config file when the template is copied
+sshd_backup: false
+
 # Empty dicts to avoid errors
 sshd: {}
 
