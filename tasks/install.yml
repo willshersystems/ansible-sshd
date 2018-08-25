@@ -1,0 +1,48 @@
+---
+
+- name: OS is supported
+  assert:
+    that: __sshd_os_supported == True
+
+- name: Install ssh packages
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ sshd_packages }}"
+
+- name: Configuration
+  template:
+    src: sshd_config.j2
+    dest: "{{ sshd_config_file }}"
+    owner: "{{ sshd_config_owner }}"
+    group: "{{ sshd_config_group }}"
+    mode: "{{ sshd_config_mode }}"
+    validate: "{{ sshd_binary }} -t -f %s"
+  notify: reload_sshd
+
+- name: Install systemd service files
+  block:
+    - template:
+        src: "{{ sshd_service_template_service }}"
+        dest: "/etc/systemd/system/{{ sshd_service }}.service"
+      notify: reload_sshd
+    - template:
+        src: "{{ sshd_service_template_at_service }}"
+        dest: "/etc/systemd/system/{{ sshd_service }}@.service"
+      notify: reload_sshd
+    - template:
+        src: "{{ sshd_service_template_socket }}"
+        dest: "/etc/systemd/system/{{ sshd_service }}.socket"
+      notify: reload_sshd
+  when: sshd_install_service
+
+- name: Service enabled and running
+  service:
+    name: "{{ sshd_service }}"
+    enabled: true
+    state: started
+  when: "sshd_manage_service and ansible_virtualization_type|default(None) != 'docker'"
+
+- name: Register that this role has run
+  set_fact: sshd_has_run=true
+  when: sshd_has_run is not defined
