@@ -26,7 +26,7 @@ sshd: {}
 ### VARS DEFAULTS
 ### The following are defaults for OS specific configuration in var files in
 ### this role. They should not be set directly by role users. If you really
-### need to override them,use the corresponding, unprefixed variables (eg
+### need to override them, use the corresponding, unprefixed variables (eg
 ### `sshd_packages` to override __sshd_packages).
 __sshd_packages: []
 __sshd_config_owner: root
@@ -35,8 +35,8 @@ __sshd_config_mode: "0600"
 __sshd_config_file: /etc/ssh/sshd_config
 __sshd_binary: /usr/sbin/sshd
 __sshd_service: sshd
-__sshd_sftp_server: /usr/lib/openssh/sftp-server
 
 ### These variables are used by role internals and should not be used.
+__sshd_sftp_server: /usr/lib/openssh/sftp-server
 __sshd_defaults: {}
 __sshd_os_supported: no
