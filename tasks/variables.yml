@@ -1,0 +1,37 @@
+---
+
+- name: Set OS dependent variables
+  include_vars: "{{ item }}"
+  with_first_found:
+   - "{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml"
+   - "{{ ansible_distribution }}.yml"
+   - "{{ ansible_os_family }}_{{ ansible_distribution_major_version }}.yml"
+   - "{{ ansible_os_family }}.yml"
+   - default.yml
+
+- name: Override OS defaults
+  block:
+    - set_fact:
+        sshd_packages: "{{ __sshd_packages }}"
+      when: sshd_packages is not defined
+    - set_fact:
+        sshd_config_owner: "{{ __sshd_config_owner }}"
+      when: sshd_config_owner is not defined
+    - set_fact:
+        sshd_config_group: "{{ __sshd_config_group }}"
+      when: sshd_config_group is not defined
+    - set_fact:
+        sshd_config_mode: "{{ __sshd_config_mode }}"
+      when: sshd_config_mode is not defined
+    - set_fact:
+        sshd_config_file: "{{ __sshd_config_file }}"
+      when: sshd_config_file is not defined
+    - set_fact:
+        sshd_binary: "{{ __sshd_binary }}"
+      when: sshd_binary is not defined
+    - set_fact:
+        sshd_service: "{{ __sshd_service }}"
+      when: sshd_service is not defined
+    - set_fact:
+        sshd_sftp_server: "{{ __sshd_sftp_server }}"
+      when: sshd_sftp_server is not defined
