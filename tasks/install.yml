@@ -2,13 +2,12 @@
 
 - name: OS is supported
   assert:
-    that: __sshd_os_supported == True
+    that: '__sshd_os_supported == True'
 
 - name: Install ssh packages
   package:
-    name: "{{ item }}"
+    name: "{{ sshd_packages }}"
     state: present
-  with_items: "{{ sshd_packages }}"
 
 - name: Configuration
   template:
@@ -44,5 +43,6 @@
   when: "sshd_manage_service and ansible_virtualization_type|default(None) != 'docker'"
 
 - name: Register that this role has run
-  set_fact: sshd_has_run=true
+  set_fact:
+    sshd_has_run: true
   when: sshd_has_run is not defined
