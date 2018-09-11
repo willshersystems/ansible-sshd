@@ -41,7 +41,18 @@
     name: "{{ sshd_service }}"
     enabled: true
     state: started
-  when: "sshd_manage_service and ansible_virtualization_type|default(None) != 'docker'"
+  when:
+    - sshd_manage_service
+    - ansible_virtualization_type|default(None) != 'docker'
+    - ansible_connection != 'chroot'
+
+# Due to ansible bug 21026, cannot use service module on RHEL 7
+- name: Enable service in chroot
+  command: systemctl enable {{ sshd_service }}
+  when:
+    - ansible_connection == 'chroot'
+    - ansible_os_family == 'RedHat'
+    - ansible_distribution_major_version|int >= 7
 
 - name: Register that this role has run
   set_fact: sshd_has_run=true
