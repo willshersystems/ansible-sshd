@@ -18,6 +18,7 @@
     group: "{{ sshd_config_group }}"
     mode: "{{ sshd_config_mode }}"
     validate: "{{ sshd_binary }} -t -f %s"
+    backup: "{{ sshd_backup }}"
   notify: reload_sshd
 
 - name: Install systemd service files
