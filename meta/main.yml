@@ -32,8 +32,8 @@ galaxy_info:
   galaxy_tags:
   - networking
   - system
-  - SSH
-  - OpenSSH
+  - ssh
+  - openssh
   - sshd
   - server
   - ubuntu
