@@ -2,7 +2,7 @@
 
 - name: OS is supported
   assert:
-    that: __sshd_os_supported == True
+    that: __sshd_os_supported|bool
 
 - name: Install ssh packages
   package:
@@ -38,7 +38,7 @@
         src: "{{ sshd_service_template_socket }}"
         dest: "/etc/systemd/system/{{ sshd_service }}.socket"
       notify: reload_sshd
-  when: sshd_install_service
+  when: sshd_install_service|bool
 
 - name: Service enabled and running
   service:
@@ -46,7 +46,7 @@
     enabled: true
     state: started
   when:
-    - sshd_manage_service
+    - sshd_manage_service|bool
     - ansible_virtualization_type|default(None) != 'docker'
     - ansible_connection != 'chroot'
 
