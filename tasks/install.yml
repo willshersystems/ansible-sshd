@@ -23,15 +23,18 @@
 
 - name: Install systemd service files
   block:
-    - template:
+    - name: Install service unit file
+      template:
         src: "{{ sshd_service_template_service }}"
         dest: "/etc/systemd/system/{{ sshd_service }}.service"
       notify: reload_sshd
-    - template:
+    - name: Install instanced service unit file
+      template:
         src: "{{ sshd_service_template_at_service }}"
         dest: "/etc/systemd/system/{{ sshd_service }}@.service"
       notify: reload_sshd
-    - template:
+    - name: Install socket unit file
+      template:
         src: "{{ sshd_service_template_socket }}"
         dest: "/etc/systemd/system/{{ sshd_service }}.socket"
       notify: reload_sshd
