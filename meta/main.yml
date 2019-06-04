@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: Matt Willsher
-  description: OpenSSH SSH deamon configuration
+  description: OpenSSH SSH daemon configuration
   company: Willsher Systems
   license: LGPLv3
   min_ansible_version: 1.8
@@ -32,8 +32,8 @@ galaxy_info:
   galaxy_tags:
   - networking
   - system
-  - SSH
-  - OpenSSH
+  - ssh
+  - openssh
   - sshd
   - server
   - ubuntu

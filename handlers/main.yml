@@ -5,6 +5,7 @@
     name: "{{ sshd_service }}"
     state: reloaded
   when:
-    - sshd_allow_reload
+    - sshd_allow_reload|bool
     - ansible_virtualization_type|default(None) != 'docker'
+    - ansible_connection != 'chroot'
   listen: reload_sshd

@@ -1,5 +1,4 @@
 ---
 
-- include_tasks: variables.yml
-
-- include_tasks: install.yml
+- include_tasks: sshd.yml
+  when: sshd_enable|bool

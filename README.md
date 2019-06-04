@@ -44,6 +44,10 @@ Role variables
 Unconfigured, this role will provide a sshd_config that matches the OS default,
 minus the comments and in a different order.
 
+* `sshd_enable`
+
+If set to False, the role will be completely disabled. Defaults to True.
+
 * `sshd_skip_defaults`
 
 If set to True, don't apply default values. This means that you must have a
