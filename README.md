@@ -34,6 +34,7 @@ Tested on:
 * EL 6,7 derived distributions
 * Fedora 22, 23
 * OpenBSD 6.0
+* AIX 7.1, 7.2
 
 It will likely work on other flavours and more direct support via suitable
 [vars/](vars/) files is welcome.
@@ -58,14 +59,17 @@ variables. Defaults to *False*.
 
 If set to False, the service/daemon won't be **managed** at all, i.e. will not
 try to enable on boot or start or reload the service.  Defaults to *True*
-unless running inside a docker container (it is assumed ansible is used during
-build phase).
+unless: Running inside a docker container (it is assumed ansible is used during
+build phase) or AIX (Ansible `service` module does not currently support `enabled` 
+for AIX)
 
 * `sshd_allow_reload`
 
 If set to False, a reload of sshd wont happen on change. This can help with
 troubleshooting. You'll need to manually reload sshd if you want to apply the
-changed configuration. Defaults to the same value as ``sshd_manage_service``.
+changed configuration. Defaults to the same value as ``sshd_manage_service``. 
+(Except on AIX, where `sshd_manage_service` is default *False*, but 
+`sshd_allow_reload` is default *True*)
 
 * `sshd_install_service`
 

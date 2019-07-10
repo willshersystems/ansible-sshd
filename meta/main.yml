@@ -29,6 +29,10 @@ galaxy_info:
   - name: OpenBSD
     versions:
     - 6.0
+  - name: AIX
+    versions:
+    - 7.1
+    - 7.2
   galaxy_tags:
   - networking
   - system
@@ -42,4 +46,5 @@ galaxy_info:
   - redhat
   - freebsd
   - openbsd
+  - aix
 dependencies: []
