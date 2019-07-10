@@ -1,4 +1,5 @@
 ---
+
 - name: Reload the SSH service
   service:
     name: "{{ sshd_service }}"
