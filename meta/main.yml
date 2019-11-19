@@ -10,6 +10,8 @@ galaxy_info:
     versions:
     - wheezy
     - jessie
+    - stretch
+    - buster
   - name: Ubuntu
     versions:
     - precise

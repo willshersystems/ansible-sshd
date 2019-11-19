@@ -18,7 +18,7 @@
 - name: Reload sshd Service (AIX)
   shell: |
     stopsrc -s sshd
-    until $(lssrc -s sshd | grep -q inoperative); do sleep 1; done 
+    until $(lssrc -s sshd | grep -q inoperative); do sleep 1; done
     startsrc -s sshd
   listen: reload_sshd
   when:
