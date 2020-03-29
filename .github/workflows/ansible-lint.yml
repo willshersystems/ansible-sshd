@@ -3,13 +3,10 @@ name: Ansible Lint  # feel free to pick your own name
 on: [push, pull_request]
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
-
     - name: Lint Ansible Playbook
       uses: ansible/ansible-lint-action@master
       with:
