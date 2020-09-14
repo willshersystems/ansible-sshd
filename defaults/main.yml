@@ -21,7 +21,7 @@ sshd_service_template_socket: sshd.socket.j2
 sshd_allow_reload: true
 
 # If the below is true, create a backup of the config file when the template is copied
-sshd_backup: false
+sshd_backup: true
 
 # Empty dicts to avoid errors
 sshd: {}
