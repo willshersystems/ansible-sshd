@@ -1,7 +1,7 @@
 ---
 ### USER OPTIONS
-# Set to False to disable this role completely
-sshd_enable: True
+# Set to false to disable this role completely
+sshd_enable: true
 
 # Don't apply OS defaults when set to true
 sshd_skip_defaults: false
