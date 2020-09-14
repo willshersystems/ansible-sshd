@@ -36,7 +36,6 @@ GSSAPICleanupCredentials
 GSSAPIKeyExchange
 GSSAPIStoreCredentialsOnRekey
 GSSAPIStrictAcceptorCheck
-GatewayPorts
 HPNBufferSize
 HPNDisabled
 HostCertificate
