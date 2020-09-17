@@ -14,14 +14,20 @@ install:
   - "{ echo '[defaults]'; echo 'roles_path = ../'; echo 'deprecation_warnings=False'; } >> ansible.cfg"
 
 script:
-  # Check the roles syntax.
+  # Test 0: Check the roles syntax.
   - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_default.yml --syntax-check"
 
-  # Run the role
+  # Test 1: Run the role
   - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_default.yml --connection=local --become -v"
 
-  # Run the role/playbook again, checking to make sure it's idempotent.
+  # Test 2: Run the role/playbook again, checking to make sure it's idempotent.
   - >
     ansible-playbook -i tests/inventory tests/test_default.yml --connection=local --become | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
+
+  # Test 3: Check we can set arbitrary configuration options
+  - >
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_set_common.yml --connection=local --become -v
+    && (echo 'Common variables test: pass' && exit 0)
+    || (echo 'Common variables test: fail' && exit 1)
