@@ -1,0 +1,51 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: Configure sshd with uncommon options, making sure it keeps running
+    block:
+      - name: Configure ssh with unsupported options
+        include_role:
+          name: ansible-sshd
+        vars:
+          sshd:
+            # Unsupported in new versions, but ignored ?
+            Protocol: 1
+            UsePrivilegeSeparation: no
+            UseLogin: yes
+            # Debian only
+            DebianBanner: /etc/motd
+            # Used in FreeBSD ?
+            VersionAddendum: FreeBSD-20180909
+            # HPN only
+            HPNDisabled: yes
+            HPNBufferSize: 2MB
+            TcpRcvBufPoll: yes
+            NoneEnabled: yes
+            # some builds might be without kerberos/GSSAPI
+            KerberosAuthentication: yes
+            GSSAPIStoreCredentialsOnRekey: yes
+            # SSHv1 options
+            KeyRegenerationInterval: 1h
+            ServerKeyBits: 1024
+            # This one is pretty new, but works on OpenBSD only
+            RDomain: 2
+        register: role_result
+
+      - name: unreachable task
+        fail:
+          msg: UNREACH
+    rescue:
+      - name: Check that we failed in the role
+        assert:
+          that:
+            - ansible_failed_result.msg != 'UNREACH'
+            - not role_result.changed
+          msg: "Role has not failed when it should have"
+
+      - name: Make sure service is still running
+        service:
+          name: sshd
+          state: started
+        register: result
+        failed_when: result.changed

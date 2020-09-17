@@ -31,3 +31,9 @@ script:
     ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_set_common.yml --connection=local --become -v
     && (echo 'Common variables test: pass' && exit 0)
     || (echo 'Common variables test: fail' && exit 1)
+
+  # Test 4: Check if we set uncommon or unsupported configuration option, it will not fail hard
+  - >
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_set_uncommon.yml --connection=local --become -v
+    && (echo 'Uncommon configuration test: pass' && exit 0)
+    || (echo 'Uncommon configuration test: fail' && exit 1)
