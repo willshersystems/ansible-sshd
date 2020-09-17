@@ -17,8 +17,11 @@ script:
   # Test 0: Check the roles syntax.
   - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_default.yml --syntax-check"
 
-  # Test 1: Run the role
+  # Test 1a: Run the role
   - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_default.yml --connection=local --become -v"
+
+  # Test 1b: Run the role through include
+  - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_default_include.yml --connection=local --become -v"
 
   # Test 2: Run the role/playbook again, checking to make sure it's idempotent.
   - >
