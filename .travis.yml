@@ -1,7 +1,6 @@
 ---
 dist: focal
 language: c
-sudo: required
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
