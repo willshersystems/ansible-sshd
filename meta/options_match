@@ -23,6 +23,7 @@ GSSAPIAuthentication
 HostbasedAcceptedKeyTypes
 HostbasedAuthentication
 HostbasedUsesNameFromPacketOnly
+Include
 IPQoS
 KbdInteractiveAuthentication
 KerberosAuthentication
@@ -31,6 +32,7 @@ MaxAuthTries
 MaxSessions
 PasswordAuthentication
 PermitEmptyPasswords
+PermitListen
 PermitOpen
 PermitRootLogin
 PermitTTY
@@ -43,9 +45,11 @@ RekeyLimit
 RevokedKeys
 RhostsRSAAuthentication
 RSAAuthentication
+SetEnv
 StreamLocalBindMask
 StreamLocalBindUnlink
 TrustedUserCAKeys
 X11DisplayOffset
+X11MaxDisplays
 X11Forwarding
 X11UseLocalHost
