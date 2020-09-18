@@ -3,17 +3,6 @@ name: Ansible Lint  # feel free to pick your own name
 on: [push, pull_request]
 
 jobs:
-  test-ansible27:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Lint Ansible Playbook
-      uses: ansible/ansible-lint-action@master
-      with:
-        targets: "tests/test.yml"
-        override-deps: |
-          ansible==2.7
-        args: ""
   test-ansible28:
     runs-on: ubuntu-latest
     steps:
