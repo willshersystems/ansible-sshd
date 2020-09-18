@@ -17,6 +17,7 @@ AuthorizedPrincipalsCommand
 AuthorizedPrincipalsCommandUser
 AuthorizedPrincipalsFile
 Banner
+CASignatureAlgorithms
 ChallengeResponseAuthentication
 ChrootDirectory
 Ciphers
@@ -34,9 +35,9 @@ GatewayPorts
 GSSAPIAuthentication
 GSSAPICleanupCredentials
 GSSAPIKeyExchange
+GSSAPIKexAlgorithms
 GSSAPIStoreCredentialsOnRekey
 GSSAPIStrictAcceptorCheck
-GatewayPorts
 HPNBufferSize
 HPNDisabled
 HostCertificate
@@ -45,6 +46,7 @@ HostKeyAlgorithms
 HostbasedAcceptedKeyTypes
 HostbasedAuthentication
 HostbasedUsesNameFromPacketOnly
+Include
 IPQoS
 IgnoreRhosts
 IgnoreUserKnownHosts
@@ -64,6 +66,7 @@ MaxStartups
 NoneEnabled
 PasswordAuthentication
 PermitEmptyPasswords
+PermitListen
 PermitOpen
 PermitRootLogin
 PermitTTY
@@ -74,12 +77,15 @@ PidFile
 PrintLastLog
 PrintMotd
 PubkeyAcceptedKeyTypes
+PubkeyAuthOptions
 PubkeyAuthentication
 RSAAuthentication
 RekeyLimit
 RevokedKeys
 RDomain
 RhostsRSAAuthentication
+SecurityKeyProvider
+SetEnv
 ServerKeyBits
 StreamLocalBindMask
 StreamLocalBindUnlink
@@ -95,6 +101,7 @@ UsePAM
 UsePrivilegeSeparation
 VersionAddendum
 X11DisplayOffset
+X11MaxDisplays
 X11Forwarding
 X11UseLocalhost
 XAuthLocation

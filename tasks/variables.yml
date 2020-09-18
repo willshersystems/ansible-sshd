@@ -1,5 +1,4 @@
 ---
-
 - name: Set OS dependent variables
   include_vars: "{{ lookup('first_found', params) }}"
   vars:

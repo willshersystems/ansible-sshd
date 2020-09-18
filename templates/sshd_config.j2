@@ -58,6 +58,7 @@ Match {{ match["Condition"] }}
 {{       render_option("HostbasedAcceptedKeyTypes",match["HostbasedAcceptedKeyTypes"],true) -}}
 {{       render_option("HostbasedAuthentication",match["HostbasedAuthentication"],true) -}}
 {{       render_option("HostbasedUsesNameFromPacketOnly",match["HostbasedUsesNameFromPacketOnly"],true) -}}
+{{       render_option("Include",match["Include"],true) -}}
 {{       render_option("IPQoS",match["IPQoS"],true) -}}
 {{       render_option("KbdInteractiveAuthentication",match["KbdInteractiveAuthentication"],true) -}}
 {{       render_option("KerberosAuthentication",match["KerberosAuthentication"],true) -}}
@@ -66,6 +67,7 @@ Match {{ match["Condition"] }}
 {{       render_option("MaxSessions",match["MaxSessions"],true) -}}
 {{       render_option("PasswordAuthentication",match["PasswordAuthentication"],true) -}}
 {{       render_option("PermitEmptyPasswords",match["PermitEmptyPasswords"],true) -}}
+{{       render_option("PermitListen",match["PermitListen"],true) -}}
 {{       render_option("PermitOpen",match["PermitOpen"],true) -}}
 {{       render_option("PermitRootLogin",match["PermitRootLogin"],true) -}}
 {{       render_option("PermitTTY",match["PermitTTY"],true) -}}
@@ -78,10 +80,12 @@ Match {{ match["Condition"] }}
 {{       render_option("RevokedKeys",match["RevokedKeys"],true) -}}
 {{       render_option("RhostsRSAAuthentication",match["RhostsRSAAuthentication"],true) -}}
 {{       render_option("RSAAuthentication",match["RSAAuthentication"],true) -}}
+{{       render_option("SetEnv",match["SetEnv"],true) -}}
 {{       render_option("StreamLocalBindMask",match["StreamLocalBindMask"],true) -}}
 {{       render_option("StreamLocalBindUnlink",match["StreamLocalBindUnlink"],true) -}}
 {{       render_option("TrustedUserCAKeys",match["TrustedUserCAKeys"],true) -}}
 {{       render_option("X11DisplayOffset",match["X11DisplayOffset"],true) -}}
+{{       render_option("X11MaxDisplays",match["X11MaxDisplays"],true) -}}
 {{       render_option("X11Forwarding",match["X11Forwarding"],true) -}}
 {{       render_option("X11UseLocalHost",match["X11UseLocalHost"],true) -}}
 {%     endfor %}
@@ -106,6 +110,7 @@ Match {{ match["Condition"] }}
 {{ body_option("AuthorizedPrincipalsCommandUser",sshd_AuthorizedPrincipalsCommandUser) -}}
 {{ body_option("AuthorizedPrincipalsFile",sshd_AuthorizedPrincipalsFile) -}}
 {{ body_option("Banner",sshd_Banner) -}}
+{{ body_option("CASignatureAlgorithms",sshd_CASignatureAlgorithms) -}}
 {{ body_option("ChallengeResponseAuthentication",sshd_ChallengeResponseAuthentication) -}}
 {{ body_option("ChrootDirectory",sshd_ChrootDirectory) -}}
 {{ body_option("Ciphers",sshd_Ciphers) -}}
@@ -123,6 +128,7 @@ Match {{ match["Condition"] }}
 {{ body_option("GSSAPIAuthentication",sshd_GSSAPIAuthentication) -}}
 {{ body_option("GSSAPICleanupCredentials",sshd_GSSAPICleanupCredentials) -}}
 {{ body_option("GSSAPIKeyExchange",sshd_GSSAPIKeyExchange) -}}
+{{ body_option("GSSAPIKexAlgorithms",sshd_GSSAPIKexAlgorithms) -}}
 {{ body_option("GSSAPIStoreCredentialsOnRekey",sshd_GSSAPIStoreCredentialsOnRekey) -}}
 {{ body_option("GSSAPIStrictAcceptorCheck",sshd_GSSAPIStrictAcceptorCheck) -}}
 {{ body_option("HPNBufferSize",sshd_HPNBufferSize) -}}
@@ -133,6 +139,7 @@ Match {{ match["Condition"] }}
 {{ body_option("HostbasedAcceptedKeyTypes",sshd_HostbasedAcceptedKeyTypes) -}}
 {{ body_option("HostbasedAuthentication",sshd_HostbasedAuthentication) -}}
 {{ body_option("HostbasedUsesNameFromPacketOnly",sshd_HostbasedUsesNameFromPacketOnly) -}}
+{{ body_option("Include",sshd_Include) -}}
 {{ body_option("IPQoS",sshd_IPQoS) -}}
 {{ body_option("IgnoreRhosts",sshd_IgnoreRhosts) -}}
 {{ body_option("IgnoreUserKnownHosts",sshd_IgnoreUserKnownHosts) -}}
@@ -152,6 +159,7 @@ Match {{ match["Condition"] }}
 {{ body_option("NoneEnabled",sshd_NoneEnabled) -}}
 {{ body_option("PasswordAuthentication",sshd_PasswordAuthentication) -}}
 {{ body_option("PermitEmptyPasswords",sshd_PermitEmptyPasswords) -}}
+{{ body_option("PermitListen",sshd_PermitListen) -}}
 {{ body_option("PermitOpen",sshd_PermitOpen) -}}
 {{ body_option("PermitRootLogin",sshd_PermitRootLogin) -}}
 {{ body_option("PermitTTY",sshd_PermitTTY) -}}
@@ -162,12 +170,15 @@ Match {{ match["Condition"] }}
 {{ body_option("PrintLastLog",sshd_PrintLastLog) -}}
 {{ body_option("PrintMotd",sshd_PrintMotd) -}}
 {{ body_option("PubkeyAcceptedKeyTypes",sshd_PubkeyAcceptedKeyTypes) -}}
+{{ body_option("PubkeyAuthOptions",sshd_PubkeyAuthOptions) -}}
 {{ body_option("PubkeyAuthentication",sshd_PubkeyAuthentication) -}}
 {{ body_option("RSAAuthentication",sshd_RSAAuthentication) -}}
 {{ body_option("RekeyLimit",sshd_RekeyLimit) -}}
 {{ body_option("RevokedKeys",sshd_RevokedKeys) -}}
 {{ body_option("RDomain",sshd_RDomain) -}}
 {{ body_option("RhostsRSAAuthentication",sshd_RhostsRSAAuthentication) -}}
+{{ body_option("SecurityKeyProvider",sshd_SecurityKeyProvider) -}}
+{{ body_option("SetEnv",sshd_SetEnv) -}}
 {{ body_option("ServerKeyBits",sshd_ServerKeyBits) -}}
 {{ body_option("StreamLocalBindMask",sshd_StreamLocalBindMask) -}}
 {{ body_option("StreamLocalBindUnlink",sshd_StreamLocalBindUnlink) -}}
@@ -183,6 +194,7 @@ Match {{ match["Condition"] }}
 {{ body_option("UsePrivilegeSeparation",sshd_UsePrivilegeSeparation) -}}
 {{ body_option("VersionAddendum",sshd_VersionAddendum) -}}
 {{ body_option("X11DisplayOffset",sshd_X11DisplayOffset) -}}
+{{ body_option("X11MaxDisplays",sshd_X11MaxDisplays) -}}
 {{ body_option("X11Forwarding",sshd_X11Forwarding) -}}
 {{ body_option("X11UseLocalhost",sshd_X11UseLocalhost) -}}
 {{ body_option("XAuthLocation",sshd_XAuthLocation) -}}
