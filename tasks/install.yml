@@ -26,16 +26,25 @@
       template:
         src: "{{ sshd_service_template_service }}"
         dest: "/etc/systemd/system/{{ sshd_service }}.service"
+        owner: root
+        group: root
+        mode: "0644"
       notify: reload_sshd
     - name: Install instanced service unit file
       template:
         src: "{{ sshd_service_template_at_service }}"
         dest: "/etc/systemd/system/{{ sshd_service }}@.service"
+        owner: root
+        group: root
+        mode: "0644"
       notify: reload_sshd
     - name: Install socket unit file
       template:
         src: "{{ sshd_service_template_socket }}"
         dest: "/etc/systemd/system/{{ sshd_service }}.socket"
+        owner: root
+        group: root
+        mode: "0644"
       notify: reload_sshd
   when: sshd_install_service|bool
 

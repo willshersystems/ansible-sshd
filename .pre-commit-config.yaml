@@ -1,0 +1,14 @@
+---
+repos:
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.24.2
+    hooks:
+      - id: yamllint
+        files: \.(yaml|yml)$
+        types: [file, yaml]
+        entry: yamllint --strict
+  - repo: https://github.com/ansible/ansible-lint.git
+    rev: v4.3.5
+    hooks:
+      - id: ansible-lint
+        files: \.(yaml|yml)$
