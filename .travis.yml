@@ -1,6 +1,7 @@
 ---
+os: linux
 dist: focal
-language: c
+language: python
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
