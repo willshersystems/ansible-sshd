@@ -3,6 +3,12 @@
 - name: OS is supported
   assert:
     that: __sshd_os_supported|bool
+  when: ansible_version.full is version_compare('2.8', '<')
+
+- name: OS is supported
+  meta: end_host
+  when: 
+    - not __sshd_os_supported|bool
 
 - name: Install ssh packages
   package:
