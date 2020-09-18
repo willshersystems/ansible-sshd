@@ -1,26 +1,19 @@
 ---
+dist: focal
 language: c
 sudo: required
 
 notifications:
-    webhooks: https://galaxy.ansible.com/api/v1/notifications/
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
 
 before_install:
-  - sudo add-apt-repository -y ppa:ansible/ansible
-  - sudo apt-get update -qq
-  - sudo apt-get -qq install ansible
+  - sudo -H pip3 install ansible
 
 install:
   # Add ansible.cfg to pick up roles path.
-  - "{ echo '[defaults]'; echo 'roles_path = ../'; } >> ansible.cfg"
+  - "{ echo '[defaults]'; echo 'roles_path = ../'; echo 'deprecation_warnings=False'; } >> ansible.cfg"
 
 script:
-  # Check the ansible version.
-  - >
-    ansible --version
-    | grep -q '^ansible 2'
-    && (echo 'Ansible 2.0+ test: pass' && exit 0)
-    || (echo 'Ansible 2.0+ test: fail' && exit 1)
   # Check the roles syntax.
   - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test.yml --syntax-check"
 
@@ -32,4 +25,3 @@ script:
     ansible-playbook -i tests/inventory tests/test.yml --connection=local --become | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
-
