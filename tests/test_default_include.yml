@@ -1,0 +1,7 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: "Configure sshd"
+    include_role:
+      name: ansible-sshd

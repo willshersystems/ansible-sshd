@@ -1,0 +1,31 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: Configure alternative sshd_config file
+    include_role:
+      name: ansible-sshd
+    vars:
+      # just anything -- will not get processed by sshd
+      sshd_config_file: /etc/ssh/sshd_config_custom
+      sshd_skip_defaults: true
+      sshd:
+        AcceptEnv: LANG
+        Banner: /etc/issue
+        Ciphers: aes256-gcm@openssh.com
+
+  - name: Verify the options are correctly set
+    block:
+      - meta: flush_handlers
+
+      - name: Print current configuration file
+        command: cat /etc/ssh/sshd_config_custom
+        register: config
+
+      - name: Check the options are in configuration file
+        assert:
+          that:
+            - "'AcceptEnv LANG' in config.stdout"
+            - "'Banner /etc/issue' in config.stdout"
+            - "'Ciphers aes256-gcm@openssh.com' in config.stdout"
+    tags: tests::verify

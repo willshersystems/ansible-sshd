@@ -1,7 +1,7 @@
 ---
+os: linux
 dist: focal
-language: c
-sudo: required
+language: python
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
@@ -14,14 +14,36 @@ install:
   - "{ echo '[defaults]'; echo 'roles_path = ../'; echo 'deprecation_warnings=False'; } >> ansible.cfg"
 
 script:
-  # Check the roles syntax.
-  - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test.yml --syntax-check"
+  # Test 0: Check the roles syntax.
+  - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_default.yml --syntax-check"
 
-  # Run the role
-  - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test.yml --connection=local --become -v"
+  # Test 1a: Run the role
+  - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_default.yml --connection=local --become -v"
 
-  # Run the role/playbook again, checking to make sure it's idempotent.
+  # Test 1b: Run the role through include
+  - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_default_include.yml --connection=local --become -v"
+
+  # Test 2: Run the role/playbook again, checking to make sure it's idempotent.
   - >
-    ansible-playbook -i tests/inventory tests/test.yml --connection=local --become | grep -q 'changed=0.*failed=0'
+    ansible-playbook -i tests/inventory tests/test_default.yml --connection=local --become | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
+
+  # Test 3: Check we can set arbitrary configuration options
+  - >
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_set_common.yml --connection=local --become -v
+    && (echo 'Common variables test: pass' && exit 0)
+    || (echo 'Common variables test: fail' && exit 1)
+
+  # Test 4: Check if we set uncommon or unsupported configuration option, it will not fail hard
+  - >
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_set_uncommon.yml --connection=local --become -v
+    && (echo 'Uncommon configuration test: pass' && exit 0)
+    || (echo 'Uncommon configuration test: fail' && exit 1)
+
+  # Test 5: Make sure we can modify other files, for example for inclusion
+  # in the main sshd_config or second sshd service
+  - >
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_alternative_file.yml --connection=local --become -v
+    && (echo 'Alternative configuration file test: pass' && exit 0)
+    || (echo 'Alternative configuration file test: fail' && exit 1)

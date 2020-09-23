@@ -206,6 +206,34 @@ Match Group xusers
   X11Forwarding yes
 ```
 
+Since Ansible 2.4, the role can be invoked using `include_role` keyword,
+for example:
+
+```yaml
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: "Configure sshd"
+    include_role:
+      name: willshersystems.sshd
+    vars:
+      sshd_skip_defaults: true
+      sshd:
+        Compression: true
+        ListenAddress:
+          - "0.0.0.0"
+          - "::"
+        GSSAPIAuthentication: no
+        Match:
+          - Condition: "Group user"
+            GSSAPIAuthentication: yes
+      sshd_UsePrivilegeSeparation: no
+      sshd_match:
+          - Condition: "Group xusers"
+            X11Forwarding: yes
+
+
 Template Generation
 -------------------
 
