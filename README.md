@@ -28,11 +28,11 @@ Requirements
 
 Tested on:
 
-* Ubuntu precise, trusty
-* Debian wheezy, jessie
+* Ubuntu precise, trusty, xenial, bionic, focal
+* Debian wheezy, jessie, stretch, buster
 * FreeBSD 10.1
-* EL 6,7 derived distributions
-* Fedora 22, 23
+* EL 6, 7, 8 derived distributions
+* Fedora 31, 32, 33
 * OpenBSD 6.0
 * AIX 7.1, 7.2
 
