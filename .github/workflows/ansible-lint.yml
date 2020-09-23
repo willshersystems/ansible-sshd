@@ -10,7 +10,7 @@ jobs:
       - name: Lint Ansible Playbook
         uses: ansible/ansible-lint-action@master
         with:
-          targets: "tests/test.yml"
+          targets: "tests/test_*.yml"
           override-deps: |
             ansible==2.8
           args: ""
@@ -21,7 +21,7 @@ jobs:
       - name: Lint Ansible Playbook
         uses: ansible/ansible-lint-action@master
         with:
-          targets: "tests/test.yml"
+          targets: "tests/test_*.yml
           override-deps: |
             ansible==2.9
           args: ""
@@ -32,7 +32,8 @@ jobs:
       - name: Lint Ansible Playbook
         uses: ansible/ansible-lint-action@master
         with:
-          targets: "tests/test.yml"
+          targets: "tests/test_*.yml"
           override-deps: |
             ansible==2.10
           args: ""
+
