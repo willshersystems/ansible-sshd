@@ -28,11 +28,12 @@ jobs:
   test-ansible210:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Lint Ansible Playbook
-      uses: ansible/ansible-lint-action@master
-      with:
-        targets: "tests/test_*.yml"
-        override-deps: |
-          ansible==2.10
-        args: ""
+      - uses: actions/checkout@v2
+      - name: Lint Ansible Playbook
+        uses: ansible/ansible-lint-action@master
+        with:
+          targets: "tests/test_*.yml"
+          override-deps: |
+            ansible==2.10
+          args: ""
+

@@ -21,18 +21,18 @@ before using in production!
 Ubuntu. This is not the default assigned by this module - it will set
 `PermitRootLogin without-password` which will allow access via SSH key but not
 via simple password. If you need this functionality, be sure to set
-`ssh_PermitRootLogin yes` for those hosts.
+`sshd_PermitRootLogin yes` for those hosts.
 
 Requirements
 ------------
 
 Tested on:
 
-* Ubuntu precise, trusty
-* Debian wheezy, jessie
+* Ubuntu precise, trusty, xenial, bionic, focal
+* Debian wheezy, jessie, stretch, buster
 * FreeBSD 10.1
-* EL 6,7 derived distributions
-* Fedora 22, 23
+* EL 6, 7, 8 derived distributions
+* Fedora 31, 32, 33
 * OpenBSD 6.0
 * AIX 7.1, 7.2
 
@@ -60,15 +60,15 @@ variables. Defaults to *False*.
 If set to False, the service/daemon won't be **managed** at all, i.e. will not
 try to enable on boot or start or reload the service.  Defaults to *True*
 unless: Running inside a docker container (it is assumed ansible is used during
-build phase) or AIX (Ansible `service` module does not currently support `enabled` 
+build phase) or AIX (Ansible `service` module does not currently support `enabled`
 for AIX)
 
 * `sshd_allow_reload`
 
 If set to False, a reload of sshd wont happen on change. This can help with
 troubleshooting. You'll need to manually reload sshd if you want to apply the
-changed configuration. Defaults to the same value as ``sshd_manage_service``. 
-(Except on AIX, where `sshd_manage_service` is default *False*, but 
+changed configuration. Defaults to the same value as ``sshd_manage_service``.
+(Except on AIX, where `sshd_manage_service` is default *False*, but
 `sshd_allow_reload` is default *True*)
 
 * `sshd_install_service`
@@ -97,7 +97,7 @@ sshd:
     - 0.0.0.0
 ```
 
-* `ssh_...`
+* `sshd_...`
 
 Simple variables can be used rather than a dict. Simple values override dict
 values. e.g.:
