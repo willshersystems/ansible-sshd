@@ -6,33 +6,34 @@ jobs:
   test-ansible28:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Lint Ansible Playbook
-      uses: ansible/ansible-lint-action@master
-      with:
-        targets: "tests/test_*.yml"
-        override-deps: |
-          ansible==2.8
-        args: ""
+      - uses: actions/checkout@v2
+      - name: Lint Ansible Playbook
+        uses: ansible/ansible-lint-action@master
+        with:
+          targets: "tests/test_*.yml"
+          override-deps: |
+            ansible==2.8
+          args: ""
   test-ansible29:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Lint Ansible Playbook
-      uses: ansible/ansible-lint-action@master
-      with:
-        targets: "tests/test_*.yml"
-        override-deps: |
-          ansible==2.9
-        args: ""
+      - uses: actions/checkout@v2
+      - name: Lint Ansible Playbook
+        uses: ansible/ansible-lint-action@master
+        with:
+          targets: "tests/test_*.yml
+          override-deps: |
+            ansible==2.9
+          args: ""
   test-ansible210:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Lint Ansible Playbook
-      uses: ansible/ansible-lint-action@master
-      with:
-        targets: "tests/test_*.yml"
-        override-deps: |
-          ansible==2.10
-        args: ""
+      - uses: actions/checkout@v2
+      - name: Lint Ansible Playbook
+        uses: ansible/ansible-lint-action@master
+        with:
+          targets: "tests/test_*.yml"
+          override-deps: |
+            ansible==2.10
+          args: ""
+
