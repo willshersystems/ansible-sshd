@@ -36,4 +36,3 @@ jobs:
           override-deps: |
             ansible==2.10
           args: ""
-
