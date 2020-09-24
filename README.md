@@ -232,7 +232,7 @@ for example:
       sshd_match:
           - Condition: "Group xusers"
             X11Forwarding: yes
-
+```
 
 Template Generation
 -------------------
