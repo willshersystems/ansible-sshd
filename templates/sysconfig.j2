@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+{% if __sshd_sysconfig_supports_crypto_policy %}
+{%   if sshd_sysconfig_override_crypto_policy == true %}
+CRYPTO_POLICY=
+{%   endif %}
+{% endif %}
+
+{% if __sshd_sysconfig_supports_use_strong_rng %}
+SSH_USE_STRONG_RNG={{ sshd_sysconfig_use_strong_rng }}
+{% endif %}

@@ -23,6 +23,19 @@ sshd_allow_reload: true
 # If the below is true, create a backup of the config file when the template is copied
 sshd_backup: true
 
+# If the below is true, also install the sysconfig file with the below options
+# (useful only on Fedora and RHEL)
+sshd_sysconfig: false
+
+# If the below is true the role will override also crypto policy configuration
+sshd_sysconfig_override_crypto_policy: false
+
+# If the below is set to non-zero value, the OpenSSL random generator is
+# reseeded with the given amount of random bytes (from getrandom(2)
+# with GRND_RANDOM or /dev/random). Minimum is 14 bytes when enabled.
+# This is not recommended to enable if you do not have hadware random generator
+sshd_sysconfig_use_strong_rng: 0
+
 # Empty dicts to avoid errors
 sshd: {}
 
@@ -43,3 +56,6 @@ __sshd_service: sshd
 __sshd_sftp_server: /usr/lib/openssh/sftp-server
 __sshd_defaults: {}
 __sshd_os_supported: no
+__sshd_sysconfig: false
+__sshd_sysconfig_supports_crypto_policy: false
+__sshd_sysconfig_supports_use_strong_rng: false
