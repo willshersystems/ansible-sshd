@@ -47,3 +47,15 @@ script:
     ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_alternative_file.yml --connection=local --become -v
     && (echo 'Alternative configuration file test: pass' && exit 0)
     || (echo 'Alternative configuration file test: fail' && exit 1)
+
+  # Test 6: Test match blocks generators
+  - >
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_match.yml --connection=local --become -v
+    && (echo 'Match blocks test: pass' && exit 0)
+    || (echo 'Match blocks test: fail' && exit 1)
+
+  # Test 7: Test match blocks generators with iteration
+  - >
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_match_iterate.yml --connection=local --become -v
+    && (echo 'Match blocks with iteration test: pass' && exit 0)
+    || (echo 'Match blocks with iteration test: fail' && exit 1)
