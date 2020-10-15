@@ -91,6 +91,15 @@ Match {{ match["Condition"] }}
 {%     endfor %}
 {%   endif %}
 {% endmacro %}
+{% macro match_iterate_block(match_list) %}
+{%   if match_list | type_debug == "list" %}
+{%     for match in match_list %}
+{{       match_block(match) -}}
+{%     endfor %}
+{%   else %}
+{{     match_block(match_list) -}}
+{%   endif %}
+{% endmacro %}
 {{ body_option("Port",sshd_Port) -}}
 {{ body_option("AddressFamily",sshd_AddressFamily) -}}
 {{ body_option("ListenAddress",sshd_ListenAddress) -}}
@@ -199,10 +208,10 @@ Match {{ match["Condition"] }}
 {{ body_option("X11UseLocalhost",sshd_X11UseLocalhost) -}}
 {{ body_option("XAuthLocation",sshd_XAuthLocation) -}}
 {% if sshd['Match'] is defined %}
-{{ match_block(sshd['Match']) -}}
+{{   match_iterate_block(sshd['Match']) -}}
 {% endif %}
 {% if sshd_match is defined %}
-{{ match_block(sshd_match) -}}
+{{   match_iterate_block(sshd_match) -}}
 {% endif %}
 {% if sshd_match_1 is defined %}
 {{ match_block(sshd_match_1) -}}
