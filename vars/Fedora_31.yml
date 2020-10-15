@@ -23,3 +23,4 @@ __sshd_defaults:
     - XMODIFIERS
   Subsystem: "sftp {{ sshd_sftp_server }}"
 __sshd_os_supported: yes
+__sshd_sysconfig_supports_crypto_policy: true
