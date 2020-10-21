@@ -1,6 +1,5 @@
 ---
 - hosts: all
-  become: true
   tasks:
   - name: Configure sshd with uncommon options, making sure it keeps running
     block:

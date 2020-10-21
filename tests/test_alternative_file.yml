@@ -1,6 +1,5 @@
 ---
 - hosts: all
-  become: true
   tasks:
   - name: Configure alternative sshd_config file
     include_role:
