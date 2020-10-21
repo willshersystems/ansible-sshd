@@ -24,7 +24,6 @@
           PasswordAuthentication: no
           PermitTunnel: yes
 
-
   - name: Verify the options are correctly set
     block:
       - meta: flush_handlers
