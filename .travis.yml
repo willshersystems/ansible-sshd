@@ -2,6 +2,9 @@
 os: linux
 dist: focal
 language: python
+addons:
+  apt_packages:
+    - yamllint
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
@@ -14,8 +17,12 @@ install:
   - "{ echo '[defaults]'; echo 'roles_path = ../'; echo 'deprecation_warnings=False'; } >> ansible.cfg"
 
 script:
-  # Test 0: Check the roles syntax.
+  # Test 0a: Check the roles syntax.
   - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_default.yml --syntax-check"
+
+  # Test 0b: Run yamllint with galaxy configuration to avoid quality score penalty
+  - wget https://raw.githubusercontent.com/ansible/galaxy/devel/galaxy/importer/linters/yamllint.yaml
+  - "yamllint -c yamllint.yaml **/*.yml"
 
   # Test 1a: Run the role
   - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_default.yml --connection=local --become -v"
