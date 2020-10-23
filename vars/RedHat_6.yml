@@ -20,3 +20,5 @@ __sshd_defaults:
   Subsystem: "sftp {{ sshd_sftp_server }}"
 __sshd_os_supported: yes
 __sshd_sysconfig_supports_use_strong_rng: true
+sshd_hostkey_group: ssh_keys
+sshd_hostkey_mode: "0640"

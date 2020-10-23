@@ -183,6 +183,19 @@ the ssh service that the target platform uses. But it can also be used to set
 the name of the custom ssh service when the `sshd_install_service` variable is
 used.
 
+* `sshd_verify_hostkeys`
+
+By default (*auto*), this list contains all the host keys that are present in
+the produced configuration file. The paths are checked for presence and
+generated if missing. Additionally, permissions and file owners are set to sane
+defaults. This is useful if the role is used in deployment stage to make sure
+the service is able to start on the first attempt. To disable this check, set
+this to empty list.
+
+* `sshd_hostkey_owner`, `sshd_hostkey_group`, `sshd_hostkey_group`
+
+Use these variables to set the ownership and permissions for the host keys from
+the above list.
 
 * `sshd_sftp_server`
 

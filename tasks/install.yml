@@ -9,17 +9,6 @@
     name: "{{ sshd_packages }}"
     state: present
 
-- name: Configuration
-  template:
-    src: sshd_config.j2
-    dest: "{{ sshd_config_file }}"
-    owner: "{{ sshd_config_owner }}"
-    group: "{{ sshd_config_group }}"
-    mode: "{{ sshd_config_mode }}"
-    validate: "{{ sshd_binary }} -t -f %s"
-    backup: "{{ sshd_backup }}"
-  notify: reload_sshd
-
 - name: Sysconfig configuration
   template:
     src: sysconfig.j2
@@ -30,6 +19,56 @@
     backup: "{{ sshd_backup }}"
   when:
     - sshd_sysconfig|bool
+  notify: reload_sshd
+
+- name: Make sure hostkeys are available and have expected permissions
+  vars:
+    # This mimics the macro body_option() in sshd_config.j2
+    # The explicit to_json filter is needed for Python 2 compatibility
+    __sshd_verify_hostkeys: >-
+      {% if not sshd_verify_hostkeys %}
+        []
+      {% elif sshd_verify_hostkeys == 'auto' %}
+        {% if sshd_HostKey is defined %}
+          {{ sshd_HostKey | to_json}}
+        {% elif sshd['HostKey'] is defined %}
+          {{ sshd['HostKey'] | to_json }}
+        {% elif __sshd_defaults['HostKey'] is defined and not sshd_skip_defaults %}
+          {{ __sshd_defaults['HostKey'] | to_json }}
+        {% else %}
+          []
+        {% endif %}
+      {% else %}
+        {{ sshd_verify_hostkeys | to_json }}
+      {% endif %}
+  block:
+    - name: Make sure hostkeys are available
+      shell: >
+        {% if sshd_sysconfig %}
+          source /etc/sysconfig/sshd;
+        {% endif %}
+        ssh-keygen -q -t {{ item | regex_search('(rsa|dsa|ecdsa|ed25519)') }} -f {{ item }} -C '' -N ''
+      args:
+        creates: "{{ item }}"
+      loop: "{{ __sshd_verify_hostkeys | from_json | list }}"
+
+    - name: Make sure private hostkeys have expected permissions
+      file:
+        path: "{{ item }}"
+        owner: "{{ sshd_hostkey_owner }}"
+        group: "{{ sshd_hostkey_group }}"
+        mode: "{{ sshd_hostkey_mode }}"
+      loop: "{{ __sshd_verify_hostkeys | from_json | list }}"
+
+- name: Apply configuration
+  template:
+    src: sshd_config.j2
+    dest: "{{ sshd_config_file }}"
+    owner: "{{ sshd_config_owner }}"
+    group: "{{ sshd_config_group }}"
+    mode: "{{ sshd_config_mode }}"
+    validate: "{{ sshd_binary }} -t -f %s"
+    backup: "{{ sshd_backup }}"
   notify: reload_sshd
 
 - name: Install systemd service files
