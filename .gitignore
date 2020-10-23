@@ -1,3 +1,2 @@
 .vagrant
-tests/roles/ansible-sshd
 tests/test.retry
