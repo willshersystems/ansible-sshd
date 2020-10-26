@@ -130,6 +130,11 @@ A list of dicts for a match section. See the example playbook.
 
 A list of dicts or just a dict for a Match section.
 
+* `sshd_config_file`
+
+The path where the openssh configuration produced by this role should be saved.
+This is useful mostly when generating configuration snippets to Include.
+
 ### Secondary role variables
 
 These variables are used by the role internals and can be used to override the
@@ -143,10 +148,6 @@ Use this variable to override the default list of packages to install.
 
 Use these variables to set the ownership and permissions for the openssh config
 file that this role produces.
-
-* `sshd_config_file`
-
-The path where the openssh configuration produced by this role should be saved.
 
 * `sshd_binary`
 
