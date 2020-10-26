@@ -6,7 +6,7 @@ OpenSSH Server
 This role configures the OpenSSH daemon. It:
 
 * By default configures the SSH daemon with the normal OS defaults.
-* Works across a variety of UN*X like distributions
+* Works across a variety of `UN*X` distributions
 * Can be configured by dict or simple variables
 * Supports Match sets
 * Supports all sshd_config options. Templates are programmatically generated.
