@@ -7,6 +7,7 @@
   when:
     - sshd_allow_reload|bool
     - ansible_virtualization_type|default(None) != 'docker'
+    - ansible_virtualization_type|default(None) != 'VirtualPC' # for Github Actions
     - ansible_connection != 'chroot'
     - ansible_os_family != 'AIX'
   listen: reload_sshd
