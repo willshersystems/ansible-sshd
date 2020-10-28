@@ -1,6 +1,5 @@
 ---
 - hosts: all
-  become: true
   tasks:
   - name: Configure sshd
     include_role:
@@ -23,7 +22,6 @@
         - Condition: "User root"
           PasswordAuthentication: no
           PermitTunnel: yes
-
 
   - name: Verify the options are correctly set
     block:
@@ -70,4 +68,3 @@
             - "'Match User sftponly' in config.stdout"
             - "'Match User root' in config.stdout"
     tags: tests::verify
-
