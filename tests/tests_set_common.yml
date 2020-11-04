@@ -10,6 +10,7 @@
         Banner: /etc/issue
         Ciphers: aes256-gcm@openssh.com
         Subsystem: "sftp internal-sftp"
+      sshd_config_file: /etc/ssh/sshd_config
 
   - name: Verify the options are correctly set
     block:
