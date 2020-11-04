@@ -1,7 +1,7 @@
 ---
-__sshd_packages:
+sshd_packages:
   - net-misc/openssh
-__sshd_sftp_server: /usr/lib64/misc/sftp-server
+sshd_sftp_server: /usr/lib64/misc/sftp-server
 __sshd_defaults:
   Subsystem: "sftp {{ sshd_sftp_server }}"
   # Replace tcp keepalive with unspoofable keepalive

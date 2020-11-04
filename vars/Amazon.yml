@@ -1,9 +1,9 @@
 ---
-__sshd_config_mode: '0644'
-__sshd_packages:
+sshd_config_mode: '0644'
+sshd_packages:
   - openssh
   - openssh-server
-__sshd_sftp_server: /usr/libexec/openssh/sftp-server
+sshd_sftp_server: /usr/libexec/openssh/sftp-server
 __sshd_defaults:
   SyslogFacility: AUTHPRIV
   PermitRootLogin: forced-commands-only

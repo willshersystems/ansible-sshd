@@ -1,8 +1,8 @@
 ---
-__sshd_packages:
+sshd_packages:
   - openssh
   - openssh-server
-__sshd_sftp_server: /usr/libexec/openssh/sftp-server
+sshd_sftp_server: /usr/libexec/openssh/sftp-server
 __sshd_defaults:
   Protocol: 2
   SyslogFacility: AUTHPRIV
