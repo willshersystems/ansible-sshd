@@ -17,13 +17,24 @@
         command: cat /etc/sysconfig/sshd
         register: config
 
-      - name: Check the options are in configuration file
+      - name: Check the crypto policies is overridden in RHEL 8
         assert:
           that:
             - "'CRYPTO_POLICY=' in config.stdout_lines"
-            - "'SSH_USE_STRONG_RNG=32' in config.stdout_lines"
             # these are string variants in default configuration file
             - "'# CRYPTO_POLICY=' not in config.stdout_lines"
+        when:
+          - ansible_facts['os_family'] == "RedHat"
+          - ansible_facts['distribution_major_version'] == "8"
+
+      - name: Check the RNG options are in configuration file
+        assert:
+          that:
+            - "'SSH_USE_STRONG_RNG=32' in config.stdout_lines"
+            # these are string variants in default configuration file
             - "'SSH_USE_STRONG_RNG=0' not in config.stdout_lines"
             - "'# SSH_USE_STRONG_RNG=1' not in config.stdout_lines"
+        when:
+          - ansible_facts['os_family'] == "RedHat"
+          - ansible_facts['distribution'] != 'Fedora'
     tags: tests::verify
