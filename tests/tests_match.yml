@@ -24,6 +24,13 @@
           PermitTunnel: yes
 
   - name: Verify the options are correctly set
+    vars:
+      main_sshd_config: >-
+        {{
+          "/etc/ssh/sshd_config.d/00-ansible_system_role.conf"
+          if ansible_facts['distribution'] == 'Fedora'
+          else "/etc/ssh/sshd_config"
+        }}
     block:
       - meta: flush_handlers
 
@@ -44,7 +51,7 @@
         register: root_effective
 
       - name: Print current configuration file
-        command: cat /etc/ssh/sshd_config
+        command: "cat {{ main_sshd_config }}"
         register: config
 
       - name: Check the options are effective
