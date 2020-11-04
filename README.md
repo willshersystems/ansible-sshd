@@ -9,9 +9,9 @@ This role configures the OpenSSH daemon. It:
 * Works across a variety of `UN*X` distributions
 * Can be configured by dict or simple variables
 * Supports Match sets
-* Supports all sshd_config options. Templates are programmatically generated.
-  (see [meta/make_option_list](meta/make_option_list))
-* Tests the sshd_config before reloading sshd.
+* Supports all `sshd_config` options. Templates are programmatically generated.
+  (see [`meta/make_option_list`](meta/make_option_list))
+* Tests the `sshd_config` before reloading sshd.
 
 **WARNING** Misconfiguration of this role can lock you out of your server!
 Please test your configuration and its interaction with your users configuration
@@ -42,51 +42,51 @@ It will likely work on other flavours and more direct support via suitable
 Role variables
 ---------------
 
-Unconfigured, this role will provide a sshd_config that matches the OS default,
+Unconfigured, this role will provide a `sshd_config` that matches the OS default,
 minus the comments and in a different order.
 
 * `sshd_enable`
 
-If set to False, the role will be completely disabled. Defaults to True.
+If set to *false*, the role will be completely disabled. Defaults to *true*.
 
 * `sshd_skip_defaults`
 
-If set to True, don't apply default values. This means that you must have a
-complete set of configuration defaults via either the sshd dict, or sshd_Key
-variables. Defaults to *False*.
+If set to *true*, don't apply default values. This means that you must have a
+complete set of configuration defaults via either the `sshd` dict, or
+`sshd_Key` variables. Defaults to *false*.
 
 * `sshd_manage_service`
 
-If set to False, the service/daemon won't be **managed** at all, i.e. will not
-try to enable on boot or start or reload the service.  Defaults to *True*
+If set to *false*, the service/daemon won't be **managed** at all, i.e. will not
+try to enable on boot or start or reload the service.  Defaults to *true*
 unless: Running inside a docker container (it is assumed ansible is used during
 build phase) or AIX (Ansible `service` module does not currently support `enabled`
 for AIX)
 
 * `sshd_allow_reload`
 
-If set to False, a reload of sshd wont happen on change. This can help with
+If set to *false*, a reload of sshd wont happen on change. This can help with
 troubleshooting. You'll need to manually reload sshd if you want to apply the
-changed configuration. Defaults to the same value as ``sshd_manage_service``.
-(Except on AIX, where `sshd_manage_service` is default *False*, but
-`sshd_allow_reload` is default *True*)
+changed configuration. Defaults to the same value as `sshd_manage_service`.
+(Except on AIX, where `sshd_manage_service` is default *false*, but
+`sshd_allow_reload` is default *true*)
 
 * `sshd_install_service`
 
-If set to True, the role will install service files for the ssh service.
-Defaults to False.
+If set to *true*, the role will install service files for the ssh service.
+Defaults to *false*.
 
 The templates for the service files to be used are pointed to by the variables
 
-  - `sshd_service_template_service` (__default__: _templates/sshd.service.j2_)
-  - `sshd_service_template_at_service` (__default__: _templates/sshd@.service.j2_)
-  - `sshd_service_template_socket` (__default__: _templates/sshd.socket.j2_)
+  - `sshd_service_template_service` (__default__: `templates/sshd.service.j2`)
+  - `sshd_service_template_at_service` (__default__: `templates/sshd@.service.j2`)
+  - `sshd_service_template_socket` (__default__: `templates/sshd.socket.j2`)
 
 Using these variables, you can use your own custom templates. With the above
 default templates, the name of the installed ssh service will be provided by
 the `sshd_service` variable.
 
-* sshd
+* `sshd`
 
 A dict containing configuration.  e.g.
 
@@ -106,8 +106,8 @@ values. e.g.:
 sshd_Compression: off
 ```
 
-In all cases, booleans correctly rendered as yes and no in sshd configuration.
-Lists can be used for multiline configuration items. e.g.
+In all cases, booleans are correctly rendered as yes and no in sshd
+configuration. Lists can be used for multiline configuration items. e.g.
 
 ```yaml
 sshd_ListenAddress:
@@ -129,6 +129,29 @@ A list of dicts for a match section. See the example playbook.
 * `sshd_match_1` through `sshd_match_9`
 
 A list of dicts or just a dict for a Match section.
+
+* `sshd_backup`
+
+When set to *false*, the original `sshd_config` file is not backed up. Default
+is *true*.
+
+* `sshd_sysconfig`
+
+On RHEL-based systems, sysconfig is used for configuring more details of sshd
+service. If set to *true*, this role will manage also the `/etc/sysconfig/sshd`
+configuration file based on the following configuration. Default is *false*.
+
+* `sshd_sysconfig_override_crypto_policy`
+
+In RHEL8-based systems, this can be used to override system-wide crypto policy
+by setting to *true*. Defaults to *false*.
+
+* `sshd_sysconfig_use_strong_rng`
+
+In RHEL-based systems, this can be used to force sshd to reseed openssl random
+number generator with the given amount of bytes as an argument. The default is
+*0*, which disables this functionality. It is not recommended to turn this on
+if the system does not have hardware random number generator.
 
 * `sshd_config_file`
 
@@ -160,6 +183,10 @@ the ssh service that the target platform uses. But it can also be used to set
 the name of the custom ssh service when the `sshd_install_service` variable is
 used.
 
+
+* `sshd_sftp_server`
+
+Default path to the sftp server binary.
 
 Dependencies
 ------------
@@ -238,9 +265,9 @@ for example:
 Template Generation
 -------------------
 
-The [sshd_config.j2](templates/sshd_config.j2) template is programatically
+The [`sshd_config.j2`](templates/sshd_config.j2) template is programatically
 generated by the scripts in meta. New options should be added to the
-options_body or options_match.
+`options_body` or `options_match`.
 
 To regenerate the template, from within the meta/ directory run:
 `./make_option_list >../templates/sshd_config.j2`
