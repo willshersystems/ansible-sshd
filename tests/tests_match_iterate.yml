@@ -33,19 +33,19 @@
       - meta: flush_handlers
 
       - name: List effective configuration using sshd -T for xusers
-        command: sshd -T -C user=xusers
+        command: sshd -T -C user=xusers,addr=127.0.0.1,host=example.com
         register: xusers_effective
 
       - name: List effective configuration using sshd -T for bot
-        command: sshd -T -C user=bot
+        command: sshd -T -C user=bot,addr=127.0.0.1,host=example.com
         register: bot_effective
 
       - name: List effective configuration using sshd -T for sftponly
-        command: sshd -T -C user=sftponly
+        command: sshd -T -C user=sftponly,addr=127.0.0.1,host=example.com
         register: sftponly_effective
 
       - name: List effective configuration using sshd -T for root
-        command: sshd -T -C user=root
+        command: sshd -T -C user=root,addr=127.0.0.1,host=example.com
         register: root_effective
 
       - name: Print current configuration file
