@@ -33,7 +33,8 @@ sshd_sysconfig_override_crypto_policy: false
 # If the below is set to non-zero value, the OpenSSL random generator is
 # reseeded with the given amount of random bytes (from getrandom(2)
 # with GRND_RANDOM or /dev/random). Minimum is 14 bytes when enabled.
-# This is not recommended to enable if you do not have hadware random generator
+# This is not recommended to enable if you do not have hardware random number
+# generator
 sshd_sysconfig_use_strong_rng: 0
 
 
