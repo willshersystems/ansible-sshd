@@ -6,6 +6,18 @@
       path: /tmp/ssh_host_ed25519_key
       state: absent
 
+  - name: Ensure group 'nobody' exists
+    group:
+      name: nobody
+
+  - name: Ensure the user 'nobody' exists
+    user:
+      name: nobody
+      group: nobody
+      comment: nobody
+      create_home: no
+      shell: /sbin/nologin
+
   - name: Configure sshd with alternative host keys
     include_role:
       name: ansible-sshd
