@@ -70,12 +70,14 @@
       tempfile:
         state: directory
       register: sshd_test_hostkey
+      changed_when: False
       when:
         - __sshd_hostkeys_from_config | from_json == []
         - sshd_config_file != "/etc/ssh/sshd_config"
 
     - name: Generate temporary hostkey
       shell: "ssh-keygen -q -t rsa -f {{ sshd_test_hostkey.path }}/rsa_key -C '' -N ''"
+      changed_when: False
       when: sshd_test_hostkey.path is defined
 
     - name: Create the configuration file
@@ -102,6 +104,7 @@
       file:
         path: "{{ sshd_test_hostkey.path }}"
         state: absent
+      changed_when: False
       when: sshd_test_hostkey.path is defined
 
 - name: Install systemd service files
