@@ -49,7 +49,8 @@
         register: root_effective
 
       - name: Print current configuration file
-        command: "cat {{ main_sshd_config }}"
+        slurp:
+          src: "{{ main_sshd_config }}"
         register: config
 
       - name: Check the options are effective
@@ -68,8 +69,8 @@
       - name: Check the options are in configuration file
         assert:
           that:
-            - "'Match User xusers' in config.stdout"
-            - "'Match User bot' in config.stdout"
-            - "'Match User sftponly' in config.stdout"
-            - "'Match User root' in config.stdout"
+            - "'Match User xusers' in config.content | b64decode"
+            - "'Match User bot' in config.content | b64decode"
+            - "'Match User sftponly' in config.content | b64decode"
+            - "'Match User root' in config.content | b64decode"
     tags: tests::verify
