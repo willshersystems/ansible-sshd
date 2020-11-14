@@ -20,6 +20,18 @@
     backup: "{{ sshd_backup }}"
   notify: reload_sshd
 
+- name: Sysconfig configuration
+  template:
+    src: sysconfig.j2
+    dest: "/etc/sysconfig/sshd"
+    owner: "root"
+    group: "root"
+    mode: "600"
+    backup: "{{ sshd_backup }}"
+  when:
+    - sshd_sysconfig|bool
+  notify: reload_sshd
+
 - name: Install systemd service files
   block:
     - name: Install service unit file

@@ -1,0 +1,68 @@
+---
+- hosts: all
+  tasks:
+  - name: Configure sshd
+    include_role:
+      name: ansible-sshd
+    vars:
+      sshd:
+        Match:
+        - Condition: "User xusers"
+          X11Forwarding: yes
+          Banner: /tmp/xusers-banner
+        - Condition: "User bot"
+          AllowTcpForwarding: no
+          Banner: /tmp/bot-banner
+      sshd_match:
+        - Condition: "User sftponly"
+          ForceCommand: "internal-sftp"
+          ChrootDirectory: "/var/uploads/"
+        - Condition: "User root"
+          PasswordAuthentication: no
+          PermitTunnel: yes
+
+  - name: Verify the options are correctly set
+    block:
+      - meta: flush_handlers
+
+      - name: List effective configuration using sshd -T for xusers
+        command: sshd -T -C user=xusers
+        register: xusers_effective
+
+      - name: List effective configuration using sshd -T for bot
+        command: sshd -T -C user=bot
+        register: bot_effective
+
+      - name: List effective configuration using sshd -T for sftponly
+        command: sshd -T -C user=sftponly
+        register: sftponly_effective
+
+      - name: List effective configuration using sshd -T for root
+        command: sshd -T -C user=root
+        register: root_effective
+
+      - name: Print current configuration file
+        command: cat /etc/ssh/sshd_config
+        register: config
+
+      - name: Check the options are effective
+        # note, the options are in lower-case here
+        assert:
+          that:
+            - "'x11forwarding yes' in xusers_effective.stdout"
+            - "'banner /tmp/xusers-banner' in xusers_effective.stdout"
+            - "'allowtcpforwarding no' in bot_effective.stdout"
+            - "'banner /tmp/bot-banner' in bot_effective.stdout"
+            - "'forcecommand internal-sftp' in sftponly_effective.stdout"
+            - "'chrootdirectory /var/uploads/' in sftponly_effective.stdout"
+            - "'passwordauthentication no' in root_effective.stdout"
+            - "'permittunnel yes' in root_effective.stdout"
+
+      - name: Check the options are in configuration file
+        assert:
+          that:
+            - "'Match User xusers' in config.stdout"
+            - "'Match User bot' in config.stdout"
+            - "'Match User sftponly' in config.stdout"
+            - "'Match User root' in config.stdout"
+    tags: tests::verify

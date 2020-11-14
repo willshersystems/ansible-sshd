@@ -1,0 +1,29 @@
+---
+- hosts: all
+  tasks:
+  - name: Configure sshd
+    include_role:
+      name: ansible-sshd
+    vars:
+      sshd_sysconfig: true
+      sshd_sysconfig_override_crypto_policy: true
+      sshd_sysconfig_use_strong_rng: 32
+
+  - name: Verify the options are correctly set
+    block:
+      - meta: flush_handlers
+
+      - name: Print current configuration file
+        command: cat /etc/sysconfig/sshd
+        register: config
+
+      - name: Check the options are in configuration file
+        assert:
+          that:
+            - "'CRYPTO_POLICY=' in config.stdout_lines"
+            - "'SSH_USE_STRONG_RNG=32' in config.stdout_lines"
+            # these are string variants in default configuration file
+            - "'# CRYPTO_POLICY=' not in config.stdout_lines"
+            - "'SSH_USE_STRONG_RNG=0' not in config.stdout_lines"
+            - "'# SSH_USE_STRONG_RNG=1' not in config.stdout_lines"
+    tags: tests::verify

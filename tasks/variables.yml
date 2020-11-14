@@ -60,3 +60,7 @@
       set_fact:
         sshd_sftp_server: "{{ __sshd_sftp_server }}"
       when: sshd_sftp_server is not defined
+    - name: Define sshd_sysconfig
+      set_fact:
+        sshd_sysconfig: "{{ __sshd_sysconfig }}"
+      when: sshd_sysconfig is not defined

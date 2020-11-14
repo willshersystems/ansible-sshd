@@ -2,6 +2,9 @@
 os: linux
 dist: focal
 language: python
+addons:
+  apt_packages:
+    - yamllint
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
@@ -14,36 +17,52 @@ install:
   - "{ echo '[defaults]'; echo 'roles_path = ../'; echo 'deprecation_warnings=False'; } >> ansible.cfg"
 
 script:
-  # Test 0: Check the roles syntax.
-  - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_default.yml --syntax-check"
+  # Test 0a: Check the roles syntax.
+  - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_default.yml --syntax-check"
+
+  # Test 0b: Run yamllint with galaxy configuration to avoid quality score penalty
+  - wget https://raw.githubusercontent.com/ansible/galaxy/devel/galaxy/importer/linters/yamllint.yaml
+  - "yamllint -c yamllint.yaml **/*.yml"
 
   # Test 1a: Run the role
-  - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_default.yml --connection=local --become -v"
+  - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_default.yml --connection=local --become -v"
 
   # Test 1b: Run the role through include
-  - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_default_include.yml --connection=local --become -v"
+  - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_default_include.yml --connection=local --become -v"
 
   # Test 2: Run the role/playbook again, checking to make sure it's idempotent.
   - >
-    ansible-playbook -i tests/inventory tests/test_default.yml --connection=local --become | grep -q 'changed=0.*failed=0'
+    ansible-playbook -i tests/inventory tests/tests_default.yml --connection=local --become | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
 
   # Test 3: Check we can set arbitrary configuration options
   - >
-    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_set_common.yml --connection=local --become -v
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_set_common.yml --connection=local --become -v
     && (echo 'Common variables test: pass' && exit 0)
     || (echo 'Common variables test: fail' && exit 1)
 
   # Test 4: Check if we set uncommon or unsupported configuration option, it will not fail hard
   - >
-    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_set_uncommon.yml --connection=local --become -v
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_set_uncommon.yml --connection=local --become -v
     && (echo 'Uncommon configuration test: pass' && exit 0)
     || (echo 'Uncommon configuration test: fail' && exit 1)
 
   # Test 5: Make sure we can modify other files, for example for inclusion
   # in the main sshd_config or second sshd service
   - >
-    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/test_alternative_file.yml --connection=local --become -v
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_alternative_file.yml --connection=local --become -v
     && (echo 'Alternative configuration file test: pass' && exit 0)
     || (echo 'Alternative configuration file test: fail' && exit 1)
+
+  # Test 6: Test match blocks generators
+  - >
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_match.yml --connection=local --become -v
+    && (echo 'Match blocks test: pass' && exit 0)
+    || (echo 'Match blocks test: fail' && exit 1)
+
+  # Test 7: Test match blocks generators with iteration
+  - >
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_match_iterate.yml --connection=local --become -v
+    && (echo 'Match blocks with iteration test: pass' && exit 0)
+    || (echo 'Match blocks with iteration test: fail' && exit 1)
