@@ -5,6 +5,9 @@
     include_role:
       name: ansible-sshd
     vars:
+      # For Fedora containers, we need to make sure we have keys for sshd -T below
+      sshd_verify_hostkeys:
+        - /etc/ssh/ssh_host_rsa_key
       sshd:
         Match:
         - Condition: "User xusers"
@@ -24,27 +27,35 @@
           PermitTunnel: yes
 
   - name: Verify the options are correctly set
+    vars:
+      main_sshd_config: >-
+        {{
+          "/etc/ssh/sshd_config.d/00-ansible_system_role.conf"
+          if ansible_facts['distribution'] == 'Fedora'
+          else "/etc/ssh/sshd_config"
+        }}
     block:
       - meta: flush_handlers
 
       - name: List effective configuration using sshd -T for xusers
-        command: sshd -T -C user=xusers
+        command: sshd -T -C user=xusers,addr=127.0.0.1,host=example.com
         register: xusers_effective
 
       - name: List effective configuration using sshd -T for bot
-        command: sshd -T -C user=bot
+        command: sshd -T -C user=bot,addr=127.0.0.1,host=example.com
         register: bot_effective
 
       - name: List effective configuration using sshd -T for sftponly
-        command: sshd -T -C user=sftponly
+        command: sshd -T -C user=sftponly,addr=127.0.0.1,host=example.com
         register: sftponly_effective
 
       - name: List effective configuration using sshd -T for root
-        command: sshd -T -C user=root
+        command: sshd -T -C user=root,addr=127.0.0.1,host=example.com
         register: root_effective
 
       - name: Print current configuration file
-        command: cat /etc/ssh/sshd_config
+        slurp:
+          src: "{{ main_sshd_config }}"
         register: config
 
       - name: Check the options are effective
@@ -63,8 +74,8 @@
       - name: Check the options are in configuration file
         assert:
           that:
-            - "'Match User xusers' in config.stdout"
-            - "'Match User bot' in config.stdout"
-            - "'Match User sftponly' in config.stdout"
-            - "'Match User root' in config.stdout"
+            - "'Match User xusers' in config.content | b64decode"
+            - "'Match User bot' in config.content | b64decode"
+            - "'Match User sftponly' in config.content | b64decode"
+            - "'Match User root' in config.content | b64decode"
     tags: tests::verify

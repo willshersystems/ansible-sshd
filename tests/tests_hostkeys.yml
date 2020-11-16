@@ -1,0 +1,70 @@
+---
+- hosts: all
+  tasks:
+  - name: Remove host key before the test
+    file:
+      path: /tmp/ssh_host_ed25519_key
+      state: absent
+
+  - name: Ensure group 'nobody' exists
+    group:
+      name: nobody
+
+  - name: Ensure the user 'nobody' exists
+    user:
+      name: nobody
+      group: nobody
+      comment: nobody
+      create_home: no
+      shell: /sbin/nologin
+
+  - name: Configure sshd with alternative host keys
+    include_role:
+      name: ansible-sshd
+    vars:
+      # very BAD example
+      sshd_hostkey_owner: "nobody"
+      sshd_hostkey_group: "nobody"
+      sshd_hostkey_mode: "0664"
+      sshd:
+        HostKey:
+          - /tmp/ssh_host_ed25519_key
+
+  - name: Verify the options are correctly set
+    vars:
+      main_sshd_config: >-
+        {{
+          "/etc/ssh/sshd_config.d/00-ansible_system_role.conf"
+          if ansible_facts['distribution'] == 'Fedora'
+          else "/etc/ssh/sshd_config"
+        }}
+    block:
+      - meta: flush_handlers
+
+      - name: Print current configuration file
+        slurp:
+          src: "{{ main_sshd_config }}"
+        register: config
+
+      - stat:
+          path: /tmp/ssh_host_ed25519_key
+        register: privkey
+
+      - stat:
+          path: /tmp/ssh_host_ed25519_key.pub
+        register: pubkey
+
+      - name: Check the options are in configuration file
+        assert:
+          that:
+            - "'HostKey /tmp/ssh_host_ed25519_key' in config.content | b64decode"
+
+      - name: Check the generated host key has requested properties
+        assert:
+          that:
+            - privkey.stat.exists
+            - privkey.stat.gr_name == 'nobody'
+            - privkey.stat.pw_name == 'nobody'
+            - privkey.stat.mode == '0664'
+            - pubkey.stat.exists
+    tags: tests::verify

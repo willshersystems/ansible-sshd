@@ -1,7 +1,7 @@
 ---
-__sshd_packages:
+sshd_packages:
   - openssh
-__sshd_sftp_server: /usr/lib/ssh/sftp-server
+sshd_sftp_server: /usr/lib/ssh/sftp-server
 __sshd_defaults:
   AuthorizedKeysFile: .ssh/authorized_keys
   ChallengeResponseAuthentication: no

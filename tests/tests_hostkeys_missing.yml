@@ -1,0 +1,33 @@
+---
+- hosts: all
+  tasks:
+  - name: Configure sshd with missing host keys and prevent their creation
+    block:
+      - name: Configure missing hostkey
+        include_role:
+          name: ansible-sshd
+        vars:
+          sshd_verify_hostkeys: []
+          sshd:
+            HostKey:
+              - /tmp/missing_ssh_host_rsa_key
+        register: role_result
+
+      - name: unreachable task
+        fail:
+          msg: UNREACH
+
+    rescue:
+      - name: Check that we failed in the role
+        assert:
+          that:
+            - ansible_failed_result.msg != 'UNREACH'
+            - not role_result.changed
+          msg: "Role has not failed when it should have"
+
+      - name: Make sure service is still running
+        service:
+          name: sshd
+          state: started
+        register: result
+        failed_when: result.changed

@@ -1,19 +1,14 @@
 ---
-__sshd_packages:
+sshd_packages:
   - net-misc/openssh
-__sshd_config_owner: root
-__sshd_config_group: root
-__sshd_config_mode: "0600"
-__sshd_config_file: /etc/ssh/sshd_config
-__sshd_sftp_server: /usr/lib64/misc/sftp-server
-__sshd_binary: /usr/sbin/sshd
+sshd_sftp_server: /usr/lib64/misc/sftp-server
 __sshd_defaults:
   Subsystem: "sftp {{ sshd_sftp_server }}"
   # Replace tcp keepalive with unspoofable keepalive
   TCPKeepAlive: no
   ClientAliveInterval: 300
   ClientAliveCountMax: 2
-  # Secure chipher and algorithm settings
+  # Secure cipher and algorithm settings
   HostKey:
     - /etc/ssh/ssh_host_ed25519_key
     - /etc/ssh/ssh_host_rsa_key
