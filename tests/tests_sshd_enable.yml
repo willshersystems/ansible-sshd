@@ -1,0 +1,47 @@
+---
+- hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+  tasks:
+  - name: "Backup configuration files"
+    include_tasks: tasks/backup.yml
+
+  - name: Configure sshd with the role disabled
+    include_role:
+      name: ansible-sshd
+    vars:
+      sshd_enable: false
+      sshd:
+        AcceptEnv: XDG_*
+        Banner: /etc/issue
+        Ciphers: aes256-ctr,aes128-ctr
+      sshd_config_file: /etc/ssh/sshd_config
+
+  - name: Print current configuration file
+    slurp:
+      src: /etc/ssh/sshd_config
+    register: config
+
+  - name: Print effective configuration
+    shell: >
+      if test ! -f /etc/ssh/ssh_host_rsa_key; then
+        ssh-keygen -q -t rsa -f /etc/ssh/ssh_host_rsa_key -C '' -N ''
+      fi;
+      sshd -T
+    register: runtime
+
+  - name: Check the options were not applied
+    # note, the options are in lower-case here
+    assert:
+      that:
+        - "'Acceptenv XDG_*' not in config.content | b64decode"
+        - "'Banner /etc/issue' not in config.content | b64decode"
+        - "'Ciphers aes256-ctr,aes128-ctr' not in config.content | b64decode"
+        - "'acceptenv XDG_*' not in runtime.stdout"
+        - "'banner /etc/issue' not in runtime.stdout"
+        - "'ciphers aes256-ctr,aes128-ctr' not in runtime.stdout"
+
+  - name: "Restore configuration files"
+    include_tasks: tasks/restore.yml

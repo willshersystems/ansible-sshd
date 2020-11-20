@@ -81,3 +81,9 @@ script:
     ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_hostkeys_missing.yml --connection=local --become -v
     && (echo 'Missing hostkeys test: pass' && exit 0)
     || (echo 'Missing hostkeys test: fail' && exit 1)
+
+  # Test 10: Test sshd_enable has effect
+  - >
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_sshd_enable.yml --connection=local --become -v
+    && (echo 'Test sshd_enable: pass' && exit 0)
+    || (echo 'Test sshd_enable: fail' && exit 1)
