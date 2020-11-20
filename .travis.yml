@@ -24,6 +24,9 @@ script:
   - wget https://raw.githubusercontent.com/ansible/galaxy/devel/galaxy/importer/linters/yamllint.yaml
   - "yamllint -c yamllint.yaml **/*.yml"
 
+  # Test 0.5: OS defaults: Travis images have heavily updated (even with invalid configuration options)
+  # sshd_config so it does not make sense to test OS defaults here
+
   # Test 1a: Run the role
   - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_default.yml --connection=local --become -v"
 

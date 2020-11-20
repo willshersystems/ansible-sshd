@@ -1,0 +1,38 @@
+---
+- hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+      - /etc/ssh/ssh_host_rsa_key
+      - /etc/ssh/ssh_host_rsa_key.pub
+  tasks:
+  - name: Backup configuration files
+    include_tasks: tasks/backup.yml
+
+  - name: Show effective configuration before running role (system defaults)
+    shell: >
+      if test ! -f /etc/ssh/ssh_host_rsa_key; then
+        ssh-keygen -q -t rsa -f /etc/ssh/ssh_host_rsa_key -C '' -N ''
+      fi;
+      sshd -T
+    register: runtime_before
+  - name: Configure sshd
+    include_role:
+      name: ansible-sshd
+  - name: Show effective configuration after running role (role defaults)
+    shell: sshd -T
+    register: runtime_after
+  - debug:
+      var: ansible_facts['distribution']
+  - debug:
+      var: ansible_facts['distribution_major_version']
+  - name: Check that the effective configuration did not change from OS defaults
+    assert:
+      that:
+        - runtime_before.stdout == runtime_after.stdout
+    when:
+      - not (ansible_facts['distribution'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6')
+
+  - name: Restore configuration files
+    include_tasks: tasks/restore.yml
