@@ -17,7 +17,7 @@
         - /etc/ssh/ssh_host_rsa_key
       sshd:
         Match:
-        - Condition: "User xusers"
+          Condition: "User xusers"
           X11Forwarding: yes
           Banner: /tmp/xusers-banner
       sshd_match:
