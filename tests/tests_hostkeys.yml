@@ -1,6 +1,14 @@
 ---
 - hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+      - /tmp/ssh_host_ed25519_key
   tasks:
+  - name: "Backup configuration files"
+    include_tasks: tasks/backup.yml
+
   - name: Remove host key before the test
     file:
       path: /tmp/ssh_host_ed25519_key
@@ -68,3 +76,6 @@
             - privkey.stat.mode == '0664'
             - pubkey.stat.exists
     tags: tests::verify
+
+  - name: "Restore configuration files"
+    include_tasks: tasks/restore.yml
