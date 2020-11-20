@@ -39,7 +39,11 @@
       {% if not sshd_verify_hostkeys %}
         []
       {% elif sshd_verify_hostkeys == 'auto' %}
-        {{ __sshd_hostkeys_from_config }}
+        {% if sshd_HostKey is string %}
+          [ {{ __sshd_hostkeys_from_config }} ]
+        {% else %}
+          {{ __sshd_hostkeys_from_config }}
+        {% endif %}
       {% else %}
         {{ sshd_verify_hostkeys | to_json }}
       {% endif %}
