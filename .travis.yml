@@ -87,3 +87,9 @@ script:
     ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_sshd_enable.yml --connection=local --become -v
     && (echo 'Test sshd_enable: pass' && exit 0)
     || (echo 'Test sshd_enable: fail' && exit 1)
+
+  # Test 11: Test variable precedence
+  - >
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_precedence.yml --connection=local --become -v
+    && (echo 'Variable precedence test: pass' && exit 0)
+    || (echo 'Variable precedence test: fail' && exit 1)
