@@ -32,6 +32,9 @@
             - ansible_failed_result.msg != 'UNREACH'
             - not role_result.changed
           msg: "Role has not failed when it should have"
+        when:
+          - ansible_facts['os_family'] != 'Debian'
+          - not (ansible_facts['distribution'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6')
     tags: tests::verify
 
   - name: Make sure the key was not created
