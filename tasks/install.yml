@@ -84,6 +84,16 @@
       changed_when: False
       when: sshd_test_hostkey.path is defined
 
+    - name: Make sure sshd runtime directory is present
+      file:
+        path: "{{ __sshd_runtime_directory }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "{{ __sshd_runtime_directory_mode }}"
+      when:
+        - __sshd_runtime_directory | d(false) | bool
+
     - name: Create the configuration file
       template:
         src: sshd_config.j2
