@@ -43,10 +43,10 @@
             # these are string variants in default configuration file
             - "'SSH_USE_STRONG_RNG=0' not in config.content | b64decode"
             - "'# SSH_USE_STRONG_RNG=1' not in config.content | b64decode"
-        when:
-          - ansible_facts['os_family'] == "RedHat"
-          - ansible_facts['distribution'] != 'Fedora'
     tags: tests::verify
+    when:
+      - ansible_facts['os_family'] == "RedHat"
+      - ansible_facts['distribution'] != 'Fedora'
 
   - name: "Restore configuration files"
     include_tasks: tasks/restore.yml

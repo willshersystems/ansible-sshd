@@ -19,6 +19,7 @@
     backup: "{{ sshd_backup }}"
   when:
     - sshd_sysconfig|bool
+    - __sshd_sysconfig_supports_use_strong_rng or __sshd_sysconfig_supports_crypto_policy
   notify: reload_sshd
 
 - name: Make sure hostkeys are available and have expected permissions
