@@ -93,3 +93,9 @@ script:
     ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_precedence.yml --connection=local --become -v
     && (echo 'Variable precedence test: pass' && exit 0)
     || (echo 'Variable precedence test: fail' && exit 1)
+
+  # Test 12: Verify backups are created
+  - >
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_backup.yml --connection=local --become -v
+    && (echo 'Backup test: pass' && exit 0)
+    || (echo 'Backup test: fail' && exit 1)
