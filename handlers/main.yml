@@ -1,6 +1,7 @@
 ---
 
 - name: Reload the SSH service
+  become: yes
   service:
     name: "{{ sshd_service }}"
     state: reloaded
