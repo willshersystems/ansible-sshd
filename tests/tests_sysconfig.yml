@@ -26,12 +26,31 @@
           src: /etc/sysconfig/sshd
         register: config
 
+      - name: Evaluate sysconfig similarly as systemd
+        shell: |
+          source /etc/sysconfig/sshd
+          echo "CP=|$CRYPTO_POLICY|"
+          echo "RNG=|$SSH_USE_STRONG_RNG|"
+        register: evaluation
+
+      - name: Evaluate sysconfig similarly as systemd on RHEL 8
+        shell: |
+          source /etc/crypto-policies/back-ends/opensshserver.config
+          source /etc/sysconfig/sshd
+          echo "CP=|$CRYPTO_POLICY|"
+          echo "RNG=|$SSH_USE_STRONG_RNG|"
+        register: evaluation8
+        when:
+          - ansible_facts['os_family'] == "RedHat"
+          - ansible_facts['distribution_major_version'] == "8"
+
       - name: Check the crypto policies is overridden in RHEL 8
         assert:
           that:
             - "'CRYPTO_POLICY=' in config.content | b64decode"
             # these are string variants in default configuration file
             - "'# CRYPTO_POLICY=' not in config.content | b64decode"
+            - "'CP=||' in evaluation8.stdout"
         when:
           - ansible_facts['os_family'] == "RedHat"
           - ansible_facts['distribution_major_version'] == "8"
@@ -43,6 +62,7 @@
             # these are string variants in default configuration file
             - "'SSH_USE_STRONG_RNG=0' not in config.content | b64decode"
             - "'# SSH_USE_STRONG_RNG=1' not in config.content | b64decode"
+            - "'RNG=|32|' in evaluation.stdout"
     tags: tests::verify
     when:
       - ansible_facts['os_family'] == "RedHat"
