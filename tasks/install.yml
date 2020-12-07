@@ -95,6 +95,47 @@
           {% endif %}
         backup: "{{ sshd_backup }}"
       notify: reload_sshd
+      when: sshd_exclusive_configuration | bool
+
+    - name: Non-exclusive configuration
+      when: not sshd_exclusive_configuration | bool
+      vars:
+        marker_begin: BEGIN
+        marker: "# {mark} ANSIBLE SSH MANAGED CONFIGURATION"
+      block:
+        - name: Check if configuration block is present
+          lineinfile:
+            path: "{{ sshd_config_file }}"
+            line: "{{ marker.format(mark=marker_begin) }}"
+            state: present
+          check_mode: true
+          register: configuration_block_presence
+
+        - name: Remove default configuration
+          file:
+            path: "{{ sshd_config_file }}"
+            state: absent
+          when: configuration_block_presence is changed
+
+        - name: Copy configuration
+          blockinfile:
+            block: "{{ lookup('template', 'sshd_config.j2') }}"
+            dest: "{{ sshd_config_file }}"
+            create: true
+            owner: "{{ sshd_config_owner }}"
+            group: "{{ sshd_config_group }}"
+            mode: "{{ sshd_config_mode }}"
+            marker_begin: "{{ marker_begin }}"
+            marker: "{{ marker }}"
+            validate: >-
+              {% if sshd_test_hostkey is defined and sshd_test_hostkey.path is defined %}
+                {{ sshd_binary }} -t -f %s -h {{ sshd_test_hostkey.path }}/rsa_key
+              {% else %}
+                {{ sshd_binary }} -t -f %s
+              {% endif %}
+            backup: "{{ sshd_backup }}"
+          notify: reload_sshd
+
   rescue:
     - name: re-raise the error
       fail:

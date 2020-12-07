@@ -3,6 +3,10 @@
 # Set to false to disable this role completely
 sshd_enable: true
 
+# If set to *false*, do not manage SSH configuration exclusively.
+# This allows SSH configuration modifications from other tasks or roles (e.g sftp role, ...) while preserving idempotency.
+sshd_exclusive_configuration: true
+
 # Don't apply OS defaults when set to true
 sshd_skip_defaults: false
 

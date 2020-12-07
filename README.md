@@ -86,6 +86,12 @@ Using these variables, you can use your own custom templates. With the above
 default templates, the name of the installed ssh service will be provided by
 the `sshd_service` variable.
 
+* `sshd_exclusive_configuration`
+
+If set to *false*, do not manage SSH configuration exclusively.
+This allows SSH configuration modifications from other tasks or roles (e.g sftp role, ...) while preserving idempotency.
+Defaults to *true*.
+
 * `sshd`
 
 A dict containing configuration.  e.g.
