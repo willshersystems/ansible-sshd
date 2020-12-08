@@ -4,6 +4,8 @@ sshd_packages:
   - openssh-server
 sshd_sftp_server: /usr/libexec/openssh/sftp-server
 __sshd_defaults:
+  HostKey:
+    - /etc/ssh/ssh_host_rsa_key
   Protocol: 2
   SyslogFacility: AUTHPRIV
   PasswordAuthentication: yes
