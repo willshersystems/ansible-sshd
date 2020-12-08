@@ -29,7 +29,7 @@
           ChrootDirectory: "/var/uploads/"
         - Condition: "User root"
           PasswordAuthentication: no
-          PermitTunnel: yes
+          AllowTcpForwarding: yes
 
   - name: Verify the options are correctly set
     vars:
@@ -74,7 +74,7 @@
             - "'forcecommand internal-sftp' in sftponly_effective.stdout"
             - "'chrootdirectory /var/uploads/' in sftponly_effective.stdout"
             - "'passwordauthentication no' in root_effective.stdout"
-            - "'permittunnel yes' in root_effective.stdout"
+            - "'allowtcpforwarding yes' in root_effective.stdout"
 
       - name: Check the options are in configuration file
         assert:
