@@ -4,14 +4,14 @@
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
       - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
-      - /tmp/ssh_host_ed25519_key
+      - /tmp/ssh_host_rsa_key2
   tasks:
   - name: "Backup configuration files"
     include_tasks: tasks/backup.yml
 
   - name: Remove host key before the test
     file:
-      path: /tmp/ssh_host_ed25519_key
+      path: /tmp/ssh_host_rsa_key2
       state: absent
 
   - name: Ensure group 'nobody' exists
@@ -36,7 +36,7 @@
       sshd_hostkey_mode: "0664"
       sshd:
         HostKey:
-          - /tmp/ssh_host_ed25519_key
+          - /tmp/ssh_host_rsa_key2
 
   - name: Verify the options are correctly set
     vars:
@@ -55,17 +55,17 @@
         register: config
 
       - stat:
-          path: /tmp/ssh_host_ed25519_key
+          path: /tmp/ssh_host_rsa_key2
         register: privkey
 
       - stat:
-          path: /tmp/ssh_host_ed25519_key.pub
+          path: /tmp/ssh_host_rsa_key2.pub
         register: pubkey
 
       - name: Check the options are in configuration file
         assert:
           that:
-            - "'HostKey /tmp/ssh_host_ed25519_key' in config.content | b64decode"
+            - "'HostKey /tmp/ssh_host_rsa_key2' in config.content | b64decode"
 
       - name: Check the generated host key has requested properties
         assert:
