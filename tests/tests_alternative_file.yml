@@ -20,7 +20,7 @@
       sshd:
         AcceptEnv: LANG
         Banner: /etc/issue
-        Ciphers: aes256-gcm@openssh.com
+        Ciphers: aes256-ctr
       sshd_Compression: no
   - name: Configure second alternative sshd_config file
     include_role:
@@ -31,7 +31,7 @@
       sshd_skip_defaults: true
       sshd:
         Banner: /etc/issue2
-        Ciphers: aes128-gcm@openssh.com
+        Ciphers: aes128-ctr
       sshd_MaxStartups: 100
   - name: Now configure the main sshd_config file
     include_role:
@@ -39,7 +39,7 @@
     vars:
       sshd:
         Banner: /etc/issue
-        Ciphers: aes128-ctr
+        Ciphers: aes192-ctr
         HostKey:
           - /tmp/ssh_host_ecdsa_key
       sshd_PasswordAuthentication: no
@@ -75,7 +75,7 @@
           that:
             - "'AcceptEnv LANG' in config.content | b64decode"
             - "'Banner /etc/issue' in config.content | b64decode"
-            - "'Ciphers aes256-gcm@openssh.com' in config.content | b64decode"
+            - "'Ciphers aes256-ctr' in config.content | b64decode"
             - "'HostKey' not in config.content | b64decode"
             - "'Compression no' in config.content | b64decode"
             - "'MaxStartups 100' not in config.content | b64decode"
@@ -84,7 +84,7 @@
         assert:
           that:
             - "'Banner /etc/issue2' in config2.content | b64decode"
-            - "'Ciphers aes128-gcm@openssh.com' in config2.content | b64decode"
+            - "'Ciphers aes128-ctr' in config2.content | b64decode"
             - "'HostKey' not in config2.content | b64decode"
             - "'MaxStartups 100' in config2.content | b64decode"
             - "'Compression no' not in config2.content | b64decode"
@@ -93,7 +93,7 @@
         assert:
           that:
             - "'Banner /etc/issue' in config3.content | b64decode"
-            - "'Ciphers aes128-ctr' in config3.content | b64decode"
+            - "'Ciphers aes192-ctr' in config3.content | b64decode"
             - "'HostKey /tmp/ssh_host_ecdsa_key' in config3.content | b64decode"
             - "'PasswordAuthentication no' in config3.content | b64decode"
             - "'MaxStartups 100' not in config3.content | b64decode"
