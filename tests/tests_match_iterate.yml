@@ -1,6 +1,13 @@
 ---
 - hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
   tasks:
+  - name: "Backup configuration files"
+    include_tasks: tasks/backup.yml
+
   - name: Configure sshd
     include_role:
       name: ansible-sshd
@@ -22,7 +29,7 @@
           ChrootDirectory: "/var/uploads/"
         - Condition: "User root"
           PasswordAuthentication: no
-          PermitTunnel: yes
+          AllowTcpForwarding: yes
 
   - name: Verify the options are correctly set
     vars:
@@ -67,7 +74,7 @@
             - "'forcecommand internal-sftp' in sftponly_effective.stdout"
             - "'chrootdirectory /var/uploads/' in sftponly_effective.stdout"
             - "'passwordauthentication no' in root_effective.stdout"
-            - "'permittunnel yes' in root_effective.stdout"
+            - "'allowtcpforwarding yes' in root_effective.stdout"
 
       - name: Check the options are in configuration file
         assert:
@@ -77,3 +84,6 @@
             - "'Match User sftponly' in config.content | b64decode"
             - "'Match User root' in config.content | b64decode"
     tags: tests::verify
+
+  - name: "Restore configuration files"
+    include_tasks: tasks/restore.yml

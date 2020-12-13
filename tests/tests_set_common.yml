@@ -1,6 +1,13 @@
 ---
 - hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
   tasks:
+  - name: "Backup configuration files"
+    include_tasks: tasks/backup.yml
+
   - name: Configure sshd
     include_role:
       name: ansible-sshd
@@ -8,7 +15,7 @@
       sshd:
         AcceptEnv: LANG
         Banner: /etc/issue
-        Ciphers: aes256-gcm@openssh.com
+        Ciphers: aes256-ctr
         Subsystem: "sftp internal-sftp"
       sshd_config_file: /etc/ssh/sshd_config
 
@@ -31,7 +38,7 @@
           that:
             - "'acceptenv LANG' in runtime.stdout"
             - "'banner /etc/issue' in runtime.stdout"
-            - "'ciphers aes256-gcm@openssh.com' in runtime.stdout"
+            - "'ciphers aes256-ctr' in runtime.stdout"
             - "'subsystem sftp internal-sftp' in runtime.stdout"
 
       - name: Check the options are in configuration file
@@ -39,6 +46,9 @@
           that:
             - "'AcceptEnv LANG' in config.content | b64decode"
             - "'Banner /etc/issue' in config.content | b64decode"
-            - "'Ciphers aes256-gcm@openssh.com' in config.content | b64decode"
+            - "'Ciphers aes256-ctr' in config.content | b64decode"
             - "'Subsystem sftp internal-sftp' in config.content | b64decode"
     tags: tests::verify
+
+  - name: "Restore configuration files"
+    include_tasks: tasks/restore.yml

@@ -21,6 +21,7 @@
     backup: "{{ sshd_backup }}"
   when:
     - sshd_sysconfig|bool
+    - __sshd_sysconfig_supports_use_strong_rng or __sshd_sysconfig_supports_crypto_policy
   notify: reload_sshd
 
 - name: Make sure hostkeys are available and have expected permissions
@@ -41,7 +42,11 @@
       {% if not sshd_verify_hostkeys %}
         []
       {% elif sshd_verify_hostkeys == 'auto' %}
-        {{ __sshd_hostkeys_from_config }}
+        {% if sshd_HostKey is string %}
+          [ {{ __sshd_hostkeys_from_config }} ]
+        {% else %}
+          {{ __sshd_hostkeys_from_config }}
+        {% endif %}
       {% else %}
         {{ sshd_verify_hostkeys | to_json }}
       {% endif %}
@@ -81,6 +86,16 @@
       command: "ssh-keygen -q -t rsa -f {{ sshd_test_hostkey.path }}/rsa_key -C '' -N ''"
       changed_when: False
       when: sshd_test_hostkey.path is defined
+
+    - name: Make sure sshd runtime directory is present
+      file:
+        path: "{{ __sshd_runtime_directory }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "{{ __sshd_runtime_directory_mode }}"
+      when:
+        - __sshd_runtime_directory | d(false) | bool
 
     - name: Create the configuration file
       become: yes
@@ -148,6 +163,7 @@
   when:
     - sshd_manage_service|bool
     - ansible_virtualization_type|default(None) != 'docker'
+    - ansible_virtualization_type|default(None) != 'podman'
     - ansible_virtualization_type|default(None) != 'VirtualPC' # for Github Actions
     - ansible_connection != 'chroot'
 

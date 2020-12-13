@@ -122,13 +122,11 @@ ListenAddress 0.0.0.0
 ListenAddress ::
 ```
 
-* `sshd_match`
+* `sshd_match`, `sshd_match_1` through `sshd_match_9`
 
-A list of dicts for a match section. See the example playbook.
-
-* `sshd_match_1` through `sshd_match_9`
-
-A list of dicts or just a dict for a Match section.
+A list of dicts or just a dict for a Match section. Note, that these variables
+do not override match blocks as defined in the `sshd` dict. All of the sources
+will be reflected in the resulting configuration file.
 
 * `sshd_backup`
 

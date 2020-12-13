@@ -11,6 +11,7 @@ __sshd_defaults:
   SyslogFacility: AUTHPRIV
   AuthorizedKeysFile: .ssh/authorized_keys
   PasswordAuthentication: yes
+  PermitRootLogin: yes
   ChallengeResponseAuthentication: no
   GSSAPIAuthentication: yes
   GSSAPICleanupCredentials: no

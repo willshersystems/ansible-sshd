@@ -4,6 +4,8 @@ sshd_packages:
   - openssh-server
 sshd_sftp_server: /usr/libexec/openssh/sftp-server
 __sshd_defaults:
+  HostKey:
+    - /etc/ssh/ssh_host_rsa_key
   Protocol: 2
   SyslogFacility: AUTHPRIV
   PasswordAuthentication: yes
@@ -20,5 +22,3 @@ __sshd_defaults:
   Subsystem: "sftp {{ sshd_sftp_server }}"
 __sshd_os_supported: yes
 __sshd_sysconfig_supports_use_strong_rng: true
-sshd_hostkey_group: ssh_keys
-sshd_hostkey_mode: "0640"

@@ -1,0 +1,23 @@
+---
+- name: Setup
+  include_tasks: setup.yml
+
+- name: Create a temporary directory for backup files
+  tempfile:
+    state: directory
+  register: __sshd_test_backup
+  changed_when: False
+  when:
+    - sshd_test_backup_skip is not defined
+
+- name: Backup files
+  shell: >
+    if test -f {{ item }}; then
+      mkdir -p {{ __sshd_test_backup.path }}/$(dirname {{ item }});
+      cp {{ item }} {{ __sshd_test_backup.path }}/$(dirname {{ item }})
+    fi
+  changed_when: False
+  loop: "{{ __sshd_test_backup_files | d([]) }}"
+  when:
+    - __sshd_test_backup is defined
+    - __sshd_test_backup.path is defined

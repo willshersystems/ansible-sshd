@@ -1,0 +1,15 @@
+---
+- name: Make sure openssh is installed before creating backup
+  package:
+    name: openssh-server
+    state: present
+
+- name: Make sure openssh has runtime directory on debian
+  file:
+    path: /run/sshd
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  when:
+    - ansible_facts['os_family'] == 'Debian'

@@ -1,0 +1,35 @@
+---
+- name: Restore backed up files and remove what was not present
+  shell: >
+    if test -f {{ __sshd_test_backup.path }}/{{ item }}; then
+      cp {{ __sshd_test_backup.path }}/{{ item }} $(dirname {{ item }})
+    elif test -f {{ item }}; then
+      rm {{ item }}
+    fi
+  changed_when: False
+  loop: "{{ __sshd_test_backup_files | d([]) }}"
+  when:
+    - __sshd_test_backup is defined
+    - __sshd_test_backup.path is defined
+
+- name: Remove temporary directory for backup files
+  file:
+    path: "{{ __sshd_test_backup.path }}"
+    state: absent
+  changed_when: False
+  when:
+    - __sshd_test_backup is defined
+    - __sshd_test_backup.path is defined
+
+- name: Restart sshd service
+  service:
+    name: sshd
+    state: reloaded
+  changed_when: False
+  when:
+    - __sshd_test_backup is defined
+    - ansible_virtualization_type|default(None) != 'docker'
+    - ansible_virtualization_type|default(None) != 'podman'
+    - ansible_virtualization_type|default(None) != 'VirtualPC' # for Github Actions
+    - ansible_connection != 'chroot'
+    - ansible_os_family != 'AIX'

@@ -24,15 +24,18 @@ script:
   - wget https://raw.githubusercontent.com/ansible/galaxy/devel/galaxy/importer/linters/yamllint.yaml
   - "yamllint -c yamllint.yaml **/*.yml"
 
+  # Test 0.5: OS defaults: Travis images have heavily updated (even with invalid configuration options)
+  # sshd_config so it does not make sense to test OS defaults here
+
   # Test 1a: Run the role
   - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_default.yml --connection=local --become -v"
 
-  # Test 1b: Run the role through include
-  - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_default_include.yml --connection=local --become -v"
+  # Test 1b: Run the role through include (skipping backup)
+  - "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_default_include.yml -e sshd_test_backup_skip=yes --connection=local --become -v"
 
-  # Test 2: Run the role/playbook again, checking to make sure it's idempotent.
+  # Test 2: Run the role/playbook again, checking to make sure it's idempotent (skipping backup)
   - >
-    ansible-playbook -i tests/inventory tests/tests_default.yml --connection=local --become | grep -q 'changed=0.*failed=0'
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_default.yml --connection=local -e sshd_test_backup_skip=yes --become | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
 
@@ -78,3 +81,21 @@ script:
     ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_hostkeys_missing.yml --connection=local --become -v
     && (echo 'Missing hostkeys test: pass' && exit 0)
     || (echo 'Missing hostkeys test: fail' && exit 1)
+
+  # Test 10: Test sshd_enable has effect
+  - >
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_sshd_enable.yml --connection=local --become -v
+    && (echo 'Test sshd_enable: pass' && exit 0)
+    || (echo 'Test sshd_enable: fail' && exit 1)
+
+  # Test 11: Test variable precedence
+  - >
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_precedence.yml --connection=local --become -v
+    && (echo 'Variable precedence test: pass' && exit 0)
+    || (echo 'Variable precedence test: fail' && exit 1)
+
+  # Test 12: Verify backups are created
+  - >
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_backup.yml --connection=local --become -v
+    && (echo 'Backup test: pass' && exit 0)
+    || (echo 'Backup test: fail' && exit 1)
