@@ -273,6 +273,8 @@ for example:
             X11Forwarding: yes
 ```
 
+More example playbooks can be found in [`examples/`](examples/) directory.
+
 Template Generation
 -------------------
 
