@@ -1,0 +1,15 @@
+---
+- hosts: all
+  tasks:
+  - name: Configure sshd to prevent root and password login except from particular subnet
+    include_role:
+      name: ansible-sshd
+    vars:
+      sshd:
+        # root login and password login is enabled only from a particular subnet
+        PermitRootLogin: no
+        PasswordAuthentication: no
+        Match:
+        - Condition: "Address 192.0.2.0/24"
+          PermitRootLogin: yes
+          PasswordAuthentication: yes
