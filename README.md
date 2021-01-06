@@ -190,7 +190,7 @@ defaults. This is useful if the role is used in deployment stage to make sure
 the service is able to start on the first attempt. To disable this check, set
 this to empty list.
 
-* `sshd_hostkey_owner`, `sshd_hostkey_group`, `sshd_hostkey_group`
+* `sshd_hostkey_owner`, `sshd_hostkey_group`, `sshd_hostkey_mode`
 
 Use these variables to set the ownership and permissions for the host keys from
 the above list.
