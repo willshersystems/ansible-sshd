@@ -199,6 +199,12 @@ the above list.
 
 Default path to the sftp server binary.
 
+### Variables Exported by the Role
+
+* `sshd_has_run`
+
+This variable is set to *true* after the role was successfully executed.
+
 Dependencies
 ------------
 
