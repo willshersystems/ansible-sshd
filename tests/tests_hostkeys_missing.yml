@@ -40,7 +40,7 @@
   - name: Make sure the key was not created
     file:
       path: /tmp/missing_ssh_host_rsa_key
-      state: missing
+      state: absent
     register: key
     failed_when: key.changed
     tags: tests::verify
