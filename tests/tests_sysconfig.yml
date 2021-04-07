@@ -6,67 +6,77 @@
       - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
       - /etc/sysconfig/sshd
   tasks:
-  - name: "Backup configuration files"
-    include_tasks: tasks/backup.yml
+    - name: "Backup configuration files"
+      include_tasks: tasks/backup.yml
 
-  - name: Configure sshd
-    include_role:
-      name: ansible-sshd
-    vars:
-      sshd_sysconfig: true
-      sshd_sysconfig_override_crypto_policy: true
-      sshd_sysconfig_use_strong_rng: 32
+    - name: Configure sshd
+      include_role:
+        name: ansible-sshd
+      vars:
+        sshd_sysconfig: true
+        sshd_sysconfig_override_crypto_policy: true
+        sshd_sysconfig_use_strong_rng: 32
 
-  - name: Verify the options are correctly set
-    block:
-      - meta: flush_handlers
+    - name: Verify the options are correctly set
+      block:
+        - meta: flush_handlers
 
-      - name: Print current configuration file
-        slurp:
-          src: /etc/sysconfig/sshd
-        register: config
+        - name: Print current configuration file
+          slurp:
+            src: /etc/sysconfig/sshd
+          register: config
 
-      - name: Evaluate sysconfig similarly as systemd
-        shell: |
-          source /etc/sysconfig/sshd
-          echo "CP=|$CRYPTO_POLICY|"
-          echo "RNG=|$SSH_USE_STRONG_RNG|"
-        register: evaluation
+        - name: Evaluate sysconfig similarly as systemd
+          shell: |
+            set -eu
+            if set -o | grep pipefail 2>&1 /dev/null ; then
+              set -o pipefail
+            fi
+            source /etc/sysconfig/sshd
+            echo "CP=|${CRYPTO_POLICY:-}|"
+            echo "RNG=|${SSH_USE_STRONG_RNG:-}|"
+          register: evaluation
+          changed_when: false
 
-      - name: Evaluate sysconfig similarly as systemd on RHEL 8
-        shell: |
-          source /etc/crypto-policies/back-ends/opensshserver.config
-          source /etc/sysconfig/sshd
-          echo "CP=|$CRYPTO_POLICY|"
-          echo "RNG=|$SSH_USE_STRONG_RNG|"
-        register: evaluation8
-        when:
-          - ansible_facts['os_family'] == "RedHat"
-          - ansible_facts['distribution_major_version'] == "8"
+        - name: Evaluate sysconfig similarly as systemd on RHEL 8
+          shell: |
+            set -eu
+            if set -o | grep pipefail 2>&1 /dev/null ; then
+              set -o pipefail
+            fi
+            source /etc/crypto-policies/back-ends/opensshserver.config
+            source /etc/sysconfig/sshd
+            echo "CP=|${CRYPTO_POLICY:-}|"
+            echo "RNG=|${SSH_USE_STRONG_RNG:-}|"
+          register: evaluation8
+          changed_when: false
+          when:
+            - ansible_facts['os_family'] == "RedHat"
+            - ansible_facts['distribution_major_version'] == "8"
 
-      - name: Check the crypto policies is overridden in RHEL 8
-        assert:
-          that:
-            - "'CRYPTO_POLICY=' in config.content | b64decode"
-            # these are string variants in default configuration file
-            - "'# CRYPTO_POLICY=' not in config.content | b64decode"
-            - "'CP=||' in evaluation8.stdout"
-        when:
-          - ansible_facts['os_family'] == "RedHat"
-          - ansible_facts['distribution_major_version'] == "8"
+        - name: Check the crypto policies is overridden in RHEL 8
+          assert:
+            that:
+              - "'CRYPTO_POLICY=' in config.content | b64decode"
+              # these are string variants in default configuration file
+              - "'# CRYPTO_POLICY=' not in config.content | b64decode"
+              - "'CP=||' in evaluation8.stdout"
+          when:
+            - ansible_facts['os_family'] == "RedHat"
+            - ansible_facts['distribution_major_version'] == "8"
 
-      - name: Check the RNG options are in configuration file
-        assert:
-          that:
-            - "'SSH_USE_STRONG_RNG=32' in config.content | b64decode"
-            # these are string variants in default configuration file
-            - "'SSH_USE_STRONG_RNG=0' not in config.content | b64decode"
-            - "'# SSH_USE_STRONG_RNG=1' not in config.content | b64decode"
-            - "'RNG=|32|' in evaluation.stdout"
-    tags: tests::verify
-    when:
-      - ansible_facts['os_family'] == "RedHat"
-      - ansible_facts['distribution'] != 'Fedora'
+        - name: Check the RNG options are in configuration file
+          assert:
+            that:
+              - "'SSH_USE_STRONG_RNG=32' in config.content | b64decode"
+              # these are string variants in default configuration file
+              - "'SSH_USE_STRONG_RNG=0' not in config.content | b64decode"
+              - "'# SSH_USE_STRONG_RNG=1' not in config.content | b64decode"
+              - "'RNG=|32|' in evaluation.stdout"
+      tags: tests::verify
+      when:
+        - ansible_facts['os_family'] == "RedHat"
+        - ansible_facts['distribution'] != 'Fedora'
 
-  - name: "Restore configuration files"
-    include_tasks: tasks/restore.yml
+    - name: "Restore configuration files"
+      include_tasks: tasks/restore.yml
