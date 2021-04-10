@@ -29,10 +29,6 @@
       command: sshd -T
       register: runtime_after
       changed_when: false
-    - debug:
-        var: ansible_facts['distribution']
-    - debug:
-        var: ansible_facts['distribution_major_version']
     - name: Check that the effective configuration did not change from OS defaults
       assert:
         that:

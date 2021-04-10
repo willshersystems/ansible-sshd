@@ -13,7 +13,7 @@
 - name: Backup files
   shell: |
     if set -o | grep pipefail 2>&1 /dev/null ; then
-    set -o pipefail
+      set -o pipefail
     fi
     set -eu
     if test -f {{ item }}; then
