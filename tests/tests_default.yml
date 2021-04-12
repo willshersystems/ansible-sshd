@@ -5,12 +5,12 @@
       - /etc/ssh/sshd_config
       - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
   tasks:
-  - name: "Backup configuration files"
-    include_tasks: tasks/backup.yml
+    - name: "Backup configuration files"
+      include_tasks: tasks/backup.yml
 
 - hosts: all
   roles:
-  - ansible-sshd
+    - ansible-sshd
 
 - hosts: all
   vars:
@@ -18,5 +18,5 @@
       - /etc/ssh/sshd_config
       - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
   tasks:
-  - name: "Restore configuration files"
-    include_tasks: tasks/restore.yml
+    - name: "Restore configuration files"
+      include_tasks: tasks/restore.yml

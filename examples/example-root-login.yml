@@ -10,6 +10,6 @@
         PermitRootLogin: no
         PasswordAuthentication: no
         Match:
-        - Condition: "Address 192.0.2.0/24"
-          PermitRootLogin: yes
-          PasswordAuthentication: yes
+          - Condition: "Address 192.0.2.0/24"
+            PermitRootLogin: yes
+            PasswordAuthentication: yes

@@ -50,14 +50,19 @@
       {% endif %}
   block:
     - name: Make sure hostkeys are available
-      shell: >
+      shell: |
+        set -eu
+        if set -o | grep pipefail 2>&1 /dev/null ; then
+          set -o pipefail
+        fi
         {% if sshd_sysconfig %}
-          source /etc/sysconfig/sshd;
+          source /etc/sysconfig/sshd
         {% endif %}
         ssh-keygen -q -t {{ item | regex_search('(rsa|dsa|ecdsa|ed25519)') }} -f {{ item }} -C '' -N ''
       args:
         creates: "{{ item }}"
       loop: "{{ __sshd_verify_hostkeys | from_json | list }}"
+      changed_when: false
 
     - name: Make sure private hostkeys have expected permissions
       file:
@@ -75,14 +80,15 @@
       tempfile:
         state: directory
       register: sshd_test_hostkey
-      changed_when: False
+      changed_when: false
       when:
         - __sshd_hostkeys_from_config | from_json == []
         - sshd_config_file != "/etc/ssh/sshd_config"
 
     - name: Generate temporary hostkey
-      shell: "ssh-keygen -q -t rsa -f {{ sshd_test_hostkey.path }}/rsa_key -C '' -N ''"
-      changed_when: False
+      command: >
+        ssh-keygen -q -t rsa -f '{{ sshd_test_hostkey.path }}/rsa_key' -C '' -N ''
+      changed_when: false
       when: sshd_test_hostkey.path is defined
 
     - name: Make sure sshd runtime directory is present
@@ -119,7 +125,7 @@
       file:
         path: "{{ sshd_test_hostkey.path }}"
         state: absent
-      changed_when: False
+      changed_when: false
       when: sshd_test_hostkey.path is defined
 
 - name: Install systemd service files
@@ -159,7 +165,7 @@
     - sshd_manage_service|bool
     - ansible_virtualization_type|default(None) != 'docker'
     - ansible_virtualization_type|default(None) != 'podman'
-    - ansible_virtualization_type|default(None) != 'VirtualPC' # for Github Actions
+    - ansible_virtualization_type|default(None) != 'VirtualPC'  # for Github Actions
     - ansible_connection != 'chroot'
 
 # Due to ansible bug 21026, cannot use service module on RHEL 7

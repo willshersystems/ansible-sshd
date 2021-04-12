@@ -6,11 +6,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+      - name: checkout PR
+        uses: actions/checkout@v2
 
-    - name: ansible check with centos:7
-      uses: roles-ansible/check-ansible-centos-centos7-action@master
-      with:
-        group: local
-        hosts: localhost
-        targets: "tests/*.yml"
+      - name: ansible check with centos:7
+        uses: roles-ansible/check-ansible-centos-centos7-action@master
+        with:
+          group: local
+          hosts: localhost
+          targets: "tests/*.yml"
