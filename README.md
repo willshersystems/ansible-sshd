@@ -31,8 +31,8 @@ Tested on:
 * Ubuntu precise, trusty, xenial, bionic, focal
 * Debian wheezy, jessie, stretch, buster
 * FreeBSD 10.1
-* EL 6, 7, 8 derived distributions
-* Fedora 31, 32, 33
+* EL 6, 7, 8, 9 derived distributions
+* Fedora 31, 32, 33, 34
 * OpenBSD 6.0
 * AIX 7.1, 7.2
 

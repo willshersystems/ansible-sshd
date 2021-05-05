@@ -27,11 +27,10 @@ galaxy_info:
         - 6
         - 7
         - 8
+        - 9
     - name: Fedora
       versions:
-        - 31
-        - 32
-        - 33
+        - all
     - name: OpenBSD
       versions:
         - 6.0
