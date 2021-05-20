@@ -99,3 +99,9 @@ script:
     ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_backup.yml --connection=local --become -v
     && (echo 'Backup test: pass' && exit 0)
     || (echo 'Backup test: fail' && exit 1)
+
+  # Test 13: Verify configuration append
+  - >
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_namespace_append.yml --connection=local --become -v
+    && (echo 'Append test: pass' && exit 0)
+    || (echo 'Append test: fail' && exit 1)
