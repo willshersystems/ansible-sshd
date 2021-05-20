@@ -101,9 +101,9 @@
       when:
         - __sshd_runtime_directory | d(false) | bool
 
-    - name: Create the configuration file
+    - name: Create the complete configuration file
       template:
-        src: sshd_config.j2
+        src: sshd_config_snippet.j2
         dest: "{{ sshd_config_file }}"
         owner: "{{ sshd_config_owner }}"
         group: "{{ sshd_config_group }}"
@@ -116,6 +116,29 @@
           {% endif %}
         backup: "{{ sshd_backup }}"
       notify: reload_sshd
+      when: sshd_namespace_append is none
+
+    - name: Update configuration file snippet
+      blockinfile:
+        path: "{{ sshd_config_file }}"
+        owner: "{{ sshd_config_owner }}"
+        group: "{{ sshd_config_group }}"
+        mode: "{{ sshd_config_mode }}"
+        block: |
+          Match all
+          {{ lookup('template', 'sshd_config_snippet.j2') }}
+        create: yes
+        marker: "# {mark} sshd system role managed block: namespace {{ sshd_namespace_append }}"
+        validate: >-
+          {% if sshd_test_hostkey is defined and sshd_test_hostkey.path is defined %}
+            {{ sshd_binary }} -t -f %s -h {{ sshd_test_hostkey.path }}/rsa_key
+          {% else %}
+            {{ sshd_binary }} -t -f %s
+          {% endif %}
+        backup: "{{ sshd_backup }}"
+      notify: reload_sshd
+      when: sshd_namespace_append is not none
+
   rescue:
     - name: re-raise the error
       fail:

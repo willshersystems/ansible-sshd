@@ -1,0 +1,74 @@
+---
+- hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+  tasks:
+    - name: "Backup configuration files"
+      include_tasks: tasks/backup.yml
+
+    - name: Append configuration block to default configuration file
+      include_role:
+        name: ansible-sshd
+      vars:
+        sshd_config_file: /etc/ssh/sshd_config
+        sshd_skip_defaults: true
+        sshd_namespace_append: nm1
+        sshd:
+          AcceptEnv: EDITOR
+          PasswordAuthentication: yes
+          Match:
+            Condition: user root
+            AllowAgentForwarding: no
+
+    - name: Append second configuration block to default configuration file
+      include_role:
+        name: ansible-sshd
+      vars:
+        sshd_config_file: /etc/ssh/sshd_config
+        sshd_skip_defaults: true
+        sshd_namespace_append: nm2
+        sshd:
+          AcceptEnv: LS_COLORS
+          PasswordAuthentication: no
+          Match:
+            Condition: Address 127.0.0.1
+            AllowTcpForwarding: no
+
+    - name: Verify the options are correctly set
+      block:
+        - meta: flush_handlers
+
+        - name: Print current configuration file
+          slurp:
+            src: /etc/ssh/sshd_config
+          register: config
+
+        - name: List effective configuration using sshd -T
+          command: sshd -T -Cuser=root,host=localhost,addr=127.0.0.1,
+          register: runtime
+
+        - name: Check content of configuration file
+          assert:
+            that:
+              - "'AcceptEnv EDITOR' in config.content | b64decode"
+              - "'PasswordAuthentication yes' in config.content | b64decode"
+              - "'Match user root' in config.content | b64decode"
+              - "'AllowAgentForwarding no' in config.content | b64decode"
+              - "'AcceptEnv LS_COLORS' in config.content | b64decode"
+              - "'PasswordAuthentication no' in config.content | b64decode"
+              - "'Match Address 127.0.0.1' in config.content | b64decode"
+              - "'AllowTcpForwarding no' in config.content | b64decode"
+
+        - name: Check the configuration values are effective
+          # note, the options are in lower-case here
+          assert:
+            that:
+              - "'acceptenv EDITOR' in runtime.stdout"
+              - "'acceptenv LS_COLORS' in runtime.stdout"
+              - "'passwordauthentication yes' in runtime.stdout"
+
+      tags: tests::verify
+
+    - name: "Restore configuration files"
+      include_tasks: tasks/restore.yml

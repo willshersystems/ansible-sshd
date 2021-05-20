@@ -65,6 +65,10 @@ sshd_hostkey_owner: root
 sshd_hostkey_group: root
 sshd_hostkey_mode: "0600"
 
+# instead of replacing the whole configuration file, just append a specified
+# snippet
+sshd_namespace_append: null
+
 ### These variables are used by role internals and should not be used.
 __sshd_defaults: {}
 __sshd_os_supported: no
