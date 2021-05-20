@@ -1,8 +1,8 @@
 {% if sshd['Match'] is defined %}
-{{ match_block(sshd['Match']) -}}
+{{   match_iterate_block(sshd['Match']) -}}
 {% endif %}
 {% if sshd_match is defined %}
-{{ match_block(sshd_match) -}}
+{{   match_iterate_block(sshd_match) -}}
 {% endif %}
 {% if sshd_match_1 is defined %}
 {{ match_block(sshd_match_1) -}}
