@@ -1,6 +1,6 @@
 {% macro render_option(key,value,indent=false) %}
 {%   if value is defined %}
-{%     if indent == true %}  {% endif %}
+{%     if indent %}  {% endif %}
 {%     if value is sameas true %}
 {{ key }} yes
 {%     elif value is sameas false %}
@@ -20,7 +20,7 @@
 {%     set value = override %}
 {%   elif sshd[key] is defined %}
 {%     set value = sshd[key] %}
-{%   elif __sshd_defaults[key] is defined and sshd_skip_defaults != true %}
+{%   elif __sshd_defaults[key] is defined and not sshd_skip_defaults %}
 {%     set value = __sshd_defaults[key] %}
 {%   endif %}
 {{ render_option(key,value) -}}
