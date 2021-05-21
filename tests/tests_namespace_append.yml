@@ -44,30 +44,49 @@
             src: /etc/ssh/sshd_config
           register: config
 
-        - name: List effective configuration using sshd -T
-          command: sshd -T -Cuser=root,host=localhost,addr=127.0.0.1,
+        - name: List effective configuration using sshd -T (matching)
+          command: sshd -T -Cuser=root,host=localhost,addr=127.0.0.1
           register: runtime
+
+        - name: List effective configuration using sshd -T (non-matching)
+          command: sshd -T -Cuser=nobody,host=example.com,addr=127.0.0.2
+          register: nonmatching
 
         - name: Check content of configuration file
           assert:
             that:
               - "'AcceptEnv EDITOR' in config.content | b64decode"
+              - "config.content | b64decode | regex_search('Match all\\s*AcceptEnv EDITOR')"
               - "'PasswordAuthentication yes' in config.content | b64decode"
               - "'Match user root' in config.content | b64decode"
               - "'AllowAgentForwarding no' in config.content | b64decode"
+              - "config.content | b64decode | regex_search('Match user root\\s*AllowAgentForwarding no')"
               - "'AcceptEnv LS_COLORS' in config.content | b64decode"
+              - "config.content | b64decode | regex_search('Match all\\s*AcceptEnv LS_COLORS')"
               - "'PasswordAuthentication no' in config.content | b64decode"
               - "'Match Address 127.0.0.1' in config.content | b64decode"
               - "'AllowTcpForwarding no' in config.content | b64decode"
+              - "config.content | b64decode | regex_search('Match Address 127.0.0.1\\s*AllowTcpForwarding no')"
 
         - name: Check the configuration values are effective
           # note, the options are in lower-case here
           assert:
             that:
               - "'acceptenv EDITOR' in runtime.stdout"
+              - "'allowagentforwarding no' in runtime.stdout"
               - "'acceptenv LS_COLORS' in runtime.stdout"
+              - "'allowtcpforwarding no' in runtime.stdout"
               - "'passwordauthentication yes' in runtime.stdout"
 
+        - name: Check the configuration values are not effective for non-matching connection
+          # note, the options are in lower-case here
+          assert:
+            that:
+              - "'acceptenv EDITOR' in nonmatching.stdout"
+              - "'allowAgentforwarding no' not in nonmatching.stdout"
+              - "'acceptenv LS_COLORS' in nonmatching.stdout"
+              - "'allowtcpforwarding no' not in nonmatching.stdout"
+              - "'passwordauthentication yes' in nonmatching.stdout"
       tags: tests::verify
 
     - name: "Restore configuration files"
