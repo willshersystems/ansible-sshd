@@ -159,18 +159,23 @@ This is useful mostly when generating configuration snippets to Include.
 * `sshd_namespace_append`
 
 By default (*null*), the role defines whole content of the configuration file
-(with potential system defaults). To allow this role to be invoked from other
-roles or from multiple places in a single playbok on systems that do not
-support drop-in directory, we can define namespaces, that will allow us place
-configuration snippets idempotently into a single configuration file. The only
-requirement for these instances is to have different namespace name (this
-variable). Other limitation of openssh configuration file such as that only the
-first option specified in a configuration file is effective still apply.
+including system defaults. You can use this variable to invoke this role from
+other roles or from multiple places in a single playbook on systems that do not
+support drop-in directory.
 
-Technically, the snippets are placed in `Match all` blocks (unless they contain
-other match block) to make sure they are applied regardless the previous match
-blocks. This allows to configure any non-conflicting options from different
-roles invocations.
+When this variable is set, the role places the configuration that you specify
+to configuration snippets in a existing configuration file under the given
+namespace. You need to select different namespaces when invoking the role
+several times.
+
+Note that limitations of the openssh configuration file still apply. For
+example, only the first option specified in a configuration file is effective
+for most of the variables.
+
+Technically, the role places snippets in `Match all` blocks, unless they contain
+other match blocks, to ensure they are applied regardless of the previous match
+blocks in the existing configuration file. This allows configuring any
+non-conflicting options from different roles invocations.
 
 
 ### Secondary role variables
