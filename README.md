@@ -53,7 +53,8 @@ If set to *false*, the role will be completely disabled. Defaults to *true*.
 
 If set to *true*, don't apply default values. This means that you must have a
 complete set of configuration defaults via either the `sshd` dict, or
-`sshd_Key` variables. Defaults to *false*.
+`sshd_Key` variables. Defaults to *false* unless `sshd_namespace_append` is
+set.
 
 * `sshd_manage_service`
 
@@ -161,7 +162,8 @@ This is useful mostly when generating configuration snippets to Include.
 By default (*null*), the role defines whole content of the configuration file
 including system defaults. You can use this variable to invoke this role from
 other roles or from multiple places in a single playbook on systems that do not
-support drop-in directory.
+support drop-in directory. The `sshd_skip_defaults` is ignored and no system
+defaults are used in this case.
 
 When this variable is set, the role places the configuration that you specify
 to configuration snippets in a existing configuration file under the given
@@ -300,6 +302,33 @@ for example:
           - Condition: "Group xusers"
             X11Forwarding: yes
 ```
+
+You can just append a configuration snippet with the `sshd_namespace_append`
+option:
+```
+---
+- hosts: all
+  tasks:
+  - name: Configure sshd to accept some useful environment variables
+    include_role:
+      name: ansible-sshd
+    vars:
+      sshd_namespace_append: accept-env
+      sshd:
+        # there are some handy environment variables to accept
+        AcceptEnv:
+          LANG
+          LS_COLORS
+          EDITOR
+```
+The following snippet will be appended to the default configuration file:
+```
+# BEGIN sshd system role managed block: namespace accept-env
+Match all
+  AcceptEnv LANG LS_COLORS EDITOR
+# END sshd system role managed block: namespace accept-env
+```
+
 
 More example playbooks can be found in [`examples/`](examples/) directory.
 

@@ -6,7 +6,6 @@
       name: ansible-sshd
     vars:
       sshd_namespace_append: accept-env
-      sshd_skip_defaults: true
       sshd:
         # there are some handy environment variables to accept
         AcceptEnv:

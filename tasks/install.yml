@@ -119,6 +119,8 @@
       when: sshd_namespace_append is none
 
     - name: Update configuration file snippet
+      vars:
+        sshd_skip_defaults: true
       blockinfile:
         path: "{{ sshd_config_file }}"
         owner: "{{ sshd_config_owner }}"

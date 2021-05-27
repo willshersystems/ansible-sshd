@@ -12,7 +12,6 @@
         name: ansible-sshd
       vars:
         sshd_config_file: /etc/ssh/sshd_config
-        sshd_skip_defaults: true
         sshd_namespace_append: nm1
         sshd:
           AcceptEnv: EDITOR
@@ -26,7 +25,6 @@
         name: ansible-sshd
       vars:
         sshd_config_file: /etc/ssh/sshd_config
-        sshd_skip_defaults: true
         sshd_namespace_append: nm2
         sshd:
           AcceptEnv: LS_COLORS
