@@ -1,6 +1,6 @@
 ---
-sshd_config_group: wheel
-sshd_config_mode: "0644"
+__sshd_config_group: wheel
+__sshd_config_mode: "0644"
 sshd_sftp_server: /usr/libexec/sftp-server
 __sshd_defaults:
   Subsystem: "sftp {{ sshd_sftp_server }}"
