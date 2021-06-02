@@ -179,31 +179,10 @@ other match blocks, to ensure they are applied regardless of the previous match
 blocks in the existing configuration file. This allows configuring any
 non-conflicting options from different roles invocations.
 
-
-### Secondary role variables
-
-These variables are used by the role internals and can be used to override the
-defaults that correspond to each supported platform.
-
-* `sshd_packages`
-
-Use this variable to override the default list of packages to install.
-
 * `sshd_config_owner`, `sshd_config_group`, `sshd_config_mode`
 
 Use these variables to set the ownership and permissions for the openssh config
 file that this role produces.
-
-* `sshd_binary`
-
-The path to the openssh executable
-
-* `sshd_service`
-
-The name of the openssh service. By default, this variable contains the name of
-the ssh service that the target platform uses. But it can also be used to set
-the name of the custom ssh service when the `sshd_install_service` variable is
-used.
 
 * `sshd_verify_hostkeys`
 
@@ -218,6 +197,26 @@ this to empty list.
 
 Use these variables to set the ownership and permissions for the host keys from
 the above list.
+
+### Secondary role variables
+
+These variables are used by the role internals and can be used to override the
+defaults that correspond to each supported platform.
+
+* `sshd_packages`
+
+Use this variable to override the default list of packages to install.
+
+* `sshd_binary`
+
+The path to the openssh executable
+
+* `sshd_service`
+
+The name of the openssh service. By default, this variable contains the name of
+the ssh service that the target platform uses. But it can also be used to set
+the name of the custom ssh service when the `sshd_install_service` variable is
+used.
 
 * `sshd_sftp_server`
 
