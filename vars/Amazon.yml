@@ -1,5 +1,5 @@
 ---
-sshd_config_mode: '0644'
+__sshd_config_mode: '0644'
 sshd_packages:
   - openssh
   - openssh-server

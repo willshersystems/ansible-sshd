@@ -2,7 +2,7 @@
 sshd_service: ssh
 sshd_packages:
   - openssh-server
-sshd_config_mode: "0644"
+__sshd_config_mode: "0644"
 __sshd_defaults:
   Port: 22
   Protocol: 2

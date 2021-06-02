@@ -3,7 +3,7 @@ sshd_service: ssh
 sshd_packages:
   - openssh-server
   - openssh-sftp-server
-sshd_config_mode: "0644"
+__sshd_config_mode: "0644"
 __sshd_defaults:
   ChallengeResponseAuthentication: no
   UsePAM: yes
