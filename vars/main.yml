@@ -1,0 +1,7 @@
+__sshd_config_file: "/etc/ssh/sshd_config"
+__sshd_config_owner: "root"
+__sshd_config_group: "root"
+__sshd_config_mode: "0600"
+__sshd_hostkey_owner: "root"
+__sshd_hostkey_group: "root"
+__sshd_hostkey_mode: "0600"

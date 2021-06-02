@@ -43,15 +43,15 @@ sshd: {}
 
 # The path to sshd_config file. This is useful when creating an included
 # configuration file snippet or configuring second sshd service
-sshd_config_file: "{{ __sshd_config_file | default('/etc/ssh/sshd_config') }}"
+sshd_config_file: "{{ __sshd_config_file }}"
 
 ### VARS DEFAULTS
 ### The following are defaults for OS specific configuration in var files in
 ### this role. They should not be set directly by role users.
 sshd_packages: []
-sshd_config_owner: "{{ __sshd_config_owner | default('root') }}"
-sshd_config_group: "{{ __sshd_config_group | default('root') }}"
-sshd_config_mode: "{{ __sshd_config_mode | default('0600') }}"
+sshd_config_owner: "{{ __sshd_config_owner }}"
+sshd_config_group: "{{ __sshd_config_group }}"
+sshd_config_mode: "{{ __sshd_config_mode }}"
 sshd_binary: /usr/sbin/sshd
 sshd_service: sshd
 sshd_sftp_server: /usr/lib/openssh/sftp-server
@@ -61,9 +61,9 @@ sshd_sftp_server: /usr/lib/openssh/sftp-server
 # configuration or restarting), we make sure the keys exist and have correct
 # permissions. To disable this check, set sshd_verify_hostkeys to false
 sshd_verify_hostkeys: "auto"
-sshd_hostkey_owner: "{{ __sshd_hostkey_owner | default('root') }}"
-sshd_hostkey_group: "{{ __sshd_hostkey_group | default('root') }}"
-sshd_hostkey_mode: "{{ __sshd_hostkey_mode | default('0600') }}"
+sshd_hostkey_owner: "{{ __sshd_hostkey_owner }}"
+sshd_hostkey_group: "{{ __sshd_hostkey_group }}"
+sshd_hostkey_mode: "{{ __sshd_hostkey_mode }}"
 
 # instead of replacing the whole configuration file, just append a specified
 # snippet
