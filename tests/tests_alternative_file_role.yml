@@ -22,43 +22,56 @@
         create_home: no
         shell: /sbin/nologin
 
-    - name: Configure alternative sshd_config file
-      include_role:
-        name: ansible-sshd
-      vars:
-        # just anything -- will not get processed by sshd
-        sshd_config_file: /etc/ssh/sshd_config_custom
-        sshd_config_owner: "nobody"
-        sshd_config_group: "nobody"
-        sshd_config_mode: "660"
-        sshd_skip_defaults: true
-        sshd:
-          AcceptEnv: LANG
-          Banner: /etc/issue
-          Ciphers: aes256-ctr
-        sshd_Compression: no
-    - name: Configure second alternative sshd_config file
-      include_role:
-        name: ansible-sshd
-      vars:
-        # just anything -- will not get processed by sshd
-        sshd_config_file: /etc/ssh/sshd_config_custom_second
-        sshd_skip_defaults: true
-        sshd:
-          Banner: /etc/issue2
-          Ciphers: aes128-ctr
-        sshd_MaxStartups: 100
-    - name: Now configure the main sshd_config file
-      include_role:
-        name: ansible-sshd
-      vars:
-        sshd:
-          Banner: /etc/issue
-          Ciphers: aes192-ctr
-          HostKey:
-            - /tmp/ssh_host_ecdsa_key
-        sshd_PasswordAuthentication: no
+# Configure alternative sshd_config file
+- hosts: all
+  roles:
+    - ansible-sshd
+  vars:
+    # just anything -- will not get processed by sshd
+    sshd_config_file: /etc/ssh/sshd_config_custom
+    sshd_config_owner: "nobody"
+    sshd_config_group: "nobody"
+    sshd_config_mode: "660"
+    sshd_skip_defaults: true
+    sshd:
+      AcceptEnv: LANG
+      Banner: /etc/issue
+      Ciphers: aes256-ctr
+    sshd_Compression: no
 
+# Configure second alternative sshd_config file
+- hosts: all
+  roles:
+    - ansible-sshd
+  vars:
+    # just anything -- will not get processed by sshd
+    sshd_config_file: /etc/ssh/sshd_config_custom_second
+    sshd_skip_defaults: true
+    sshd:
+      Banner: /etc/issue2
+      Ciphers: aes128-ctr
+    sshd_MaxStartups: 100
+
+# Now configure the main sshd_config file
+- hosts: all
+  roles:
+    - ansible-sshd
+  vars:
+    sshd:
+      Banner: /etc/issue
+      Ciphers: aes192-ctr
+      HostKey:
+        - /tmp/ssh_host_ecdsa_key
+    sshd_PasswordAuthentication: no
+
+- hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+      - /etc/ssh/sshd_config_custom
+      - /etc/ssh/sshd_config_custom_second
+  tasks:
     - name: Verify the options are correctly set
       vars:
         main_sshd_config: >-

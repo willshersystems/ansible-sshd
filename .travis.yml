@@ -51,12 +51,19 @@ script:
     && (echo 'Uncommon configuration test: pass' && exit 0)
     || (echo 'Uncommon configuration test: fail' && exit 1)
 
-  # Test 5: Make sure we can modify other files, for example for inclusion
+  # Test 5a: Make sure we can modify other files, for example for inclusion
   # in the main sshd_config or second sshd service
   - >
     ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_alternative_file.yml --connection=local --become -v
     && (echo 'Alternative configuration file test: pass' && exit 0)
     || (echo 'Alternative configuration file test: fail' && exit 1)
+
+  # Test 5b: Make sure we can modify other files, for example for inclusion
+  # in the main sshd_config or second sshd service using the old invocation
+  - >
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_alternative_file_role.yml --connection=local --become -v
+    && (echo 'Alternative configuration file role test: pass' && exit 0)
+    || (echo 'Alternative configuration file role test: fail' && exit 1)
 
   # Test 6: Test match blocks generators
   - >
