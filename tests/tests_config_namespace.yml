@@ -7,12 +7,12 @@
     - name: "Backup configuration files"
       include_tasks: tasks/backup.yml
 
-    - name: Append configuration block to default configuration file
+    - name: Add configuration block to default configuration file
       include_role:
         name: ansible-sshd
       vars:
         sshd_config_file: /etc/ssh/sshd_config
-        sshd_namespace_append: nm1
+        sshd_config_namespace: nm1
         sshd:
           AcceptEnv: EDITOR
           PasswordAuthentication: yes
@@ -20,12 +20,12 @@
             Condition: user root
             AllowAgentForwarding: no
 
-    - name: Append second configuration block to default configuration file
+    - name: Add second configuration block to default configuration file
       include_role:
         name: ansible-sshd
       vars:
         sshd_config_file: /etc/ssh/sshd_config
-        sshd_namespace_append: nm2
+        sshd_config_namespace: nm2
         sshd:
           AcceptEnv: LS_COLORS
           PasswordAuthentication: no

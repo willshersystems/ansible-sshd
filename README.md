@@ -53,7 +53,7 @@ If set to *false*, the role will be completely disabled. Defaults to *true*.
 
 If set to *true*, don't apply default values. This means that you must have a
 complete set of configuration defaults via either the `sshd` dict, or
-`sshd_Key` variables. Defaults to *false* unless `sshd_namespace_append` is
+`sshd_Key` variables. Defaults to *false* unless `sshd_config_namespace` is
 set.
 
 * `sshd_manage_service`
@@ -157,7 +157,7 @@ if the system does not have hardware random number generator.
 The path where the openssh configuration produced by this role should be saved.
 This is useful mostly when generating configuration snippets to Include.
 
-* `sshd_namespace_append`
+* `sshd_config_namespace`
 
 By default (*null*), the role defines whole content of the configuration file
 including system defaults. You can use this variable to invoke this role from
@@ -302,7 +302,7 @@ for example:
             X11Forwarding: yes
 ```
 
-You can just append a configuration snippet with the `sshd_namespace_append`
+You can just add a configuration snippet with the `sshd_config_namespace`
 option:
 ```
 ---
@@ -312,7 +312,7 @@ option:
     include_role:
       name: ansible-sshd
     vars:
-      sshd_namespace_append: accept-env
+      sshd_config_namespace: accept-env
       sshd:
         # there are some handy environment variables to accept
         AcceptEnv:
@@ -320,7 +320,8 @@ option:
           LS_COLORS
           EDITOR
 ```
-The following snippet will be appended to the default configuration file:
+The following snippet will be added to the default configuration file
+(if not yet present):
 ```
 # BEGIN sshd system role managed block: namespace accept-env
 Match all
