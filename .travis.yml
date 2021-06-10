@@ -113,8 +113,8 @@ script:
     && (echo 'Backup test: pass' && exit 0)
     || (echo 'Backup test: fail' && exit 1)
 
-  # Test 13: Verify configuration append
+  # Test 13: Verify configuration namespace
   - >
-    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_namespace_append.yml --connection=local --become -v
-    && (echo 'Append test: pass' && exit 0)
-    || (echo 'Append test: fail' && exit 1)
+    ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_config_namespace.yml --connection=local --become -v
+    && (echo 'Namespace test: pass' && exit 0)
+    || (echo 'Namespace test: fail' && exit 1)

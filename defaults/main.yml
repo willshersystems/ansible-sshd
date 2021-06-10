@@ -65,9 +65,9 @@ sshd_hostkey_owner: "{{ __sshd_hostkey_owner }}"
 sshd_hostkey_group: "{{ __sshd_hostkey_group }}"
 sshd_hostkey_mode: "{{ __sshd_hostkey_mode }}"
 
-# instead of replacing the whole configuration file, just append a specified
+# instead of replacing the whole configuration file, just add a specified
 # snippet
-sshd_namespace_append: null
+sshd_config_namespace: null
 
 ### These variables are used by role internals and should not be used.
 __sshd_defaults: {}
