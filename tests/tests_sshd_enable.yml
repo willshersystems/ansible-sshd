@@ -4,6 +4,8 @@
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
       - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+      - /etc/ssh/ssh_host_rsa_key
+      - /etc/ssh/ssh_host_rsa_key.pub
   tasks:
     - name: "Backup configuration files"
       include_tasks: tasks/backup.yml

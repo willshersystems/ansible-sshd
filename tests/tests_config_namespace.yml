@@ -3,6 +3,8 @@
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
+      - /etc/ssh/ssh_host_rsa_key
+      - /etc/ssh/ssh_host_rsa_key.pub
   tasks:
     - name: "Backup configuration files"
       include_tasks: tasks/backup.yml
@@ -43,7 +45,15 @@
           register: config
 
         - name: List effective configuration using sshd -T (matching)
-          command: sshd -T -Cuser=root,host=localhost,addr=127.0.0.1
+          shell: |
+            set -eu
+            if set -o | grep pipefail 2>&1 /dev/null ; then
+              set -o pipefail
+            fi
+            if test ! -f /etc/ssh/ssh_host_rsa_key; then
+              ssh-keygen -q -t rsa -f /etc/ssh/ssh_host_rsa_key -C '' -N ''
+            fi
+            sshd -T -Cuser=root,host=localhost,addr=127.0.0.1
           register: runtime
 
         - name: List effective configuration using sshd -T (non-matching)
