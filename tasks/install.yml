@@ -83,7 +83,6 @@
       changed_when: false
       when:
         - __sshd_hostkeys_from_config | from_json == []
-        - sshd_config_file != "/etc/ssh/sshd_config"
 
     - name: Generate temporary hostkey
       command: >
