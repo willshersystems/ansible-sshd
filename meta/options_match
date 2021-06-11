@@ -17,12 +17,15 @@ ClientAliveCountMax
 ClientAliveInterval
 DenyGroups
 DenyUsers
+DisableForwarding
 ForceCommand
 GatewayPorts
 GSSAPIAuthentication
 HostbasedAcceptedKeyTypes
+HostbasedAcceptedAlgorithms
 HostbasedAuthentication
 HostbasedUsesNameFromPacketOnly
+IgnoreRhosts
 Include
 IPQoS
 KbdInteractiveAuthentication
@@ -39,6 +42,7 @@ PermitTTY
 PermitTunnel
 PermitUserRC
 PubkeyAcceptedKeyTypes
+PubkeyAcceptedAlgorithms
 PubkeyAuthentication
 RDomain
 RekeyLimit
