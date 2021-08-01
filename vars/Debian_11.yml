@@ -1,0 +1,15 @@
+---
+sshd_service: ssh
+sshd_packages:
+  - openssh-server
+  - openssh-sftp-server
+__sshd_config_mode: "0644"
+__sshd_defaults:
+  ChallengeResponseAuthentication: no
+  X11Forwarding: yes
+  PrintMotd: no
+  AcceptEnv: LANG LC_*
+  Subsystem: "sftp {{ sshd_sftp_server }}"
+  UsePAM: yes
+__sshd_os_supported: yes
+__sshd_runtime_directory: /run/sshd
