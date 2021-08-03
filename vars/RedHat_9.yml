@@ -1,0 +1,13 @@
+---
+sshd_packages:
+  - openssh
+  - openssh-server
+sshd_sftp_server: /usr/libexec/openssh/sftp-server
+# RHEL 9 ships with drop-in directory support so we touch
+# just included file with highest priority by default and have
+# empty defaults
+__sshd_config_file: /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+__sshd_defaults:
+__sshd_os_supported: yes
+__sshd_hostkey_group: ssh_keys
+__sshd_hostkey_mode: "0640"

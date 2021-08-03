@@ -4,18 +4,6 @@
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
       - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
-    main_sshd_config: >-
-      {{
-        "00-ansible_system_role.conf"
-        if ansible_facts['distribution'] == 'Fedora'
-        else "sshd_config"
-      }}
-    main_sshd_config_path: >-
-      {{
-        "/etc/ssh/sshd_config.d/"
-        if ansible_facts['distribution'] == 'Fedora'
-        else "/etc/ssh/"
-      }}
   tasks:
     - name: Backup configuration files
       include_tasks: tasks/backup.yml
@@ -23,7 +11,7 @@
     - name: Find old backups files
       find:
         paths: "{{ main_sshd_config_path }}"
-        patterns: "{{ main_sshd_config }}.*@*~"
+        patterns: "{{ main_sshd_config_name }}.*@*~"
       register: backup_files
 
     - name: Remove old backup files
@@ -41,7 +29,7 @@
     - name: Find new backups files
       find:
         paths: "{{ main_sshd_config_path }}"
-        patterns: "{{ main_sshd_config }}.*@*~"
+        patterns: "{{ main_sshd_config_name }}.*@*~"
       register: no_backup
 
     - name: Configure sshd again with different configuration and with backup
@@ -54,7 +42,7 @@
     - name: Find new backups files
       find:
         paths: "{{ main_sshd_config_path }}"
-        patterns: "{{ main_sshd_config }}.*@*~"
+        patterns: "{{ main_sshd_config_name }}.*@*~"
       register: new_backup
 
     - name: Verify the backup was not done in the first attempt, but in the second one
