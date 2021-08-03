@@ -13,3 +13,19 @@
     mode: "0755"
   when:
     - ansible_facts['os_family'] == 'Debian'
+
+- name: Define common variables
+  set_fact:
+    main_sshd_config: /etc/ssh/sshd_config
+    main_sshd_config_name: sshd_config
+    main_sshd_config_path: /etc/ssh/
+
+- name: Define specific variables
+  set_fact:
+    main_sshd_config: /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+    main_sshd_config_name: 00-ansible_system_role.conf
+    main_sshd_config_path: /etc/ssh/sshd_config.d/
+  when: >
+    ansible_facts['distribution'] == 'Fedora' or
+    (ansible_facts['distribution'] == 'RedHat' and
+     ansible_facts['distribution_major_version']|int > 8)

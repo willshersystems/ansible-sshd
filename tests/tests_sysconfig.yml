@@ -77,6 +77,7 @@
       when:
         - ansible_facts['os_family'] == "RedHat"
         - ansible_facts['distribution'] != 'Fedora'
+        - ansible_facts['distribution_major_version']|int < 9
 
     - name: "Restore configuration files"
       include_tasks: tasks/restore.yml

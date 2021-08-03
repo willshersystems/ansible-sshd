@@ -39,13 +39,6 @@
             - /tmp/ssh_host_rsa_key2
 
     - name: Verify the options are correctly set
-      vars:
-        main_sshd_config: >-
-          {{
-            "/etc/ssh/sshd_config.d/00-ansible_system_role.conf"
-            if ansible_facts['distribution'] == 'Fedora'
-            else "/etc/ssh/sshd_config"
-          }}
       block:
         - meta: flush_handlers
 
