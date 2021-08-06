@@ -16,8 +16,8 @@
         sshd_config_file: /etc/ssh/sshd_config
         sshd_config_namespace: nm1
         sshd:
-          AcceptEnv: EDITOR
           PasswordAuthentication: yes
+          PermitRootLogin: yes
           Match:
             Condition: user root
             AllowAgentForwarding: no
@@ -29,8 +29,8 @@
         sshd_config_file: /etc/ssh/sshd_config
         sshd_config_namespace: nm2
         sshd:
-          AcceptEnv: LS_COLORS
           PasswordAuthentication: no
+          PermitRootLogin: no
           Match:
             Condition: Address 127.0.0.1
             AllowTcpForwarding: no
@@ -63,28 +63,28 @@
         - name: Check content of configuration file (blocks)
           assert:
             that:
-              - "config.content | b64decode | regex_search('Match all\\s*AcceptEnv EDITOR')"
-              - "config.content | b64decode | regex_search('Match all\\s*AcceptEnv LS_COLORS')"
+              - "config.content | b64decode | regex_search('Match all\\s*PasswordAuthentication yes')"
+              - "config.content | b64decode | regex_search('Match all\\s*PasswordAuthentication no')"
           when:
             - ansible_facts['os_family'] != 'RedHat' or ansible_facts['distribution_major_version'] != '6'
 
         - name: Check content of configuration file (blocks for RHEL 6)
           assert:
             that:
-              - "config.content | b64decode | regex_search('Match address *\\s*AcceptEnv EDITOR')"
-              - "config.content | b64decode | regex_search('Match address *\\s*AcceptEnv LS_COLORS')"
+              - "config.content | b64decode | regex_search('Match address \\*\\s*PasswordAuthentication yes')"
+              - "config.content | b64decode | regex_search('Match address \\*\\s*PasswordAuthentication no')"
           when:
             - ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6'
 
         - name: Check content of configuration file
           assert:
             that:
-              - "'AcceptEnv EDITOR' in config.content | b64decode"
+              - "'PermitRootLogin yes' in config.content | b64decode"
               - "'PasswordAuthentication yes' in config.content | b64decode"
               - "'Match user root' in config.content | b64decode"
               - "'AllowAgentForwarding no' in config.content | b64decode"
               - "config.content | b64decode | regex_search('Match user root\\s*AllowAgentForwarding no')"
-              - "'AcceptEnv LS_COLORS' in config.content | b64decode"
+              - "'PermitRootLogin no' in config.content | b64decode"
               - "'PasswordAuthentication no' in config.content | b64decode"
               - "'Match Address 127.0.0.1' in config.content | b64decode"
               - "'AllowTcpForwarding no' in config.content | b64decode"
@@ -94,9 +94,8 @@
           # note, the options are in lower-case here
           assert:
             that:
-              - "'acceptenv EDITOR' in runtime.stdout"
+              - "'permitrootlogin yes' in runtime.stdout"
               - "'allowagentforwarding no' in runtime.stdout"
-              - "'acceptenv LS_COLORS' in runtime.stdout"
               - "'allowtcpforwarding no' in runtime.stdout"
               - "'passwordauthentication yes' in runtime.stdout"
 
@@ -104,9 +103,8 @@
           # note, the options are in lower-case here
           assert:
             that:
-              - "'acceptenv EDITOR' in nonmatching.stdout"
+              - "'permitrootlogin yes' in runtime.stdout"
               - "'allowAgentforwarding no' not in nonmatching.stdout"
-              - "'acceptenv LS_COLORS' in nonmatching.stdout"
               - "'allowtcpforwarding no' not in nonmatching.stdout"
               - "'passwordauthentication yes' in nonmatching.stdout"
       tags: tests::verify
