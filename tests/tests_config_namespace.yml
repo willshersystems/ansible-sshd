@@ -60,17 +60,31 @@
           command: sshd -T -Cuser=nobody,host=example.com,addr=127.0.0.2
           register: nonmatching
 
+        - name: Check content of configuration file (blocks)
+          assert:
+            that:
+              - "config.content | b64decode | regex_search('Match all\\s*AcceptEnv EDITOR')"
+              - "config.content | b64decode | regex_search('Match all\\s*AcceptEnv LS_COLORS')"
+          when:
+            - ansible_facts['os_family'] != 'RedHat' or ansible_facts['distribution_major_version'] != '6'
+
+        - name: Check content of configuration file (blocks for RHEL 6)
+          assert:
+            that:
+              - "config.content | b64decode | regex_search('Match address *\\s*AcceptEnv EDITOR')"
+              - "config.content | b64decode | regex_search('Match address *\\s*AcceptEnv LS_COLORS')"
+          when:
+            - ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6'
+
         - name: Check content of configuration file
           assert:
             that:
               - "'AcceptEnv EDITOR' in config.content | b64decode"
-              - "config.content | b64decode | regex_search('Match all\\s*AcceptEnv EDITOR')"
               - "'PasswordAuthentication yes' in config.content | b64decode"
               - "'Match user root' in config.content | b64decode"
               - "'AllowAgentForwarding no' in config.content | b64decode"
               - "config.content | b64decode | regex_search('Match user root\\s*AllowAgentForwarding no')"
               - "'AcceptEnv LS_COLORS' in config.content | b64decode"
-              - "config.content | b64decode | regex_search('Match all\\s*AcceptEnv LS_COLORS')"
               - "'PasswordAuthentication no' in config.content | b64decode"
               - "'Match Address 127.0.0.1' in config.content | b64decode"
               - "'AllowTcpForwarding no' in config.content | b64decode"
