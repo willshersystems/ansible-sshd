@@ -126,7 +126,7 @@
         group: "{{ sshd_config_group }}"
         mode: "{{ sshd_config_mode }}"
         block: |
-          Match all
+          {{ __sshd_compat_match_all }}
           {{ lookup('template', 'sshd_config_snippet.j2') }}
         create: yes
         marker: "# {mark} sshd system role managed block: namespace {{ sshd_config_namespace }}"

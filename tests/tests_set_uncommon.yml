@@ -48,6 +48,8 @@
               - ansible_failed_result.msg != 'UNREACH'
               - not role_result.changed
             msg: "Role has not failed when it should have"
+      when:
+        - not (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6')
 
     - name: Make sure service is still running
       service:
@@ -56,6 +58,8 @@
       register: result
       failed_when: result.changed
       tags: tests::verify
+      when:
+        - not (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6')
 
     - name: "Restore configuration files"
       include_tasks: tasks/restore.yml

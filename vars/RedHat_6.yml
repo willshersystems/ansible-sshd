@@ -22,3 +22,4 @@ __sshd_defaults:
   Subsystem: "sftp {{ sshd_sftp_server }}"
 __sshd_os_supported: yes
 __sshd_sysconfig_supports_use_strong_rng: true
+__sshd_compat_match_all: Match address *
