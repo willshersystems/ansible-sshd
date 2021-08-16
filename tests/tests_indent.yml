@@ -1,0 +1,41 @@
+---
+- hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+  tasks:
+    - name: "Backup configuration files"
+      include_tasks: tasks/backup.yml
+
+    - name: Configure sshd with simple config options
+      include_role:
+        name: ansible-sshd
+      vars:
+        sshd:
+          PasswordAuthentication: yes
+          PermitRootLogin: yes
+          Match:
+            Condition: user root
+            AllowAgentForwarding: no
+
+    - name: Verify the options are correctly set
+      block:
+        - meta: flush_handlers
+
+        - name: Print current configuration file
+          slurp:
+            src: "{{ main_sshd_config }}"
+          register: config
+
+        - name: Check the options are correctly indented in configuration file
+          assert:
+            that:
+              - "config.content | b64decode | regex_search('^PasswordAuthentication yes$', multiline=True)"
+              - "config.content | b64decode | regex_search('^PermitRootLogin yes$', multiline=True)"
+              - "config.content | b64decode | regex_search('^Match user root\\n\\s+AllowAgentForwarding no$', multiline=True)"
+
+      tags: tests::verify
+
+    - name: "Restore configuration files"
+      include_tasks: tasks/restore.yml

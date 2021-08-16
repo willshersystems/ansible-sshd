@@ -118,3 +118,4 @@ script:
     ANSIBLE_FORCE_COLOR=1 ansible-playbook -i tests/inventory tests/tests_config_namespace.yml --connection=local --become -v
     && (echo 'Namespace test: pass' && exit 0)
     || (echo 'Namespace test: fail' && exit 1)
+
