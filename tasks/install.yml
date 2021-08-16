@@ -102,7 +102,7 @@
 
     - name: Create the complete configuration file
       template:
-        src: sshd_config_snippet.j2
+        src: sshd_config.j2
         dest: "{{ sshd_config_file }}"
         owner: "{{ sshd_config_owner }}"
         group: "{{ sshd_config_group }}"
