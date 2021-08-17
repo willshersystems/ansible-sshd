@@ -12,6 +12,7 @@ jobs:
 
       - name: ansible check with debian:bullseye (11)
         uses: roles-ansible/check-ansible-debian-bullseye-action@main
+        with:
           group: local
           hosts: localhost
           targets: "tests/*.yml"
