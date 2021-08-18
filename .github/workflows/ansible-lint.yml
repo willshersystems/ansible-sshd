@@ -13,7 +13,7 @@ jobs:
   #       with:
   #         targets: "tests/test_*.yml"
   #         override-deps: |
-  #           ansible==2.8
+  #           ansible==2.9
   #         args: ""
   # test-ansible29:
   #   runs-on: ubuntu-latest
