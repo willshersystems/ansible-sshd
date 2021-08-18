@@ -1,7 +1,8 @@
 OpenSSH Server
 ==============
 
-[![Build Status](https://travis-ci.org/willshersystems/ansible-sshd.svg?branch=master)](https://travis-ci.org/willshersystems/ansible-sshd) [![Ansible Galaxy](http://img.shields.io/badge/galaxy-willshersystems.sshd-660198.svg?style=flat)](https://galaxy.ansible.com/willshersystems/sshd/)
+[![Ansible Lint](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-lint.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-lint.yml)
+[![Ansible Galaxy](http://img.shields.io/badge/galaxy-willshersystems.sshd-660198.svg?style=flat)](https://galaxy.ansible.com/willshersystems/sshd/)
 
 This role configures the OpenSSH daemon. It:
 
@@ -29,10 +30,18 @@ Requirements
 Tested on:
 
 * Ubuntu precise, trusty, xenial, bionic, focal
+  * [![Run tests on Ubuntu latest](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-ubuntu.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-ubuntu.yml)
 * Debian wheezy, jessie, stretch, buster, bullseye
-* FreeBSD 10.1
+  * [![Run tests on Debian bullseye (11)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-bullseye.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-bullseye.yml)
+  * [![Run tests on Debian buster (10)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-buster.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-buster.yml)
+  * [![Run tests on Debian stretch (9)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-stretch.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-stretch.yml)
 * EL 6, 7, 8, 9 derived distributions
+  * [![Run tests on CentOS 8](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos8.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos8.yml)
+  * [![Run tests on CentOS 7](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos7.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos7.yml)
+  * [![Run tests on CentOS 6](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos6.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos6.yml)
 * Fedora 31, 32, 33, 34
+  * [![Run tests on Fedora latest](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-fedora.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-fedora.yml)
+* FreeBSD 10.1
 * OpenBSD 6.0
 * AIX 7.1, 7.2
 
