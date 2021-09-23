@@ -1,4 +1,4 @@
-# {{ ansible_managed }}
+{{ ansible_managed | comment }}
 {% macro render_option(key,value,indent=false) %}
 {%   if value is defined %}
 {%     if indent %}  {% endif %}
