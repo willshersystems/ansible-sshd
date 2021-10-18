@@ -11,7 +11,7 @@ This role configures the OpenSSH daemon. It:
 * Can be configured by dict or simple variables
 * Supports Match sets
 * Supports all `sshd_config` options. Templates are programmatically generated.
-  (see [`meta/make_option_list`](meta/make_option_list))
+  (see [`meta/make_option_lists`](meta/make_option_lists))
 * Tests the `sshd_config` before reloading sshd.
 
 **WARNING** Misconfiguration of this role can lock you out of your server!
