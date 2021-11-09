@@ -1,0 +1,103 @@
+---
+- hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+      - /etc/ssh/ssh_host_ed255519_key
+      - /etc/ssh/ssh_host_ed255519_key.pub
+      - /etc/system-fips
+  tasks:
+    - name: "Backup configuration files"
+      include_tasks: tasks/backup.yml
+
+    - name: Fake FIPS mode
+      block:
+        - name: Create temporary directory
+          tempfile:
+            state: directory
+          register: fips_directory
+
+        - name: Create a /etc/system-fips
+          copy:
+            dest: /etc/system-fips
+            content: userspace fips
+
+        - name: Create a fips_enabled file
+          copy:
+            dest: "{{ fips_directory.path }}/fips_enabled"
+            content: 1
+
+        - name: Bind mount the file where we need it
+          mount:
+            path: /proc/sys/crypto/fips_enabled
+            src: "{{ fips_directory.path }}/fips_enabled"
+            opts: bind
+            state: mounted
+            fstype: none
+          failed_when: false
+
+    - name: Remove the Ed25519 hostkey
+      file:
+        path:
+          /etc/ssh/ssh_host_ed255519_key
+        state: absent
+
+    - name: Remove the Ed25519 pubkey
+      file:
+        path:
+          /etc/ssh/ssh_host_ed255519_key.pub
+        state: absent
+
+    - name: Run the role with default parameters
+      include_role:
+        name: ansible-sshd
+
+    - name: Verify the options are correctly set
+      block:
+        - meta: flush_handlers
+
+        - name: Print current configuration file
+          slurp:
+            src: "{{ main_sshd_config }}"
+          register: config
+
+        - name: Get stat of private key
+          stat:
+            path: /etc/ssh/ssh_host_ed255519_key
+          register: privkey
+
+        - name: Get stat of public key
+          stat:
+            path: /etc/ssh/ssh_host_ed255519_key.pub
+          register: pubkey
+
+        - name: Check the key is not in configuration file
+          assert:
+            that:
+              - "'HostKey /etc/ssh/ssh_host_ed255519_key' not in config.content | b64decode"
+
+        - name: Check no host key was generated
+          assert:
+            that:
+              - not privkey.stat.exists
+              - not pubkey.stat.exists
+      when:
+        - ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] in ['7', '8']
+      tags: tests::verify
+
+    - name: Remove the FIPS mode indicators
+      block:
+        - name: Unmount the file
+          mount:
+            path: /proc/sys/crypto/fips_enabled
+            state: unmounted
+          failed_when: false
+
+        - name: Remove the temporary directory
+          file:
+            path: "{{ fips_directory.path }}"
+            state: absent
+
+    - name: "Restore configuration files"
+      include_tasks: tasks/restore.yml
