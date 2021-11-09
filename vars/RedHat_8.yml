@@ -31,3 +31,5 @@ __sshd_sysconfig_supports_use_strong_rng: true
 __sshd_sysconfig_supports_crypto_policy: true
 __sshd_hostkey_group: ssh_keys
 __sshd_hostkey_mode: "0640"
+__sshd_hostkeys_nofips:
+  - /etc/ssh/ssh_host_ed25519_key
