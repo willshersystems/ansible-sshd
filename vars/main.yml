@@ -7,3 +7,5 @@ __sshd_hostkey_group: "root"
 __sshd_hostkey_mode: "0600"
 # The OpenSSH 5.3 in RHEL6 does not support "Match all" so we need a workaround
 __sshd_compat_match_all: Match all
+# The hostkeys not supported in FIPS mode, if applicable
+__sshd_hostkeys_nofips: []
