@@ -14,4 +14,4 @@ jobs:
         with:
           group: local
           hosts: localhost
-          targets: "tests/*.yml"
+          targets: "tests/tests_*.yml"
