@@ -74,8 +74,6 @@ __sshd_defaults: {}
 __sshd_os_supported: no
 __sshd_sysconfig_supports_crypto_policy: false
 __sshd_sysconfig_supports_use_strong_rng: false
-# The hostkeys not supported in FIPS mode, if applicable
-__sshd_hostkeys_nofips: []
 
 __sshd_runtime_directory: false
 __sshd_runtime_directory_mode: "0755"
