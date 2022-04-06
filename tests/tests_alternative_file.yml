@@ -6,6 +6,7 @@
       - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
       - /etc/ssh/sshd_config_custom
       - /etc/ssh/sshd_config_custom_second
+      - /tmp/ssh_host_ecdsa_key
   tasks:
     - name: "Backup configuration files"
       include_tasks: tasks/backup.yml
@@ -52,6 +53,7 @@
       include_role:
         name: ansible-sshd
       vars:
+        sshd_config_file: /etc/ssh/sshd_config
         sshd:
           Banner: /etc/issue
           Ciphers: aes192-ctr
