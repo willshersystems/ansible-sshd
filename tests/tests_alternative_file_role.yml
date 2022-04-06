@@ -98,7 +98,7 @@
 
         - name: Print the main configuration file
           slurp:
-            src: "{{ main_sshd_config }}"
+            src: /etc/ssh/sshd_config
           register: config3
 
         - name: Check content of first configuration file
