@@ -130,6 +130,16 @@
               - "'MaxStartups 100' not in config3.content | b64decode"
               - "'Compression no' not in config3.content | b64decode"
 
+        - name: Check the main configuration file contains some default values for RHEL 9 or Fedora
+          assert:
+            that:
+              - "'Include /etc/ssh/sshd_config.d/*.conf' in config3.content | b64decode"
+              - "'AuthorizedKeysFile .ssh/authorized_keys' in config3.content | b64decode"
+              - "'Subsystem sftp /usr/libexec/sftp-server' in config3.content | b64decode"
+          when:
+            - ansible_facts['os_family'] == 'RedHat'
+            - ansible_facts['distribution_major_version']|int > 8
+
         - name: Check the generated config has requested properties
           assert:
             that:
