@@ -22,7 +22,11 @@
 {%   elif sshd[key] is defined %}
 {%     set value = sshd[key] %}
 {%   elif __sshd_defaults[key] is defined and not sshd_skip_defaults %}
-{%     set value = __sshd_defaults[key] %}
+{%     if key == 'HostKey' and __sshd_fips_mode %}
+{%       set value = __sshd_defaults[key] | difference(__sshd_hostkeys_nofips) %}
+{%     else %}
+{%       set value = __sshd_defaults[key] %}
+{%     endif %}
 {%   endif %}
 {{ render_option(key,value) -}}
 {% endmacro %}
