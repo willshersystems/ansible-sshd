@@ -3,39 +3,10 @@ name: Ansible Lint  # feel free to pick your own name
 on: [push, pull_request]
 
 jobs:
-  # test-ansible28:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: checkout PR
-  #       uses: actions/checkout@v2
-  #     - name: Lint Ansible Playbook
-  #       uses: ansible/ansible-lint-action@master
-  #       with:
-  #         targets: "tests/test_*.yml"
-  #         override-deps: |
-  #           ansible==2.9
-  #         args: ""
-  # test-ansible29:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: checkout PR
-  #       uses: actions/checkout@v2
-  #     - name: Lint Ansible Playbook
-  #       uses: ansible/ansible-lint-action@master
-  #       with:
-  #         targets: "tests/test_*.yml"
-  #         override-deps: |
-  #           ansible==2.9
-  #         args: ""
-  test-ansible210:
+  ansible-lint:
     runs-on: ubuntu-latest
     steps:
       - name: checkout PR
         uses: actions/checkout@v2
-      - name: Lint Ansible Playbook
-        uses: ansible/ansible-lint-action@master
-        with:
-          targets: "tests/test_*.yml"
-          override-deps: |
-            ansible==2.10
-          args: ""
+      - name: Lint Ansible playbook
+        uses: ansible/ansible-lint-action@main

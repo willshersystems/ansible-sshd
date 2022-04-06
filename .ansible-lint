@@ -1,3 +1,6 @@
-warn_list:  # or 'skip_list' to silence them completely                       │
+warn_list:  # or 'skip_list' to silence them completely
   - '106'  # Role name {} does not match ``^[a-z][a-z0-9_]+$`` pattern
   - '306'  # Shells that use pipes should set the pipefail option
+  - 'fqcn-builtins'  # this is not compatible with ansible 2.6 on RHEL6
+exclude_paths:
+  - tests/roles/
