@@ -1,14 +1,19 @@
 ---
+__sshd_os_supported: yes
+
 sshd_packages:
   - openssh
   - openssh-server
 sshd_sftp_server: /usr/libexec/openssh/sftp-server
 # Fedora 32 ships with drop-in directory support so we touch
-# just included file with highest priority by default and have
-# empty defaults
+# just included file with highest priority by default
 __sshd_config_file: /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+# the defaults here represent the defaults shipped in the main sshd_config
 __sshd_defaults:
-__sshd_os_supported: yes
+  Include: /etc/ssh/sshd_config.d/*.conf
+  AuthorizedKeysFile: .ssh/authorized_keys
+  Subsystem: sftp /usr/libexec/sftp-server
+
 __sshd_verify_hostkeys_default:
   - /etc/ssh/ssh_host_rsa_key
   - /etc/ssh/ssh_host_ecdsa_key
@@ -17,3 +22,6 @@ __sshd_hostkeys_nofips:
   - /etc/ssh/ssh_host_ed25519_key
 __sshd_hostkey_group: ssh_keys
 __sshd_hostkey_mode: "0640"
+
+__sshd_drop_in_dir: /etc/ssh/sshd_config.d/
+__sshd_main_config_file: /etc/ssh/sshd_config

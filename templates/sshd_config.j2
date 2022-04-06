@@ -21,6 +21,8 @@
 {%     set value = override %}
 {%   elif sshd[key] is defined %}
 {%     set value = sshd[key] %}
+{%   elif __sshd_drop_in_dir and sshd_config_file.startswith(__sshd_drop_in_dir)  %}
+{#     The drop-in directory does not use the defaults from main file to avoid recursion #}
 {%   elif __sshd_defaults[key] is defined and not sshd_skip_defaults %}
 {%     if key == 'HostKey' and __sshd_fips_mode %}
 {%       set value = __sshd_defaults[key] | difference(__sshd_hostkeys_nofips) %}
