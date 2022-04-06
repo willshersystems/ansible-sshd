@@ -41,9 +41,9 @@
 - name: Make sure hostkeys are available and have expected permissions
   vars: &share_vars
     __sshd_fips_mode: >-
-      - __sshd_hostkeys_nofips | d([])
-      - __sshd_kernel_fips_mode.content | b64decode == "1" | bool or \
-        __sshd_userspace_fips_mode.content | b64decode != "0" | bool
+      {{ __sshd_hostkeys_nofips | d([]) and
+         (__sshd_kernel_fips_mode.content | d('MAo=') | b64decode | trim == '1' or
+          __sshd_userspace_fips_mode.content | d('MAo=') | b64decode | trim != '0') }}
     # This mimics the macro body_option() in sshd_config.j2
     # The explicit to_json filter is needed for Python 2 compatibility
     __sshd_hostkeys_from_config: >-
@@ -58,14 +58,14 @@
           {{ __sshd_defaults['HostKey'] | to_json }}
         {% endif %}
       {% else %}
-        []
+        {{ [] | to_json }}
       {% endif %}
     __sshd_verify_hostkeys: >-
       {% if not sshd_verify_hostkeys %}
-        []
+        {{ [] | to_json }}
       {% elif sshd_verify_hostkeys == 'auto' %}
-        {% if sshd_HostKey is string %}
-          [ {{ __sshd_hostkeys_from_config }} ]
+        {% if __sshd_hostkeys_from_config | from_json is string %}
+          {{ [ __sshd_hostkeys_from_config | from_json ] | to_json }}
         {% else %}
           {{ __sshd_hostkeys_from_config }}
         {% endif %}
