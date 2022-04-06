@@ -6,6 +6,7 @@
       - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
       - /etc/ssh/ssh_host_rsa_key
       - /etc/ssh/ssh_host_rsa_key.pub
+
   tasks:
     - name: Backup configuration files
       include_tasks: tasks/backup.yml
@@ -22,13 +23,16 @@
         sshd -T
       register: runtime_before
       changed_when: false
+
     - name: Configure sshd
       include_role:
         name: ansible-sshd
+
     - name: Show effective configuration after running role (role defaults)
       command: sshd -T
       register: runtime_after
       changed_when: false
+
     - name: Check that the effective configuration did not change from OS defaults
       assert:
         that:
