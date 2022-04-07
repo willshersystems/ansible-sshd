@@ -1,0 +1,43 @@
+name: Run tests on Debian
+
+on: [push, pull_request]
+
+jobs:
+  debian-bullseye:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout PR
+        uses: actions/checkout@v2
+
+      - name: ansible check with debian bullseye (11)
+        uses: roles-ansible/check-ansible-debian-bullseye-action@main
+        with:
+          group: local
+          hosts: localhost
+          targets: "tests/tests_*.yml"
+
+  debian-buster:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout PR
+        uses: actions/checkout@v2
+
+      - name: ansible check with debian buster (10)
+        uses: roles-ansible/check-ansible-debian-buster-action@master
+        with:
+          group: local
+          hosts: localhost
+          targets: "tests/tests_*.yml"
+
+  debian-stretch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout PR
+        uses: actions/checkout@v2
+
+      - name: ansible check with debian stretch (9)
+        uses: roles-ansible/check-ansible-debian-stretch-action@master
+        with:
+          group: local
+          hosts: localhost
+          targets: "tests/tests_*.yml"
