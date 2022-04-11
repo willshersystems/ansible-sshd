@@ -61,6 +61,9 @@ sshd_sftp_server: /usr/lib/openssh/sftp-server
 # configuration or restarting), we make sure the keys exist and have correct
 # permissions. To disable this check, set sshd_verify_hostkeys to false
 sshd_verify_hostkeys: "auto"
+# The list of hostkeys to check when there are none listed in configuration file.
+# This is usually the case when the selection is up to the OpenSSH defaults or
+# drop-in directory is used.
 __sshd_verify_hostkeys_default: []
 sshd_hostkey_owner: "{{ __sshd_hostkey_owner }}"
 sshd_hostkey_group: "{{ __sshd_hostkey_group }}"
