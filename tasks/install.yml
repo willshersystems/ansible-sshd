@@ -64,7 +64,13 @@
       {% if not sshd_verify_hostkeys %}
         {{ [] | to_json }}
       {% elif sshd_verify_hostkeys == 'auto' %}
-        {% if __sshd_hostkeys_from_config | from_json is string %}
+        {% if not __sshd_hostkeys_from_config | from_json %}
+          {% if __sshd_fips_mode %}
+            {{ __sshd_verify_hostkeys_default | difference(__sshd_hostkeys_nofips) | to_json }}
+          {% else %}
+            {{ __sshd_verify_hostkeys_default | to_json }}
+          {% endif %}
+        {% elif __sshd_hostkeys_from_config | from_json is string %}
           {{ [ __sshd_hostkeys_from_config | from_json ] | to_json }}
         {% else %}
           {{ __sshd_hostkeys_from_config }}

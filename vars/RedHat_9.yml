@@ -9,5 +9,11 @@ sshd_sftp_server: /usr/libexec/openssh/sftp-server
 __sshd_config_file: /etc/ssh/sshd_config.d/00-ansible_system_role.conf
 __sshd_defaults:
 __sshd_os_supported: yes
+__sshd_verify_hostkeys_default:
+  - /etc/ssh/ssh_host_rsa_key
+  - /etc/ssh/ssh_host_ecdsa_key
+  - /etc/ssh/ssh_host_ed25519_key
+__sshd_hostkeys_nofips:
+  - /etc/ssh/ssh_host_ed25519_key
 __sshd_hostkey_group: ssh_keys
 __sshd_hostkey_mode: "0640"
