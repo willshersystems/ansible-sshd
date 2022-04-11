@@ -32,13 +32,9 @@ Tested on:
 * Ubuntu precise, trusty, xenial, bionic, focal
   * [![Run tests on Ubuntu latest](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-ubuntu.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-ubuntu.yml)
 * Debian wheezy, jessie, stretch, buster, bullseye
-  * [![Run tests on Debian bullseye (11)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-bullseye.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-bullseye.yml)
-  * [![Run tests on Debian buster (10)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-buster.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-buster.yml)
-  * [![Run tests on Debian stretch (9)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-stretch.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-stretch.yml)
+  * [![Run tests on Debian](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-check.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-check.yml)
 * EL 6, 7, 8, 9 derived distributions
-  * [![Run tests on CentOS 8](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos8.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos8.yml)
-  * [![Run tests on CentOS 7](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos7.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos7.yml)
-  * [![Run tests on CentOS 6](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos6.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos6.yml)
+  * [![Run tests on CentOS](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos-check.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos-check.yml)
 * Fedora 31, 32, 33, 34
   * [![Run tests on Fedora latest](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-fedora.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-fedora.yml)
 * FreeBSD 10.1
