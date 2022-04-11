@@ -81,3 +81,11 @@ __sshd_sysconfig_supports_use_strong_rng: false
 
 __sshd_runtime_directory: false
 __sshd_runtime_directory_mode: "0755"
+
+__sshd_skip_virt_env:
+  - kvm
+  - docker
+  - podman
+  - container
+  - containerd
+  - VirtualPC
