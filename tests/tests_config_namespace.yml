@@ -74,7 +74,8 @@
               - "config.content | b64decode | regex_search('Match address \\*\\s*PasswordAuthentication yes')"
               - "config.content | b64decode | regex_search('Match address \\*\\s*PasswordAuthentication no')"
           when:
-            - ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6'
+            - ansible_facts['os_family'] == 'RedHat'
+            - ansible_facts['distribution_major_version'] == '6'
 
         - name: Check content of configuration file
           assert:
