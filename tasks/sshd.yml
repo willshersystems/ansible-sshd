@@ -1,5 +1,7 @@
 ---
 
+- include_tasks: set_common_vars.yml
+
 - include_tasks: variables.yml
 
 - include_tasks: install.yml
