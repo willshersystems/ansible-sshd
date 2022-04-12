@@ -39,7 +39,8 @@
             that:
               - "'HostKey /etc/ssh/ssh_host_ed25519_key' in config.content | b64decode"
           when:
-            - ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version']|int < 9
+            - ansible_facts['os_family'] == 'RedHat'
+            - ansible_facts['distribution_major_version']|int < 9
 
         - name: Check host key was generated
           assert:
@@ -47,7 +48,8 @@
               - privkey.stat.exists
               - pubkey.stat.exists
       when:
-        - ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version']|int > 6
+        - ansible_facts['os_family'] == 'RedHat'
+        - ansible_facts['distribution_major_version']|int > 6
       tags: tests::verify
 
     - name: Fake FIPS mode
@@ -122,7 +124,8 @@
               - not privkey.stat.exists
               - not pubkey.stat.exists
       when:
-        - ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] in ['7', '8']
+        - ansible_facts['os_family'] == 'RedHat'
+        - ansible_facts['distribution_major_version']|int > 6
       tags: tests::verify
 
     - name: Remove the FIPS mode indicators
