@@ -25,19 +25,14 @@
     - __sshd_test_backup is defined
     - __sshd_test_backup.path is defined
 
+- name: Include common variables
+  include_vars: ../../vars/common.yml
+
 - name: Restart sshd service
   service:
     name: sshd
     state: reloaded
   changed_when: false
-  vars:
-    __sshd_skip_virt_env:
-      - kvm
-      - docker
-      - podman
-      - container
-      - containerd
-      - VirtualPC
   when:
     - __sshd_test_backup is defined
     - ansible_virtualization_type|default(None) not in __sshd_skip_virt_env

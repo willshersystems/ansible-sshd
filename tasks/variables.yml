@@ -1,4 +1,7 @@
 ---
+- name: Set common vars
+  include_vars: vars/common.yml
+
 - name: Set OS dependent variables
   include_vars: "{{ lookup('first_found', params) }}"
   vars:
