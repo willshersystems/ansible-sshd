@@ -161,7 +161,13 @@ if the system does not have hardware random number generator.
 * `sshd_config_file`
 
 The path where the openssh configuration produced by this role should be saved.
-This is useful mostly when generating configuration snippets to Include.
+This is useful mostly when generating configuration snippets to Include from
+drop-in directory (default in Fedora and RHEL9).
+
+When this path points to system drop-in directory (defined with internal
+variable `__sshd_drop_in_dir`), the main configuration file (defined with
+internal variable `__sshd_main_config_file`) is checked to contain the
+default `Include` directive from `__sshd_defaults` dict.
 
 * `sshd_config_namespace`
 
