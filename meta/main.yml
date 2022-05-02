@@ -20,6 +20,7 @@ galaxy_info:
         - xenial
         - bionic
         - focal
+        - jammy
     - name: FreeBSD
       version:
         - 10.1

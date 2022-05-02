@@ -15,7 +15,8 @@
         regexp: "^Include"
         state: absent
       when:
-        - ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version']|int > 8
+        - (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version']|int > 8) or
+          (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int >= 22)
 
     - name: Create a new configuration in drop-in directory
       include_role:
@@ -26,7 +27,8 @@
           Banner: /etc/include-issue
           Ciphers: aes192-ctr
       when:
-        - ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version']|int > 8
+        - (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version']|int > 8) or
+          (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int >= 22)
 
     - name: Verify the options are correctly set
       block:
@@ -48,17 +50,31 @@
               - "'Banner /etc/include-issue' in config.content | b64decode"
               - "'Ciphers aes192-ctr' in config.content | b64decode"
               - "'Include /etc/ssh/sshd_config.d/*.conf' not in config.content | b64decode"
-              - "'Subsystem sftp /usr/libexec/sftp-server' not in config.content | b64decode"
+              - "'Subsystem sftp  /usr/libexec/openssh/sftp-server' not in config.content | b64decode"
+              - "'Subsystem	sftp	/usr/lib/openssh/sftp-server' not in config.content | b64decode"
 
-        - name: Check content of the main configuration file
+        - name: Check common content of the main configuration file
           assert:
             that:
               - "'Banner /etc/include-issue' not in config_main.content | b64decode"
               - "'Ciphers aes192-ctr' not in config_main.content | b64decode"
               - "'Include /etc/ssh/sshd_config.d/*.conf' in config_main.content | b64decode"
+
+        - name: Check RHEL content of the main configuration file
+          assert:
+            that:
               - "'Subsystem	sftp	/usr/libexec/openssh/sftp-server' in config_main.content | b64decode"
+          when: ansible_facts['os_family'] == 'RedHat'
+
+        - name: Check Ubuntu content of the main configuration file
+          assert:
+            that:
+              - "'Subsystem	sftp	/usr/lib/openssh/sftp-server' in config_main.content | b64decode"
+          when: ansible_facts['os_family'] == 'Ubuntu'
+
       when:
-        - ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version']|int > 8
+        - (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version']|int > 8) or
+          (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int >= 22)
 
       tags: tests::verify
 
