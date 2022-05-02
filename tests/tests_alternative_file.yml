@@ -32,7 +32,6 @@
         sshd_config_owner: "nobody"
         sshd_config_group: "nobody"
         sshd_config_mode: "660"
-        sshd_skip_defaults: true
         sshd:
           AcceptEnv: LANG
           Banner: /etc/issue
@@ -93,9 +92,44 @@
               - "'AcceptEnv LANG' in config.content | b64decode"
               - "'Banner /etc/issue' in config.content | b64decode"
               - "'Ciphers aes256-ctr' in config.content | b64decode"
-              - "'HostKey' not in config.content | b64decode"
               - "'Compression no' in config.content | b64decode"
-              - "'MaxStartups 100' not in config.content | b64decode"
+
+        - name: Check Fedora/RHEL9+ defaults are present in the first configuration file
+          assert:
+            that:
+              - "'Include /etc/ssh/sshd_config.d/*.conf' in config.content | b64decode"
+              - "'AuthorizedKeysFile .ssh/authorized_keys' in config.content | b64decode"
+          when:
+            - ansible_facts['os_family'] == 'RedHat'
+            - ansible_facts['distribution_major_version']|int > 8
+
+        - name: Check RHEL7 and RHEL8 defaults are present in the first configuration file
+          assert:
+            that:
+              - "'X11Forwarding yes' in config.content | b64decode"
+              - "'AuthorizedKeysFile .ssh/authorized_keys' in config.content | b64decode"
+              - "'UsePAM yes' in config.content | b64decode"
+          when:
+            - ansible_facts['os_family'] == 'RedHat'
+            - ansible_facts['distribution_major_version']|int > 6
+            - ansible_facts['distribution_major_version']|int < 9
+
+        - name: Check RHEL6 defaults are present in the first configuration file
+          assert:
+            that:
+              - "'Protocol 2' in config.content | b64decode"
+              - "'UsePAM yes' in config.content | b64decode"
+          when:
+            - ansible_facts['os_family'] == 'RedHat'
+            - ansible_facts['distribution_major_version'] == '6'
+
+        - name: Check Debian defaults are present in the first configuration file
+          assert:
+            that:
+              - "'PrintMotd no' in config.content | b64decode"
+              - "'UsePAM yes' in config.content | b64decode"
+          when:
+            - ansible_facts['os_family'] == 'Debian'
 
         - name: Check content of second configuration file
           assert:
