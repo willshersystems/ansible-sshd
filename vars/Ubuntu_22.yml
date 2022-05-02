@@ -1,0 +1,23 @@
+---
+__sshd_os_supported: yes
+
+sshd_service: ssh
+sshd_packages:
+  - openssh-server
+  - openssh-sftp-server
+# Ubuntu 22.04 finally ships with drop-in directory support so we touch
+# just included file with highest priority by default
+__sshd_config_file: /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+__sshd_config_mode: "0644"
+# the defaults here represent the defaults shipped in the main sshd_config
+__sshd_defaults:
+  Include: /etc/ssh/sshd_config.d/*.conf
+  KbdInteractiveAuthentication: no
+  UsePAM: yes
+  AcceptEnv: LANG LC_*
+  Subsystem: "sftp  /usr/lib/openssh/sftp-server"
+
+__sshd_runtime_directory: /run/sshd
+
+__sshd_drop_in_dir: /etc/ssh/sshd_config.d/
+__sshd_main_config_file: /etc/ssh/sshd_config

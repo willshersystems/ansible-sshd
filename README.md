@@ -29,13 +29,13 @@ Requirements
 
 Tested on:
 
-* Ubuntu precise, trusty, xenial, bionic, focal
+* Ubuntu precise, trusty, xenial, bionic, focal, jammy
   * [![Run tests on Ubuntu latest](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-ubuntu.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-ubuntu.yml)
 * Debian wheezy, jessie, stretch, buster, bullseye
   * [![Run tests on Debian](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-check.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-check.yml)
 * EL 6, 7, 8, 9 derived distributions
   * [![Run tests on CentOS](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos-check.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos-check.yml)
-* Fedora 31, 32, 33, 34
+* All Fedora
   * [![Run tests on Fedora latest](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-fedora.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-fedora.yml)
 * FreeBSD 10.1
 * OpenBSD 6.0
