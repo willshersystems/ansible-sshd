@@ -1,9 +1,9 @@
-name: Run tests on Ubuntu latest
+name: Run Ansible Check on Ubuntu
 
 on: [push, pull_request]
 
 jobs:
-  build:
+  ubuntu-latest:
     runs-on: ubuntu-latest
     steps:
       # Important: This sets up your GITHUB_WORKSPACE environment variable
@@ -12,6 +12,20 @@ jobs:
 
       - name: ansible check with ubuntu:latest
         uses: roles-ansible/check-ansible-ubuntu-latest-action@master
+        with:
+          group: local
+          hosts: localhost
+          targets: "tests/tests_*.yml"
+
+  ubuntu-20:
+    runs-on: ubuntu-latest
+    steps:
+      # Important: This sets up your GITHUB_WORKSPACE environment variable
+      - name: checkout PR
+        uses: actions/checkout@v2
+
+      - name: ansible check with ubuntu:20 (focal)
+        uses: roles-ansible/check-ansible-ubuntu-focal-action@master
         with:
           group: local
           hosts: localhost
