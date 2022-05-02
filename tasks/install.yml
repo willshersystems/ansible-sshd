@@ -22,19 +22,8 @@
     - __sshd_sysconfig_supports_use_strong_rng or __sshd_sysconfig_supports_crypto_policy
   notify: reload_sshd
 
-- name: Check the kernel FIPS mode
-  slurp:
-    src: /proc/sys/crypto/fips_enabled
-  register: __sshd_kernel_fips_mode
-  failed_when: false
-  when:
-    - __sshd_hostkeys_nofips | d([])
-
-- name: Check the userspace FIPS mode
-  slurp:
-    src: /etc/system-fips
-  register: __sshd_userspace_fips_mode
-  failed_when: false
+- name: Check FIPS mode
+  include_tasks: check_fips.yml
   when:
     - __sshd_hostkeys_nofips | d([])
 
@@ -132,66 +121,11 @@
         - __sshd_runtime_directory | d(false)
 
     - name: Create the complete configuration file
-      template:
-        src: sshd_config.j2
-        dest: "{{ sshd_config_file }}"
-        owner: "{{ sshd_config_owner }}"
-        group: "{{ sshd_config_group }}"
-        mode: "{{ sshd_config_mode }}"
-        validate: >-
-          {% if sshd_test_hostkey is defined and sshd_test_hostkey.path is defined %}
-            {{ sshd_binary }} -t -f %s -h {{ sshd_test_hostkey.path }}/rsa_key
-          {% else %}
-            {{ sshd_binary }} -t -f %s
-          {% endif %}
-        backup: "{{ sshd_backup }}"
-      notify: reload_sshd
+      include_tasks: install_config.yml
       when: sshd_config_namespace is none
 
-    - name: Make sure the include path is present in the main sshd_config
-      lineinfile:
-        insertbefore: BOF
-        line: "Include {{ __sshd_defaults['Include'] }}"
-        path: "{{ __sshd_main_config_file }}"
-        owner: "{{ sshd_config_owner }}"
-        group: "{{ sshd_config_group }}"
-        mode: "{{ sshd_config_mode }}"
-        validate: >-
-          {% if sshd_test_hostkey is defined and sshd_test_hostkey.path is defined %}
-            {{ sshd_binary }} -t -f %s -h {{ sshd_test_hostkey.path }}/rsa_key
-          {% else %}
-            {{ sshd_binary }} -t -f %s
-          {% endif %}
-        backup: "{{ sshd_backup }}"
-      notify: reload_sshd
-      when:
-        - sshd_config_namespace is none
-        - __sshd_defaults['Include'] | d(false)
-        - __sshd_main_config_file is not none
-        - __sshd_drop_in_dir is not none
-        - sshd_config_file.startswith(__sshd_drop_in_dir)
-
     - name: Update configuration file snippet
-      vars:
-        sshd_skip_defaults: true
-      blockinfile:
-        path: "{{ sshd_config_file }}"
-        owner: "{{ sshd_config_owner }}"
-        group: "{{ sshd_config_group }}"
-        mode: "{{ sshd_config_mode }}"
-        block: |
-          {{ __sshd_compat_match_all }}
-          {{ lookup('template', 'sshd_config_snippet.j2') }}
-        create: yes
-        marker: "# {mark} sshd system role managed block: namespace {{ sshd_config_namespace }}"
-        validate: >-
-          {% if sshd_test_hostkey is defined and sshd_test_hostkey.path is defined %}
-            {{ sshd_binary }} -t -f %s -h {{ sshd_test_hostkey.path }}/rsa_key
-          {% else %}
-            {{ sshd_binary }} -t -f %s
-          {% endif %}
-        backup: "{{ sshd_backup }}"
-      notify: reload_sshd
+      include_tasks: install_namespace.yml
       when: sshd_config_namespace is not none
 
   rescue:
@@ -206,51 +140,8 @@
       changed_when: false
       when: sshd_test_hostkey.path is defined
 
-- name: Install systemd service files
-  block:
-    - name: Install service unit file
-      template:
-        src: "{{ sshd_service_template_service }}"
-        dest: "/etc/systemd/system/{{ sshd_service }}.service"
-        owner: root
-        group: root
-        mode: "0644"
-      notify: reload_sshd
-    - name: Install instanced service unit file
-      template:
-        src: "{{ sshd_service_template_at_service }}"
-        dest: "/etc/systemd/system/{{ sshd_service }}@.service"
-        owner: root
-        group: root
-        mode: "0644"
-      notify: reload_sshd
-    - name: Install socket unit file
-      template:
-        src: "{{ sshd_service_template_socket }}"
-        dest: "/etc/systemd/system/{{ sshd_service }}.socket"
-        owner: root
-        group: root
-        mode: "0644"
-      notify: reload_sshd
-  when: sshd_install_service|bool
-
-- name: Service enabled and running
-  service:
-    name: "{{ sshd_service }}"
-    enabled: true
-    state: started
-  when:
-    - sshd_manage_service|bool
-    - ansible_virtualization_type|default(None) not in __sshd_skip_virt_env
-    - ansible_connection != 'chroot'
-
-# Due to ansible bug 21026, cannot use service module on RHEL 7
-- name: Enable service in chroot
-  command: systemctl enable {{ sshd_service }}  # noqa 303
-  when:
-    - ansible_connection == 'chroot'
-    - ansible_os_family == 'RedHat'
-    - ansible_distribution_major_version|int >= 7
+- name: Install and start systemd service
+  include_tasks: install_service.yml
 
 - name: Register that this role has run
   set_fact:

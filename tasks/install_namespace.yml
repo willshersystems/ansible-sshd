@@ -1,0 +1,22 @@
+---
+- name: Update configuration file snippet
+  vars:
+    sshd_skip_defaults: true
+  blockinfile:
+    path: "{{ sshd_config_file }}"
+    owner: "{{ sshd_config_owner }}"
+    group: "{{ sshd_config_group }}"
+    mode: "{{ sshd_config_mode }}"
+    block: |
+      {{ __sshd_compat_match_all }}
+      {{ lookup('template', 'sshd_config_snippet.j2') }}
+    create: yes
+    marker: "# {mark} sshd system role managed block: namespace {{ sshd_config_namespace }}"
+    validate: >-
+      {% if sshd_test_hostkey is defined and sshd_test_hostkey.path is defined %}
+        {{ sshd_binary }} -t -f %s -h {{ sshd_test_hostkey.path }}/rsa_key
+      {% else %}
+        {{ sshd_binary }} -t -f %s
+      {% endif %}
+    backup: "{{ sshd_backup }}"
+  notify: reload_sshd

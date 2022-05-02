@@ -1,0 +1,38 @@
+---
+- name: Create the complete configuration file
+  template:
+    src: sshd_config.j2
+    dest: "{{ sshd_config_file }}"
+    owner: "{{ sshd_config_owner }}"
+    group: "{{ sshd_config_group }}"
+    mode: "{{ sshd_config_mode }}"
+    validate: >-
+      {% if sshd_test_hostkey is defined and sshd_test_hostkey.path is defined %}
+        {{ sshd_binary }} -t -f %s -h {{ sshd_test_hostkey.path }}/rsa_key
+      {% else %}
+        {{ sshd_binary }} -t -f %s
+      {% endif %}
+    backup: "{{ sshd_backup }}"
+  notify: reload_sshd
+
+- name: Make sure the include path is present in the main sshd_config
+  lineinfile:
+    insertbefore: BOF
+    line: "Include {{ __sshd_defaults['Include'] }}"
+    path: "{{ __sshd_main_config_file }}"
+    owner: "{{ sshd_config_owner }}"
+    group: "{{ sshd_config_group }}"
+    mode: "{{ sshd_config_mode }}"
+    validate: >-
+      {% if sshd_test_hostkey is defined and sshd_test_hostkey.path is defined %}
+        {{ sshd_binary }} -t -f %s -h {{ sshd_test_hostkey.path }}/rsa_key
+      {% else %}
+        {{ sshd_binary }} -t -f %s
+      {% endif %}
+    backup: "{{ sshd_backup }}"
+  notify: reload_sshd
+  when:
+    - __sshd_defaults['Include'] | d(false)
+    - __sshd_main_config_file is not none
+    - __sshd_drop_in_dir is not none
+    - sshd_config_file.startswith(__sshd_drop_in_dir)

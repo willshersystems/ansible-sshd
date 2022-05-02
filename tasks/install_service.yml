@@ -1,0 +1,46 @@
+---
+- name: Install systemd service files
+  block:
+    - name: Install service unit file
+      template:
+        src: "{{ sshd_service_template_service }}"
+        dest: "/etc/systemd/system/{{ sshd_service }}.service"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: reload_sshd
+    - name: Install instanced service unit file
+      template:
+        src: "{{ sshd_service_template_at_service }}"
+        dest: "/etc/systemd/system/{{ sshd_service }}@.service"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: reload_sshd
+    - name: Install socket unit file
+      template:
+        src: "{{ sshd_service_template_socket }}"
+        dest: "/etc/systemd/system/{{ sshd_service }}.socket"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: reload_sshd
+  when: sshd_install_service|bool
+
+- name: Service enabled and running
+  service:
+    name: "{{ sshd_service }}"
+    enabled: true
+    state: started
+  when:
+    - sshd_manage_service|bool
+    - ansible_virtualization_type|default(None) not in __sshd_skip_virt_env
+    - ansible_connection != 'chroot'
+
+# Due to ansible bug 21026, cannot use service module on RHEL 7
+- name: Enable service in chroot
+  command: systemctl enable {{ sshd_service }}  # noqa 303
+  when:
+    - ansible_connection == 'chroot'
+    - ansible_os_family == 'RedHat'
+    - ansible_distribution_major_version|int >= 7
