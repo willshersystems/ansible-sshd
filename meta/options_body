@@ -47,6 +47,7 @@ HostbasedAcceptedKeyTypes
 HostbasedAcceptedAlgorithms
 HostbasedAuthentication
 HostbasedUsesNameFromPacketOnly
+IdentityFile
 Include
 IPQoS
 IgnoreRhosts
