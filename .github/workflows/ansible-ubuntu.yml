@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: ansible check with ubuntu:latest
-        uses: Jakuje/check-ansible-ubuntu-latest-action@patch-1
+        uses: roles-ansible/check-ansible-ubuntu-latest-action@master
         with:
           group: local
           hosts: localhost
@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: ansible check with ubuntu:20 (focal)
-        uses: Jakuje/check-ansible-ubuntu-focal-action@patch-1
+        uses: roles-ansible/check-ansible-ubuntu-focal-action@master
         with:
           group: local
           hosts: localhost
