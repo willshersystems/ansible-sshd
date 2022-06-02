@@ -1,5 +1,4 @@
 __sshd_skip_virt_env:
-  - kvm
   - docker
   - podman
   - container
