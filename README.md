@@ -219,7 +219,8 @@ the above list.
 ### Secondary role variables
 
 These variables are used by the role internals and can be used to override the
-defaults that correspond to each supported platform.
+defaults that correspond to each supported platform. They are not tested and
+generally are not needed as the role will determine them from the OS type.
 
 * `sshd_packages`
 
