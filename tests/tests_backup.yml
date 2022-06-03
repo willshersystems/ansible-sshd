@@ -6,50 +6,50 @@
       - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
   tasks:
     - name: Backup configuration files
-      include_tasks: tasks/backup.yml
+      ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Find old backups files
-      find:
+      ansible.builtin.find:
         paths: "{{ main_sshd_config_path }}"
         patterns: "{{ main_sshd_config_name }}.*@*~"
       register: backup_files
 
     - name: Remove old backup files
-      file:
+      ansible.builtin.file:
         path: "{{ item.path }}"
         state: absent
       with_items: "{{ backup_files.files }}"
 
     - name: Configure sshd without creating backup
-      include_role:
+      ansible.builtin.include_role:
         name: ansible-sshd
       vars:
         sshd_backup: false
 
     - name: Find new backups files
-      find:
+      ansible.builtin.find:
         paths: "{{ main_sshd_config_path }}"
         patterns: "{{ main_sshd_config_name }}.*@*~"
       register: no_backup
 
     - name: Configure sshd again with different configuration and with backup
-      include_role:
+      ansible.builtin.include_role:
         name: ansible-sshd
       vars:
-        sshd_Banner: /tmp/banner
+        sshd_Banner: /tmp/banner  # noqa var-naming
       register: second_run
 
     - name: Find new backups files
-      find:
+      ansible.builtin.find:
         paths: "{{ main_sshd_config_path }}"
         patterns: "{{ main_sshd_config_name }}.*@*~"
       register: new_backup
 
     - name: Verify the backup was not done in the first attempt, but in the second one
-      assert:
+      ansible.builtin.assert:
         that:
           - no_backup.files == []
           - new_backup.files != []
 
     - name: Restore configuration files
-      include_tasks: tasks/restore.yml
+      ansible.builtin.include_tasks: tasks/restore.yml

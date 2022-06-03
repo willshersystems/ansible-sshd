@@ -1,6 +1,6 @@
 ---
 - name: Create the complete configuration file
-  template:
+  ansible.builtin.template:
     src: sshd_config.j2
     dest: "{{ sshd_config_file }}"
     owner: "{{ sshd_config_owner }}"
@@ -16,7 +16,7 @@
   notify: reload_sshd
 
 - name: Make sure the include path is present in the main sshd_config
-  lineinfile:
+  ansible.builtin.template:
     insertbefore: BOF
     line: "Include {{ __sshd_defaults['Include'] }}"
     path: "{{ __sshd_main_config_file }}"

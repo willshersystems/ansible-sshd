@@ -1,16 +1,16 @@
 ---
 - name: OS is supported
-  meta: end_host
+  ansible.builtin.meta: end_host
   when:
     - not __sshd_os_supported|bool
 
 - name: Install ssh packages
-  package:
+  ansible.builtin.package:
     name: "{{ sshd_packages }}"
     state: present
 
 - name: Sysconfig configuration
-  template:
+  ansible.builtin.template:
     src: sysconfig.j2
     dest: "/etc/sysconfig/sshd"
     owner: "root"
@@ -23,7 +23,7 @@
   notify: reload_sshd
 
 - name: Check FIPS mode
-  include_tasks: check_fips.yml
+  ansible.builtin.include_tasks: check_fips.yml
   when:
     - __sshd_hostkeys_nofips | d([])
 
@@ -70,7 +70,7 @@
       {% endif %}
   block:
     - name: Make sure hostkeys are available
-      shell: |
+      ansible.builtin.shell: |
         set -eu
         if set -o | grep pipefail 2>&1 /dev/null ; then
           set -o pipefail
@@ -85,7 +85,7 @@
       changed_when: false
 
     - name: Make sure private hostkeys have expected permissions
-      file:
+      ansible.builtin.file:
         path: "{{ item }}"
         owner: "{{ sshd_hostkey_owner }}"
         group: "{{ sshd_hostkey_group }}"
@@ -97,7 +97,7 @@
     <<: *share_vars
   block:
     - name: Create a temporary hostkey for syntax verification if needed
-      tempfile:
+      ansible.builtin.tempfile:
         state: directory
       register: sshd_test_hostkey
       changed_when: false
@@ -105,13 +105,13 @@
         - __sshd_hostkeys_from_config | from_json == []
 
     - name: Generate temporary hostkey
-      command: >
+      ansible.builtin.command: >
         ssh-keygen -q -t rsa -f '{{ sshd_test_hostkey.path }}/rsa_key' -C '' -N ''
       changed_when: false
       when: sshd_test_hostkey.path is defined
 
     - name: Make sure sshd runtime directory is present
-      file:
+      ansible.builtin.file:
         path: "{{ __sshd_runtime_directory }}"
         state: directory
         owner: root
@@ -121,29 +121,29 @@
         - __sshd_runtime_directory | d(false)
 
     - name: Create the complete configuration file
-      include_tasks: install_config.yml
+      ansible.builtin.include_tasks: install_config.yml
       when: sshd_config_namespace is none
 
     - name: Update configuration file snippet
-      include_tasks: install_namespace.yml
+      ansible.builtin.include_tasks: install_namespace.yml
       when: sshd_config_namespace is not none
 
   rescue:
     - name: re-raise the error
-      fail:
+      ansible.builtin.fail:
         msg: "{{ ansible_failed_result }}"
   always:
     - name: Remove temporary host keys
-      file:
+      ansible.builtin.file:
         path: "{{ sshd_test_hostkey.path }}"
         state: absent
       changed_when: false
       when: sshd_test_hostkey.path is defined
 
 - name: Install and start systemd service
-  include_tasks: install_service.yml
+  ansible.builtin.include_tasks: install_service.yml
 
 - name: Register that this role has run
-  set_fact:
+  ansible.builtin.set_fact:
     sshd_has_run: true
   when: sshd_has_run is not defined

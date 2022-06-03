@@ -7,10 +7,10 @@
       - /etc/ssh/ssh_host_rsa_key.pub
   tasks:
     - name: "Backup configuration files"
-      include_tasks: tasks/backup.yml
+      ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Add configuration block to default configuration file
-      include_role:
+      ansible.builtin.include_role:
         name: ansible-sshd
       vars:
         sshd_config_file: /etc/ssh/sshd_config
@@ -23,7 +23,7 @@
             AllowAgentForwarding: no
 
     - name: Add second configuration block to default configuration file
-      include_role:
+      ansible.builtin.include_role:
         name: ansible-sshd
       vars:
         sshd_config_file: /etc/ssh/sshd_config
@@ -37,15 +37,16 @@
 
     - name: Verify the options are correctly set
       block:
-        - meta: flush_handlers
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
 
         - name: Print current configuration file
-          slurp:
+          ansible.builtin.slurp:
             src: /etc/ssh/sshd_config
           register: config
 
-        - name: List effective configuration using sshd -T (matching)
-          shell: |
+        - name: List effective configuration using sshd -T (matching)  # noqa no-changed-when
+          ansible.builtin.shell: |
             set -eu
             if set -o | grep pipefail 2>&1 /dev/null ; then
               set -o pipefail
@@ -56,12 +57,12 @@
             sshd -T -Cuser=root,host=localhost,addr=127.0.0.1
           register: runtime
 
-        - name: List effective configuration using sshd -T (non-matching)
-          command: sshd -T -Cuser=nobody,host=example.com,addr=127.0.0.2
+        - name: List effective configuration using sshd -T (non-matching)  # noqa no-changed-when
+          ansible.builtin.command: sshd -T -Cuser=nobody,host=example.com,addr=127.0.0.2
           register: nonmatching
 
         - name: Check content of configuration file (blocks)
-          assert:
+          ansible.builtin.assert:
             that:
               - "config.content | b64decode | regex_search('Match all\\s*PasswordAuthentication yes')"
               - "config.content | b64decode | regex_search('Match all\\s*PasswordAuthentication no')"
@@ -69,7 +70,7 @@
             - ansible_facts['os_family'] != 'RedHat' or ansible_facts['distribution_major_version'] != '6'
 
         - name: Check content of configuration file (blocks for RHEL 6)
-          assert:
+          ansible.builtin.assert:
             that:
               - "config.content | b64decode | regex_search('Match address \\*\\s*PasswordAuthentication yes')"
               - "config.content | b64decode | regex_search('Match address \\*\\s*PasswordAuthentication no')"
@@ -78,7 +79,7 @@
             - ansible_facts['distribution_major_version'] == '6'
 
         - name: Check content of configuration file
-          assert:
+          ansible.builtin.assert:
             that:
               - "'PermitRootLogin yes' in config.content | b64decode"
               - "'PasswordAuthentication yes' in config.content | b64decode"
@@ -93,7 +94,7 @@
 
         - name: Check the configuration values are effective
           # note, the options are in lower-case here
-          assert:
+          ansible.builtin.assert:
             that:
               - "'permitrootlogin yes' in runtime.stdout"
               - "'allowagentforwarding no' in runtime.stdout"
@@ -102,7 +103,7 @@
 
         - name: Check the configuration values are not effective for non-matching connection
           # note, the options are in lower-case here
-          assert:
+          ansible.builtin.assert:
             that:
               - "'permitrootlogin yes' in runtime.stdout"
               - "'allowAgentforwarding no' not in nonmatching.stdout"
@@ -111,4 +112,4 @@
       tags: tests::verify
 
     - name: "Restore configuration files"
-      include_tasks: tasks/restore.yml
+      ansible.builtin.include_tasks: tasks/restore.yml
