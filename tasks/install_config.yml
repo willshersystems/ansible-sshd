@@ -16,7 +16,7 @@
   notify: reload_sshd
 
 - name: Make sure the include path is present in the main sshd_config
-  ansible.builtin.template:
+  ansible.builtin.lineinfile:
     insertbefore: BOF
     line: "Include {{ __sshd_defaults['Include'] }}"
     path: "{{ __sshd_main_config_file }}"
