@@ -11,6 +11,7 @@ jobs:
     # Workaround missing support for end_host in old ansible
     - run: "sed -i -e 's/meta: end_host/assert:\\n    that: __sshd_os_supported|bool/' tasks/install.yml"
     - run: "sed -i -e 's/.*public: true//' tests/tasks/restore.yml"
+    - run: "sed -i -e 's/ansible.builtin.//g/' */*.yml"
 
     - name: ansible check with centos 6
       uses: roles-ansible/check-ansible-centos-centos6-action@master
