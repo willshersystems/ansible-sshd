@@ -7,10 +7,10 @@
       - /etc/sysconfig/sshd
   tasks:
     - name: "Backup configuration files"
-      include_tasks: tasks/backup.yml
+      ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Configure sshd
-      include_role:
+      ansible.builtin.include_role:
         name: ansible-sshd
       vars:
         sshd_sysconfig: true
@@ -19,15 +19,16 @@
 
     - name: Verify the options are correctly set
       block:
-        - meta: flush_handlers
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
 
         - name: Print current configuration file
-          slurp:
+          ansible.builtin.slurp:
             src: /etc/sysconfig/sshd
           register: config
 
         - name: Evaluate sysconfig similarly as systemd
-          shell: |
+          ansible.builtin.shell: |
             set -eu
             if set -o | grep pipefail 2>&1 /dev/null ; then
               set -o pipefail
@@ -39,7 +40,7 @@
           changed_when: false
 
         - name: Evaluate sysconfig similarly as systemd on RHEL 8
-          shell: |
+          ansible.builtin.shell: |
             set -eu
             if set -o | grep pipefail 2>&1 /dev/null ; then
               set -o pipefail
@@ -55,7 +56,7 @@
             - ansible_facts['distribution_major_version'] == "8"
 
         - name: Check the crypto policies is overridden in RHEL 8
-          assert:
+          ansible.builtin.assert:
             that:
               - "'CRYPTO_POLICY=' in config.content | b64decode"
               # these are string variants in default configuration file
@@ -66,7 +67,7 @@
             - ansible_facts['distribution_major_version'] == "8"
 
         - name: Check the RNG options are in configuration file
-          assert:
+          ansible.builtin.assert:
             that:
               - "'SSH_USE_STRONG_RNG=32' in config.content | b64decode"
               # these are string variants in default configuration file
@@ -80,4 +81,4 @@
         - ansible_facts['distribution_major_version']|int < 9
 
     - name: "Restore configuration files"
-      include_tasks: tasks/restore.yml
+      ansible.builtin.include_tasks: tasks/restore.yml

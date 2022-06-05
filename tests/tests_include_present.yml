@@ -7,10 +7,10 @@
 
   tasks:
     - name: "Backup configuration files"
-      include_tasks: tasks/backup.yml
+      ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Remove include directory from the main config file
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: "/etc/ssh/sshd_config"
         regexp: "^Include"
         state: absent
@@ -19,7 +19,7 @@
           (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int >= 22)
 
     - name: Create a new configuration in drop-in directory
-      include_role:
+      ansible.builtin.include_role:
         name: ansible-sshd
       vars:
         sshd_config_file: /etc/ssh/sshd_config.d/00-ansible_system_role.conf
@@ -32,20 +32,21 @@
 
     - name: Verify the options are correctly set
       block:
-        - meta: flush_handlers
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
 
         - name: Print drop-in configuration file
-          slurp:
+          ansible.builtin.slurp:
             src: /etc/ssh/sshd_config.d/00-ansible_system_role.conf
           register: config
 
         - name: Print the main configuration file
-          slurp:
+          ansible.builtin.slurp:
             src: /etc/ssh/sshd_config
           register: config_main
 
         - name: Check content of drop-in configuration file
-          assert:
+          ansible.builtin.assert:
             that:
               - "'Banner /etc/include-issue' in config.content | b64decode"
               - "'Ciphers aes192-ctr' in config.content | b64decode"
@@ -54,20 +55,20 @@
               - "'Subsystem	sftp	/usr/lib/openssh/sftp-server' not in config.content | b64decode"
 
         - name: Check common content of the main configuration file
-          assert:
+          ansible.builtin.assert:
             that:
               - "'Banner /etc/include-issue' not in config_main.content | b64decode"
               - "'Ciphers aes192-ctr' not in config_main.content | b64decode"
               - "'Include /etc/ssh/sshd_config.d/*.conf' in config_main.content | b64decode"
 
         - name: Check RHEL content of the main configuration file
-          assert:
+          ansible.builtin.assert:
             that:
               - "'Subsystem	sftp	/usr/libexec/openssh/sftp-server' in config_main.content | b64decode"
           when: ansible_facts['os_family'] == 'RedHat'
 
         - name: Check Ubuntu content of the main configuration file
-          assert:
+          ansible.builtin.assert:
             that:
               - "'Subsystem	sftp	/usr/lib/openssh/sftp-server' in config_main.content | b64decode"
           when: ansible_facts['os_family'] == 'Ubuntu'
@@ -79,4 +80,4 @@
       tags: tests::verify
 
     - name: "Restore configuration files"
-      include_tasks: tasks/restore.yml
+      ansible.builtin.include_tasks: tasks/restore.yml

@@ -9,10 +9,10 @@
 
   tasks:
     - name: Backup configuration files
-      include_tasks: tasks/backup.yml
+      ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Show effective configuration before running role (system defaults)
-      shell: |
+      ansible.builtin.shell: |
         set -eu
         if set -o | grep pipefail 2>&1 /dev/null ; then
           set -o pipefail
@@ -25,16 +25,16 @@
       changed_when: false
 
     - name: Configure sshd
-      include_role:
+      ansible.builtin.include_role:
         name: ansible-sshd
 
     - name: Show effective configuration after running role (role defaults)
-      command: sshd -T
+      ansible.builtin.command: sshd -T
       register: runtime_after
       changed_when: false
 
     - name: Check that the effective configuration did not change from OS defaults
-      assert:
+      ansible.builtin.assert:
         that:
           - runtime_before.stdout == runtime_after.stdout
       when:
@@ -42,4 +42,4 @@
         - not (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6')
 
     - name: Restore configuration files
-      include_tasks: tasks/restore.yml
+      ansible.builtin.include_tasks: tasks/restore.yml

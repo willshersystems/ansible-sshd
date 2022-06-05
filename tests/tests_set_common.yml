@@ -6,10 +6,10 @@
       - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
   tasks:
     - name: "Backup configuration files"
-      include_tasks: tasks/backup.yml
+      ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Configure sshd
-      include_role:
+      ansible.builtin.include_role:
         name: ansible-sshd
       vars:
         sshd:
@@ -21,20 +21,22 @@
 
     - name: Verify the options are correctly set
       block:
-        - meta: flush_handlers
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
 
         - name: List effective configuration using sshd -T
-          command: sshd -T
+          ansible.builtin.command: sshd -T
           register: runtime
+          changed_when: false
 
         - name: Print current configuration file
-          slurp:
+          ansible.builtin.slurp:
             src: /etc/ssh/sshd_config
           register: config
 
         - name: Check the options are effective
           # note, the options are in lower-case here
-          assert:
+          ansible.builtin.assert:
             that:
               - "'acceptenv LANG' in runtime.stdout"
               - "'banner /etc/issue' in runtime.stdout"
@@ -42,7 +44,7 @@
               - "'subsystem sftp internal-sftp' in runtime.stdout"
 
         - name: Check the options are in configuration file
-          assert:
+          ansible.builtin.assert:
             that:
               - "'AcceptEnv LANG' in config.content | b64decode"
               - "'Banner /etc/issue' in config.content | b64decode"
@@ -51,4 +53,4 @@
       tags: tests::verify
 
     - name: "Restore configuration files"
-      include_tasks: tasks/restore.yml
+      ansible.builtin.include_tasks: tasks/restore.yml

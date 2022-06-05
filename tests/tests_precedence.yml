@@ -31,9 +31,10 @@
         - name: Flush metadata
           ansible.builtin.meta: flush_handlers
 
-        - name: List effective configuration using sshd -T  # noqa no-changed-when
+        - name: List effective configuration using sshd -T
           ansible.builtin.command: sshd -T
           register: runtime
+          changed_when: false
 
         - name: Print current configuration file
           ansible.builtin.slurp:
