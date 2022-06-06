@@ -1,7 +1,7 @@
 ---
 
 - name: Reload the SSH service
-  service:
+  ansible.builtin.service:
     name: "{{ sshd_service }}"
     state: reloaded
   when:
@@ -16,7 +16,7 @@
 # Instead, use a dirty shell script:
 #  https://www.ibm.com/developerworks/community/blogs/brian/entry/scripting_the_stop_and_restart_of_src_controlled_processes_on_aix6
 - name: Reload sshd Service (AIX)
-  shell: |
+  ansible.builtin.shell: |
     set -eu
     if set -o | grep pipefail 2>&1 /dev/null ; then
       set -o pipefail

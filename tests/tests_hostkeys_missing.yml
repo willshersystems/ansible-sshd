@@ -7,12 +7,12 @@
       - /tmp/missing_ssh_host_rsa_key
   tasks:
     - name: "Backup configuration files"
-      include_tasks: tasks/backup.yml
+      ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Configure sshd with missing host keys and prevent their creation
       block:
         - name: Configure missing hostkey
-          include_role:
+          ansible.builtin.include_role:
             name: ansible-sshd
           vars:
             sshd_verify_hostkeys: []
@@ -22,12 +22,12 @@
           register: role_result
 
         - name: unreachable task
-          fail:
+          ansible.builtin.fail:
             msg: UNREACH
 
       rescue:
         - name: Check that we failed in the role
-          assert:
+          ansible.builtin.assert:
             that:
               - ansible_failed_result.msg != 'UNREACH'
               - not role_result.changed
@@ -38,7 +38,7 @@
       tags: tests::verify
 
     - name: Make sure the key was not created
-      file:
+      ansible.builtin.file:
         path: /tmp/missing_ssh_host_rsa_key
         state: absent
       register: key
@@ -46,7 +46,7 @@
       tags: tests::verify
 
     - name: Make sure service is still running
-      service:
+      ansible.builtin.service:
         name: sshd
         state: started
       register: result
@@ -56,4 +56,4 @@
         - not (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6')
 
     - name: "Restore configuration files"
-      include_tasks: tasks/restore.yml
+      ansible.builtin.include_tasks: tasks/restore.yml

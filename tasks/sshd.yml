@@ -1,9 +1,9 @@
 ---
 - name: Set common variables and ensure basic facts are gathered
-  include_tasks: set_common_vars.yml
+  ansible.builtin.include_tasks: set_common_vars.yml
 
 - name: Set platform/version specific variables
-  include_tasks: variables.yml
+  ansible.builtin.include_tasks: variables.yml
 
 - name: Execute the actual role tasks
-  include_tasks: install.yml
+  ansible.builtin.include_tasks: install.yml

@@ -7,15 +7,15 @@
       - /tmp/ssh_host_rsa_key
   tasks:
     - name: "Backup configuration files"
-      include_tasks: tasks/backup.yml
+      ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Remove host key before the test
-      file:
+      ansible.builtin.file:
         path: /tmp/ssh_host_rsa_key
         state: absent
 
-    - name: Configure sshd
-      include_role:
+    - name: Configure sshd  # noqa var-naming
+      ansible.builtin.include_role:
         name: ansible-sshd
       vars:
         sshd:
@@ -28,27 +28,29 @@
 
     - name: Verify the options are correctly set
       block:
-        - meta: flush_handlers
+        - name: Flush metadata
+          ansible.builtin.meta: flush_handlers
 
         - name: List effective configuration using sshd -T
-          command: sshd -T
+          ansible.builtin.command: sshd -T
           register: runtime
+          changed_when: false
 
         - name: Print current configuration file
-          slurp:
+          ansible.builtin.slurp:
             src: "{{ main_sshd_config }}"
           register: config
 
         - name: Check the sshd_* values are effective in runtime
           # note, the options are in lower-case here
-          assert:
+          ansible.builtin.assert:
             that:
               - "'banner /etc/good-issue' in runtime.stdout"
               - "'ciphers aes128-ctr' in runtime.stdout"
               - "'hostkey /tmp/ssh_host_rsa_key' in runtime.stdout"
 
         - name: Check the options are in configuration file
-          assert:
+          ansible.builtin.assert:
             that:
               - "'Banner /etc/good-issue' in config.content | b64decode"
               - "'Ciphers aes128-ctr' in config.content | b64decode"
@@ -56,4 +58,4 @@
       tags: tests::verify
 
     - name: "Restore configuration files"
-      include_tasks: tasks/restore.yml
+      ansible.builtin.include_tasks: tasks/restore.yml

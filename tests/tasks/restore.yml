@@ -1,6 +1,6 @@
 ---
 - name: Restore backed up files and remove what was not present
-  shell: |
+  ansible.builtin.shell: |
     set -eu
     if set -o | grep pipefail 2>&1 /dev/null ; then
       set -o pipefail
@@ -17,7 +17,7 @@
     - __sshd_test_backup.path is defined
 
 - name: Remove temporary directory for backup files
-  file:
+  ansible.builtin.file:
     path: "{{ __sshd_test_backup.path }}"
     state: absent
   changed_when: false
@@ -26,13 +26,13 @@
     - __sshd_test_backup.path is defined
 
 - name: Include common variables
-  include_role:
+  ansible.builtin.include_role:
     name: ansible-sshd
     tasks_from: set_common_vars.yml
     public: true
 
 - name: Restart sshd service
-  service:
+  ansible.builtin.service:
     name: sshd
     state: reloaded
   changed_when: false

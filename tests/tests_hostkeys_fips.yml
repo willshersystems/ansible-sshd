@@ -9,33 +9,34 @@
       - /etc/system-fips
   tasks:
     - name: "Backup configuration files"
-      include_tasks: tasks/backup.yml
+      ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Run the role with default parameters without FIPS mode
-      include_role:
+      ansible.builtin.include_role:
         name: ansible-sshd
 
     - name: Verify the options are correctly set
       block:
-        - meta: flush_handlers
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
 
         - name: Print current configuration file
-          slurp:
+          ansible.builtin.slurp:
             src: "{{ main_sshd_config }}"
           register: config
 
         - name: Get stat of private key
-          stat:
+          ansible.builtin.stat:
             path: /etc/ssh/ssh_host_ed25519_key
           register: privkey
 
         - name: Get stat of public key
-          stat:
+          ansible.builtin.stat:
             path: /etc/ssh/ssh_host_ed25519_key.pub
           register: pubkey
 
         - name: Check the key is in configuration file (without include)
-          assert:
+          ansible.builtin.assert:
             that:
               - "'HostKey /etc/ssh/ssh_host_ed25519_key' in config.content | b64decode"
           when:
@@ -43,7 +44,7 @@
             - ansible_facts['distribution_major_version']|int < 9
 
         - name: Check host key was generated
-          assert:
+          ansible.builtin.assert:
             that:
               - privkey.stat.exists
               - pubkey.stat.exists
@@ -55,22 +56,24 @@
     - name: Fake FIPS mode
       block:
         - name: Create temporary directory
-          tempfile:
+          ansible.builtin.tempfile:
             state: directory
           register: fips_directory
 
         - name: Create a /etc/system-fips
-          copy:
+          ansible.builtin.copy:
             dest: /etc/system-fips
             content: userspace fips
+            mode: "0644"
 
         - name: Create a fips_enabled file
-          copy:
+          ansible.builtin.copy:
             dest: "{{ fips_directory.path }}/fips_enabled"
             content: 1
+            mode: "0644"
 
         - name: Bind mount the file where we need it
-          mount:
+          ansible.builtin.mount:
             path: /proc/sys/crypto/fips_enabled
             src: "{{ fips_directory.path }}/fips_enabled"
             opts: bind
@@ -79,47 +82,48 @@
           failed_when: false
 
     - name: Remove the Ed25519 hostkey
-      file:
+      ansible.builtin.file:
         path:
           /etc/ssh/ssh_host_ed25519_key
         state: absent
 
     - name: Remove the Ed25519 pubkey
-      file:
+      ansible.builtin.file:
         path:
           /etc/ssh/ssh_host_ed25519_key.pub
         state: absent
 
     - name: Run the role with default parameters
-      include_role:
+      ansible.builtin.include_role:
         name: ansible-sshd
 
     - name: Verify the options are correctly set
       block:
-        - meta: flush_handlers
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
 
         - name: Print current configuration file
-          slurp:
+          ansible.builtin.slurp:
             src: "{{ main_sshd_config }}"
           register: config
 
         - name: Get stat of private key
-          stat:
+          ansible.builtin.stat:
             path: /etc/ssh/ssh_host_ed25519_key
           register: privkey
 
         - name: Get stat of public key
-          stat:
+          ansible.builtin.stat:
             path: /etc/ssh/ssh_host_ed25519_key.pub
           register: pubkey
 
         - name: Check the key is not in configuration file
-          assert:
+          ansible.builtin.assert:
             that:
               - "'HostKey /etc/ssh/ssh_host_ed25519_key' not in config.content | b64decode"
 
         - name: Check no host key was generated
-          assert:
+          ansible.builtin.assert:
             that:
               - not privkey.stat.exists
               - not pubkey.stat.exists
@@ -137,9 +141,9 @@
           failed_when: false
 
         - name: Remove the temporary directory
-          file:
+          ansible.builtin.file:
             path: "{{ fips_directory.path }}"
             state: absent
 
     - name: "Restore configuration files"
-      include_tasks: tasks/restore.yml
+      ansible.builtin.include_tasks: tasks/restore.yml

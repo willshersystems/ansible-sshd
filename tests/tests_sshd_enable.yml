@@ -8,10 +8,10 @@
       - /etc/ssh/ssh_host_rsa_key.pub
   tasks:
     - name: "Backup configuration files"
-      include_tasks: tasks/backup.yml
+      ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Configure sshd with the role disabled
-      include_role:
+      ansible.builtin.include_role:
         name: ansible-sshd
       vars:
         sshd_enable: false
@@ -22,12 +22,12 @@
         sshd_config_file: /etc/ssh/sshd_config
 
     - name: Print current configuration file
-      slurp:
+      ansible.builtin.slurp:
         src: /etc/ssh/sshd_config
       register: config
 
     - name: Print effective configuration
-      shell: |
+      ansible.builtin.shell: |
         set -eu
         if set -o | grep pipefail 2>&1 /dev/null ; then
           set -o pipefail
@@ -41,7 +41,7 @@
 
     - name: Check the options were not applied
       # note, the options are in lower-case here
-      assert:
+      ansible.builtin.assert:
         that:
           - "'Acceptenv XDG_*' not in config.content | b64decode"
           - "'Banner /etc/issue' not in config.content | b64decode"
@@ -51,4 +51,4 @@
           - "'ciphers aes256-ctr,aes128-ctr' not in runtime.stdout"
 
     - name: "Restore configuration files"
-      include_tasks: tasks/restore.yml
+      ansible.builtin.include_tasks: tasks/restore.yml

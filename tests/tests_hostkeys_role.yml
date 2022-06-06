@@ -7,19 +7,19 @@
       - /tmp/ssh_host_rsa_key2
   tasks:
     - name: "Backup configuration files"
-      include_tasks: tasks/backup.yml
+      ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Remove host key before the test
-      file:
+      ansible.builtin.file:
         path: /tmp/ssh_host_rsa_key2
         state: absent
 
     - name: Ensure group 'nobody' exists
-      group:
+      ansible.builtin.group:
         name: nobody
 
     - name: Ensure the user 'nobody' exists
-      user:
+      ansible.builtin.user:
         name: nobody
         group: nobody
         comment: nobody
@@ -47,34 +47,35 @@
       - /tmp/ssh_host_rsa_key2
   tasks:
     - name: Setup variables
-      include_tasks: tasks/setup.yml
+      ansible.builtin.include_tasks: tasks/setup.yml
 
     - name: Verify the options are correctly set
       block:
-        - meta: flush_handlers
+        - name: Flush metadata
+          ansible.builtin.meta: flush_handlers
 
         - name: Print current configuration file
-          slurp:
+          ansible.builtin.slurp:
             src: "{{ main_sshd_config }}"
           register: config
 
         - name: Get stat of private key
-          stat:
+          ansible.builtin.stat:
             path: /tmp/ssh_host_rsa_key2
           register: privkey
 
         - name: Get stat of public key
-          stat:
+          ansible.builtin.stat:
             path: /tmp/ssh_host_rsa_key2.pub
           register: pubkey
 
         - name: Check the options are in configuration file
-          assert:
+          ansible.builtin.assert:
             that:
               - "'HostKey /tmp/ssh_host_rsa_key2' in config.content | b64decode"
 
         - name: Check the generated host key has requested properties
-          assert:
+          ansible.builtin.assert:
             that:
               - privkey.stat.exists
               - privkey.stat.gr_name == 'nobody'
@@ -84,4 +85,4 @@
       tags: tests::verify
 
     - name: "Restore configuration files"
-      include_tasks: tasks/restore.yml
+      ansible.builtin.include_tasks: tasks/restore.yml

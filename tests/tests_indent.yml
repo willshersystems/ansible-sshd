@@ -6,10 +6,10 @@
       - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
   tasks:
     - name: "Backup configuration files"
-      include_tasks: tasks/backup.yml
+      ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Configure sshd with simple config options
-      include_role:
+      ansible.builtin.include_role:
         name: ansible-sshd
       vars:
         sshd:
@@ -21,15 +21,16 @@
 
     - name: Verify the options are correctly set
       block:
-        - meta: flush_handlers
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
 
         - name: Print current configuration file
-          slurp:
+          ansible.builtin.slurp:
             src: "{{ main_sshd_config }}"
           register: config
 
         - name: Check the options are correctly indented in configuration file
-          assert:
+          ansible.builtin.assert:
             that:
               - "config.content | b64decode | regex_search('^PasswordAuthentication yes$', multiline=True)"
               - "config.content | b64decode | regex_search('^PermitRootLogin yes$', multiline=True)"
@@ -38,4 +39,4 @@
       tags: tests::verify
 
     - name: "Restore configuration files"
-      include_tasks: tasks/restore.yml
+      ansible.builtin.include_tasks: tasks/restore.yml

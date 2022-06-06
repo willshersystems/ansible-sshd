@@ -1,11 +1,11 @@
 ---
 - name: Make sure openssh is installed before creating backup
-  package:
+  ansible.builtin.package:
     name: openssh-server
     state: present
 
 - name: Make sure openssh has runtime directory on debian
-  file:
+  ansible.builtin.file:
     path: /run/sshd
     state: directory
     owner: root
@@ -15,13 +15,13 @@
     - ansible_facts['os_family'] == 'Debian'
 
 - name: Define common variables
-  set_fact:
+  ansible.builtin.set_fact:
     main_sshd_config: /etc/ssh/sshd_config
     main_sshd_config_name: sshd_config
     main_sshd_config_path: /etc/ssh/
 
 - name: Define specific variables
-  set_fact:
+  ansible.builtin.set_fact:
     main_sshd_config: /etc/ssh/sshd_config.d/00-ansible_system_role.conf
     main_sshd_config_name: 00-ansible_system_role.conf
     main_sshd_config_path: /etc/ssh/sshd_config.d/

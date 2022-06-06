@@ -9,14 +9,14 @@
       - /tmp/ssh_host_ecdsa_key
   tasks:
     - name: "Backup configuration files"
-      include_tasks: tasks/backup.yml
+      ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Ensure group 'nobody' exists
-      group:
+      ansible.builtin.group:
         name: nobody
 
     - name: Ensure the user 'nobody' exists
-      user:
+      ansible.builtin.user:
         name: nobody
         group: nobody
         comment: nobody
@@ -24,7 +24,7 @@
         shell: /sbin/nologin
 
     - name: Configure alternative sshd_config file
-      include_role:
+      ansible.builtin.include_role:
         name: ansible-sshd
       vars:
         # just anything -- will not get processed by sshd
@@ -36,10 +36,10 @@
           AcceptEnv: LANG
           Banner: /etc/issue
           Ciphers: aes256-ctr
-        sshd_Compression: no
+        sshd_Compression: no  # noqa var-naming
 
     - name: Configure second alternative sshd_config file
-      include_role:
+      ansible.builtin.include_role:
         name: ansible-sshd
       vars:
         # just anything -- will not get processed by sshd
@@ -48,10 +48,10 @@
         sshd:
           Banner: /etc/issue2
           Ciphers: aes128-ctr
-        sshd_MaxStartups: 100
+        sshd_MaxStartups: 100  # noqa var-naming
 
     - name: Now configure the main sshd_config file
-      include_role:
+      ansible.builtin.include_role:
         name: ansible-sshd
       vars:
         sshd_config_file: /etc/ssh/sshd_config
@@ -60,34 +60,35 @@
           Ciphers: aes192-ctr
           HostKey:
             - /tmp/ssh_host_ecdsa_key
-        sshd_PasswordAuthentication: no
+        sshd_PasswordAuthentication: no  # noqa var-naming
 
     - name: Verify the options are correctly set
       block:
-        - meta: flush_handlers
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
 
         - name: Print current configuration file
-          slurp:
+          ansible.builtin.slurp:
             src: /etc/ssh/sshd_config_custom
           register: config
 
         - name: Get stat of the configuration file
-          stat:
+          ansible.builtin.stat:
             path: /etc/ssh/sshd_config_custom
           register: config_stat
 
         - name: Print second configuration file
-          slurp:
+          ansible.builtin.slurp:
             src: /etc/ssh/sshd_config_custom_second
           register: config2
 
         - name: Print the main configuration file
-          slurp:
+          ansible.builtin.slurp:
             src: /etc/ssh/sshd_config
           register: config3
 
         - name: Check content of first configuration file
-          assert:
+          ansible.builtin.assert:
             that:
               - "'AcceptEnv LANG' in config.content | b64decode"
               - "'Banner /etc/issue' in config.content | b64decode"
@@ -95,7 +96,7 @@
               - "'Compression no' in config.content | b64decode"
 
         - name: Check Fedora/RHEL9+ defaults are present in the first configuration file
-          assert:
+          ansible.builtin.assert:
             that:
               - "'Include /etc/ssh/sshd_config.d/*.conf' in config.content | b64decode"
               - "'AuthorizedKeysFile .ssh/authorized_keys' in config.content | b64decode"
@@ -104,7 +105,7 @@
             - ansible_facts['distribution_major_version']|int > 8
 
         - name: Check RHEL7 and RHEL8 defaults are present in the first configuration file
-          assert:
+          ansible.builtin.assert:
             that:
               - "'X11Forwarding yes' in config.content | b64decode"
               - "'AuthorizedKeysFile .ssh/authorized_keys' in config.content | b64decode"
@@ -115,7 +116,7 @@
             - ansible_facts['distribution_major_version']|int < 9
 
         - name: Check RHEL6 defaults are present in the first configuration file
-          assert:
+          ansible.builtin.assert:
             that:
               - "'Protocol 2' in config.content | b64decode"
               - "'UsePAM yes' in config.content | b64decode"
@@ -124,7 +125,7 @@
             - ansible_facts['distribution_major_version'] == '6'
 
         - name: Check Debian defaults are present in the first configuration file
-          assert:
+          ansible.builtin.assert:
             that:
               - "'PrintMotd no' in config.content | b64decode"
               - "'UsePAM yes' in config.content | b64decode"
@@ -133,7 +134,7 @@
             - ansible_facts['distribution_major_version']|int < 22
 
         - name: Check Ubuntu 22 defaults are present in the first configuration file
-          assert:
+          ansible.builtin.assert:
             that:
               - "'Include /etc/ssh/sshd_config.d/*.conf' in config3.content | b64decode"
               - "'KbdInteractiveAuthentication no' in config.content | b64decode"
@@ -143,7 +144,7 @@
             - ansible_facts['distribution_major_version']|int >= 22
 
         - name: Check content of second configuration file
-          assert:
+          ansible.builtin.assert:
             that:
               - "'Banner /etc/issue2' in config2.content | b64decode"
               - "'Ciphers aes128-ctr' in config2.content | b64decode"
@@ -152,7 +153,7 @@
               - "'Compression no' not in config2.content | b64decode"
 
         - name: Check content of the main configuration file
-          assert:
+          ansible.builtin.assert:
             that:
               - "'Banner /etc/issue' in config3.content | b64decode"
               - "'Ciphers aes192-ctr' in config3.content | b64decode"
@@ -162,7 +163,7 @@
               - "'Compression no' not in config3.content | b64decode"
 
         - name: Check the main configuration file contains some default values for RHEL 9 or Fedora
-          assert:
+          ansible.builtin.assert:
             that:
               - "'Include /etc/ssh/sshd_config.d/*.conf' in config3.content | b64decode"
               - "'AuthorizedKeysFile .ssh/authorized_keys' in config3.content | b64decode"
@@ -172,7 +173,7 @@
             - ansible_facts['distribution_major_version']|int > 8
 
         - name: Check the generated config has requested properties
-          assert:
+          ansible.builtin.assert:
             that:
               - config_stat.stat.exists
               - config_stat.stat.gr_name == 'nobody'
@@ -181,4 +182,4 @@
       tags: tests::verify
 
     - name: "Restore configuration files"
-      include_tasks: tasks/restore.yml
+      ansible.builtin.include_tasks: tasks/restore.yml

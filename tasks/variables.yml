@@ -1,9 +1,9 @@
 ---
 - name: Set common vars
-  include_vars: vars/common.yml
+  ansible.builtin.include_vars: vars/common.yml
 
 - name: Set OS dependent variables
-  include_vars: "{{ lookup('first_found', params) }}"
+  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:
     ansible_distribution_lts_offset: >-
       {{

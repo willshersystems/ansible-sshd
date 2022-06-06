@@ -6,12 +6,12 @@
       - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
   tasks:
     - name: "Backup configuration files"
-      include_tasks: tasks/backup.yml
+      ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Configure sshd with uncommon options, making sure it keeps running
       block:
         - name: Configure ssh with unsupported options
-          include_role:
+          ansible.builtin.include_role:
             name: ansible-sshd
           vars:
             sshd:
@@ -39,11 +39,11 @@
           register: role_result
 
         - name: unreachable task
-          fail:
+          ansible.builtin.fail:
             msg: UNREACH
       rescue:
         - name: Check that we failed in the role
-          assert:
+          ansible.builtin.assert:
             that:
               - ansible_failed_result.msg != 'UNREACH'
               - not role_result.changed
@@ -52,7 +52,7 @@
         - not (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6')
 
     - name: Make sure service is still running
-      service:
+      ansible.builtin.service:
         name: sshd
         state: started
       register: result
@@ -62,4 +62,4 @@
         - not (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6')
 
     - name: "Restore configuration files"
-      include_tasks: tasks/restore.yml
+      ansible.builtin.include_tasks: tasks/restore.yml

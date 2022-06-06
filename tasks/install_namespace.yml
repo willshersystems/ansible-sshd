@@ -2,7 +2,7 @@
 - name: Update configuration file snippet
   vars:
     sshd_skip_defaults: true
-  blockinfile:
+  ansible.builtin.blockinfile:
     path: "{{ sshd_config_file }}"
     owner: "{{ sshd_config_owner }}"
     group: "{{ sshd_config_group }}"
