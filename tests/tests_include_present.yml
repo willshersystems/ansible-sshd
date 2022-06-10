@@ -64,13 +64,13 @@
         - name: Check RHEL content of the main configuration file
           ansible.builtin.assert:
             that:
-              - "'Subsystem	sftp	/usr/libexec/openssh/sftp-server' in config_main.content | b64decode"
+              - "config_main.content | b64decode | regex_search('Subsystem\\ssftp\\s/usr/libexec/openssh/sftp-server')"
           when: ansible_facts['os_family'] == 'RedHat'
 
         - name: Check Ubuntu content of the main configuration file
           ansible.builtin.assert:
             that:
-              - "'Subsystem	sftp	/usr/lib/openssh/sftp-server' in config_main.content | b64decode"
+              - "config_main.content | b64decode | regex_search('Subsystem\\ssftp\\s/usr/lib/openssh/sftp-server')"
           when: ansible_facts['os_family'] == 'Ubuntu'
 
       when:
