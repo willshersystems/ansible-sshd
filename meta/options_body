@@ -87,6 +87,7 @@ PubkeyAcceptedAlgorithms
 PubkeyAuthOptions
 PubkeyAuthentication
 RSAAuthentication
+RSAMinSize
 RekeyLimit
 RevokedKeys
 RDomain
