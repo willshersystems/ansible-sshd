@@ -49,6 +49,7 @@ RekeyLimit
 RevokedKeys
 RhostsRSAAuthentication
 RSAAuthentication
+RSAMinSize
 SetEnv
 StreamLocalBindMask
 StreamLocalBindUnlink
