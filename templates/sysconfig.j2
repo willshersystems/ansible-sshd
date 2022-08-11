@@ -1,6 +1,6 @@
 {{ ansible_managed | comment }}
 {% if __sshd_sysconfig_supports_crypto_policy %}
-{%   if sshd_sysconfig_override_crypto_policy == true %}
+{%   if sshd_sysconfig_override_crypto_policy | bool %}
 CRYPTO_POLICY=
 {%   endif %}
 {% endif %}

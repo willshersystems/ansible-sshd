@@ -7,10 +7,10 @@
 {%     elif value is sameas false %}
 {{ key }} no
 {%     elif value is string or value is number %}
-{{ key }} {{ value }}
+{{ key }} {{ value | string }}
 {%     else %}
 {%       for i in value %}
-{{ key }} {{ i }}
+{{ key }} {{ i | string }}
 {%       endfor %}
 {%     endif %}
 {%   endif %}
