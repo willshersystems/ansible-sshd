@@ -70,6 +70,7 @@
       {% endif %}
   block:
     - name: Make sure hostkeys are available
+      # noqa var-spacing
       ansible.builtin.shell: |
         set -eu
         if set -o | grep pipefail 2>&1 /dev/null ; then
