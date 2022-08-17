@@ -31,3 +31,12 @@
       paths:
         - "{{ role_path }}/vars"
         - "{{ playbook_dir }}/vars"
+
+- name: Convert variables to facts for testing with old Ansible versions (pre 2.7)
+  # If such versions are not needed to be supported anymore, this task should be
+  # removed and `public: true` should be set in the `include_role` tasks
+  # wherever the variables below are needed.
+  ansible.builtin.set_fact:
+    __sshd_skip_virt_env: "{{ __sshd_skip_virt_env }}"
+    __sshd_config_file: "{{ __sshd_config_file }}"
+  when: __sshd_testing | bool
