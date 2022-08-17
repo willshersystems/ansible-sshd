@@ -29,7 +29,6 @@
   ansible.builtin.include_role:
     name: ansible-sshd
     tasks_from: variables.yml
-    public: true
 
 - name: Restart sshd service
   ansible.builtin.service:

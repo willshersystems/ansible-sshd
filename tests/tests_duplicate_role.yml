@@ -12,10 +12,9 @@
 
 - hosts: all
   tasks:
-    - name: Configure defualt config
+    - name: Configure default config
       ansible.builtin.include_role:
         name: ansible-sshd
-        public: true
 
 - hosts: all
   vars:

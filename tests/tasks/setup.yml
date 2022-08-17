@@ -1,4 +1,9 @@
 ---
+
+- name: Register we are running tests
+  ansible.builtin.set_fact:
+    __sshd_testing: true
+
 - name: Make sure openssh is installed before creating backup
   ansible.builtin.package:
     name: openssh-server
