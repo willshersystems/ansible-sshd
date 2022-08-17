@@ -1,6 +1,9 @@
 ---
-- name: Set common vars
-  ansible.builtin.include_vars: vars/common.yml
+- name: Ensure ansible_facts used by role
+  ansible.builtin.setup:
+    gather_subset: min
+  when: not ansible_facts.keys() | list |
+    intersect(__sshd_required_facts) == __sshd_required_facts
 
 - name: Set OS dependent variables
   ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
@@ -24,7 +27,7 @@
         - "{{ ansible_os_family }}_{{ ansible_distribution_major_version }}.yml"
         - "{{ ansible_distribution }}.yml"
         - "{{ ansible_os_family }}.yml"
-        - default.yml
+        - main.yml  # fallback, vars/main.yml is always loaded by Ansible
       paths:
         - "{{ role_path }}/vars"
         - "{{ playbook_dir }}/vars"

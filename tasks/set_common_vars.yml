@@ -1,9 +1,0 @@
----
-- name: Ensure ansible_facts used by role
-  ansible.builtin.setup:
-    gather_subset: min
-  when: not ansible_facts.keys() | list |
-    intersect(__sshd_required_facts) == __sshd_required_facts
-
-- name: Include common vars
-  ansible.builtin.include_vars: vars/common.yml

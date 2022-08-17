@@ -37,7 +37,6 @@ sshd_sysconfig_override_crypto_policy: false
 # generator
 sshd_sysconfig_use_strong_rng: 0
 
-
 # Empty dicts to avoid errors
 sshd: {}
 
@@ -47,7 +46,9 @@ sshd_config_file: "{{ __sshd_config_file }}"
 
 ### VARS DEFAULTS
 ### The following are defaults for OS specific configuration in var files in
-### this role. They should not be set directly by role users.
+### this role. They should not be set directly by role users, unless they know
+### what they are doing, e.g. installing extra packages or installing an
+### alternative SystemD service file
 sshd_packages: "{{ __sshd_packages }}"
 sshd_config_owner: "{{ __sshd_config_owner }}"
 sshd_config_group: "{{ __sshd_config_group }}"
@@ -62,10 +63,7 @@ sshd_sftp_server: "{{ __sshd_sftp_server }}"
 # configuration or restarting), we make sure the keys exist and have correct
 # permissions. To disable this check, set sshd_verify_hostkeys to false
 sshd_verify_hostkeys: "auto"
-# The list of hostkeys to check when there are none listed in configuration file.
-# This is usually the case when the selection is up to the OpenSSH defaults or
-# drop-in directory is used.
-__sshd_verify_hostkeys_default: []
+
 sshd_hostkey_owner: "{{ __sshd_hostkey_owner }}"
 sshd_hostkey_group: "{{ __sshd_hostkey_group }}"
 sshd_hostkey_mode: "{{ __sshd_hostkey_mode }}"
@@ -73,19 +71,3 @@ sshd_hostkey_mode: "{{ __sshd_hostkey_mode }}"
 # instead of replacing the whole configuration file, just add a specified
 # snippet
 sshd_config_namespace: null
-
-### These variables are used by role internals and should not be used.
-__sshd_defaults: {}
-__sshd_os_supported: no
-__sshd_sysconfig_supports_crypto_policy: false
-__sshd_sysconfig_supports_use_strong_rng: false
-
-__sshd_runtime_directory: false
-__sshd_runtime_directory_mode: "0755"
-
-# If the system supports drop-in directory, it is configured in this variable. It is used
-# to distinguish if we are writing a configuration snippet or we should write defaults.
-__sshd_drop_in_dir: false
-# this is the path to the main sshd_config which is checked for Include directive when
-# drop-in directory is used
-__sshd_main_config_file: false

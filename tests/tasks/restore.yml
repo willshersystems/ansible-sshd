@@ -26,10 +26,8 @@
     - __sshd_test_backup.path is defined
 
 - name: Include common variables
-  ansible.builtin.include_role:
-    name: ansible-sshd
-    tasks_from: set_common_vars.yml
-    public: true
+  ansible.builtin.include_vars:
+    file: ../../vars/main.yml
 
 - name: Restart sshd service
   ansible.builtin.service:
