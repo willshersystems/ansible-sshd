@@ -48,13 +48,14 @@ sshd_config_file: "{{ __sshd_config_file }}"
 ### VARS DEFAULTS
 ### The following are defaults for OS specific configuration in var files in
 ### this role. They should not be set directly by role users.
-sshd_packages: []
+sshd_packages: "{{ __sshd_packages }}"
 sshd_config_owner: "{{ __sshd_config_owner }}"
 sshd_config_group: "{{ __sshd_config_group }}"
 sshd_config_mode: "{{ __sshd_config_mode }}"
-sshd_binary: /usr/sbin/sshd
-sshd_service: sshd
-sshd_sftp_server: /usr/lib/openssh/sftp-server
+sshd_service: "{{ __sshd_service }}"
+sshd_binary: "{{ __sshd_binary }}"
+sshd_service: "{{ __sshd_service }}"
+sshd_sftp_server: "{{ __sshd_sftp_server }}"
 
 # This lists by default all hostkeys as rendered in the generated configuration
 # file ("auto"). Before attempting to run sshd (either for verification of

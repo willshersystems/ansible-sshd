@@ -1,7 +1,7 @@
 ---
-sshd_packages:
+__sshd_packages:
   - openssh
-sshd_sftp_server: /usr/lib/ssh/sftp-server
+__sshd_sftp_server: /usr/lib/ssh/sftp-server
 __sshd_defaults:
   HostKey:
     - /etc/ssh/ssh_host_rsa_key
@@ -20,5 +20,5 @@ __sshd_defaults:
     - LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
     - LC_IDENTIFICATION LC_ALL LANGUAGE
     - XMODIFIERS
-  Subsystem: "sftp {{ sshd_sftp_server }}"
+  Subsystem: "sftp {{ __sshd_sftp_server }}"
 __sshd_os_supported: yes
