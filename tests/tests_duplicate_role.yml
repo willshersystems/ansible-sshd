@@ -1,0 +1,61 @@
+---
+- hosts: all
+  vars:
+    sshd_config_file: /etc/ssh/dup_config1
+  tasks:
+    - name: "Backup configuration files"
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+    - name: Configure config1
+      ansible.builtin.include_role:
+        name: ansible-sshd
+
+- hosts: all
+  tasks:
+    - name: Configure defualt config
+      ansible.builtin.include_role:
+        name: ansible-sshd
+        public: true
+
+- hosts: all
+  vars:
+    sshd_config_file: /etc/ssh/dup_config2
+  tasks:
+    - name: Configure config2
+      ansible.builtin.include_role:
+        name: ansible-sshd
+
+- hosts: all
+  tasks:
+    - name: Get config1 stat
+      ansible.builtin.stat:
+        path: /etc/ssh/dup_config1
+      register: config1_stat
+
+    - name: Check config1 exists
+      ansible.builtin.assert:
+        that:
+          - "config1_stat.stat.exists"
+
+    - name: Get default config stat
+      ansible.builtin.stat:
+        path: "{{ __sshd_config_file }}"
+      register: default_config_stat
+
+    - name: Check default config exists
+      ansible.builtin.assert:
+        that:
+          - "default_config_stat.stat.exists"
+
+    - name: Get config2 stat
+      ansible.builtin.stat:
+        path: "{{ __sshd_config_file }}"
+      register: config2_stat
+
+    - name: Check config2 exists
+      ansible.builtin.assert:
+        that:
+          - "config2_stat.stat.exists"
+
+    - name: "Restore configuration files"
+      ansible.builtin.include_tasks: tasks/restore.yml
