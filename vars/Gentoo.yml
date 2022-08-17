@@ -1,9 +1,9 @@
 ---
-sshd_packages:
+__sshd_packages:
   - net-misc/openssh
-sshd_sftp_server: /usr/lib64/misc/sftp-server
+__sshd_sftp_server: /usr/lib64/misc/sftp-server
 __sshd_defaults:
-  Subsystem: "sftp {{ sshd_sftp_server }}"
+  Subsystem: "sftp {{ __sshd_sftp_server }}"
   # Replace tcp keepalive with unspoofable keepalive
   TCPKeepAlive: no
   ClientAliveInterval: 300

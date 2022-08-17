@@ -1,1 +1,11 @@
-Archlinux.yml
+---
+__sshd_packages:
+  - openssh
+__sshd_sftp_server: /usr/lib/ssh/sftp-server
+__sshd_defaults:
+  AuthorizedKeysFile: .ssh/authorized_keys
+  ChallengeResponseAuthentication: no
+  PrintMotd: no
+  Subsystem: "sftp {{ __sshd_sftp_server }}"
+  UsePAM: yes
+__sshd_os_supported: yes

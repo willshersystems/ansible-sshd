@@ -4,3 +4,7 @@ __sshd_skip_virt_env:
   - container
   - containerd
   - VirtualPC
+
+__sshd_binary: /usr/sbin/sshd
+__sshd_service: sshd
+__sshd_sftp_server: /usr/lib/openssh/sftp-server

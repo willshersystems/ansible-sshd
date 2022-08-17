@@ -1,8 +1,8 @@
 ---
 __sshd_os_supported: yes
 
-sshd_service: ssh
-sshd_packages:
+__sshd_service: ssh
+__sshd_packages:
   - openssh-server
   - openssh-sftp-server
 # Ubuntu 22.04 finally ships with drop-in directory support so we touch

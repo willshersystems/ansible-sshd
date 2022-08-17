@@ -1,6 +1,6 @@
 ---
-sshd_service: ssh
-sshd_packages:
+__sshd_service: ssh
+__sshd_packages:
   - openssh-server
   - openssh-sftp-server
 __sshd_config_mode: "0644"
