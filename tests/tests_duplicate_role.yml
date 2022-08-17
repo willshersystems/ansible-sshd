@@ -35,7 +35,7 @@
     - name: Check config1 exists
       ansible.builtin.assert:
         that:
-          - "config1_stat.stat.exists"
+          - config1_stat.stat.exists
 
     - name: Get default config stat
       ansible.builtin.stat:
@@ -45,7 +45,7 @@
     - name: Check default config exists
       ansible.builtin.assert:
         that:
-          - "default_config_stat.stat.exists"
+          - default_config_stat.stat.exists
 
     - name: Get config2 stat
       ansible.builtin.stat:
@@ -55,7 +55,7 @@
     - name: Check config2 exists
       ansible.builtin.assert:
         that:
-          - "config2_stat.stat.exists"
+          - config2_stat.stat.exists
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml
