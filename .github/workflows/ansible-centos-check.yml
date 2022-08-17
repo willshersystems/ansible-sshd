@@ -17,7 +17,11 @@ jobs:
         '    __sshd_skip_virt_env: "{{ __sshd_skip_virt_env }}"'
         '    __sshd_config_file: "{{ __sshd_config_file }}"'
         >> tasks/variables.yml
-    - run: "sed -i -e '/public: true/d' tests/tasks/restore.yml tests/tests_duplicate_role.yml"
+    - run: >-
+        sed -i -e '/public: true/d'
+        tests/tasks/restore.yml
+        tests/tests_duplicate_role.yml
+        tests/tests_os_defaults.yml
     - run: "sed -i -e 's/ansible.builtin.//g' */*.yml */*/*.yml"
 
     - name: ansible check with centos 6

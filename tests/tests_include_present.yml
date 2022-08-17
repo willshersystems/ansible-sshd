@@ -81,3 +81,85 @@
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml
+
+- hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/custom_sshd_config
+      - /etc/ssh/custom_sshd_config.d/custom-drop-in
+
+  tasks:
+    - name: Run only for a specific OS with an capable OpenSSH version
+      ansible.builtin.meta: end_play
+      when:
+        ansible_facts['distribution'] != 'Ubuntu'
+        or ansible_facts['distribution_major_version']|int != 20
+
+    - name: "Backup configuration files"
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+    - name: Create dummy main configuration file
+      # Normally, this should not be needed. For test, however, we need a file
+      # different to the one in the first play.
+      file:
+        path: /etc/ssh/custom_sshd_config
+        state: touch
+
+    - name: Create a new configuration in a custom drop-in directory
+      ansible.builtin.include_role:
+        name: ansible-sshd
+      vars:
+        sshd_config_file: /etc/ssh/custom_sshd_config.d/custom-drop-in
+        sshd_main_config_file: /etc/ssh/custom_sshd_config
+        sshd_drop_in_dir_mode: '0770'
+        sshd:
+          Banner: /etc/include-issue
+          Ciphers: aes192-ctr
+
+    - name: Verify the options are correctly set
+      block:
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
+
+        - name: Print custom drop-in configuration file
+          ansible.builtin.slurp:
+            src: /etc/ssh/custom_sshd_config.d/custom-drop-in
+          register: custom_drop_in
+
+        - name: Print the custom configuration file
+          ansible.builtin.slurp:
+            src: /etc/ssh/custom_sshd_config
+          register: custom_config
+
+        - name: Check content of custom drop-in configuration file
+          ansible.builtin.assert:
+            that:
+              - "'Banner /etc/include-issue' in custom_drop_in.content | b64decode"
+              - "'Ciphers aes192-ctr' in custom_drop_in.content | b64decode"
+              - "'Include /etc/ssh/custom_sshd_config.d/*.conf' not in custom_drop_in.content | b64decode"
+              - "'Subsystem sftp  /usr/libexec/openssh/sftp-server' not in custom_drop_in.content | b64decode"
+              - "'Subsystem	sftp	/usr/lib/openssh/sftp-server' not in custom_drop_in.content | b64decode"
+
+        - name: Check common content of the custom configuration file
+          ansible.builtin.assert:
+            that:
+              - "'Banner /etc/include-issue' not in custom_config.content | b64decode"
+              - "'Ciphers aes192-ctr' not in custom_config.content | b64decode"
+              - "'Include /etc/ssh/custom_sshd_config.d/*.conf' in custom_config.content | b64decode"
+
+        - name: Read drop in directory mode
+          ansible.builtin.stat:
+            path: "/etc/ssh/custom_sshd_config.d"
+          register: drop_in_dir_stat
+
+        - name: Check drop in directory mode has been set correctly
+          assert:
+            that:
+              - drop_in_dir_stat.stat.isdir | bool
+              - drop_in_dir_stat.stat.mode == '0770'
+            msg: "effective mode: {{ drop_in_dir_stat.stat.mode }}, desired mode: 0770"
+
+      tags: tests::verify
+
+    - name: "Restore configuration files"
+      ansible.builtin.include_tasks: tasks/restore.yml

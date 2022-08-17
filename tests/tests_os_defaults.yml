@@ -27,6 +27,7 @@
     - name: Configure sshd
       ansible.builtin.include_role:
         name: ansible-sshd
+        public: true
 
     - name: Show effective configuration after running role (role defaults)
       ansible.builtin.command: sshd -T
@@ -40,6 +41,18 @@
       when:
         # RHEL6/CentOS6 images have modified sshd_config, different from what is in rpm package
         - not (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6')
+
+    - name: Read drop in directory mode
+      ansible.builtin.stat:
+        path: "{{ __sshd_defaults.Include | dirname }}"
+      register: drop_in_dir_stat
+      when: __sshd_defaults.Include is defined
+
+    - name: Check drop in directory mode has not changed
+      assert:
+        that:
+          - drop_in_dir_stat.stat.mode == __sshd_drop_in_dir_mode
+      when: __sshd_defaults.Include is defined
 
     - name: Restore configuration files
       ansible.builtin.include_tasks: tasks/restore.yml

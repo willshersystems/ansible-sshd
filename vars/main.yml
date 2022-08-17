@@ -31,15 +31,14 @@ __sshd_os_supported: no
 __sshd_sysconfig_supports_crypto_policy: false
 __sshd_sysconfig_supports_use_strong_rng: false
 
-__sshd_runtime_directory: false
+__sshd_runtime_directory: ~
 __sshd_runtime_directory_mode: "0755"
 
-# If the system supports drop-in directory, it is configured in this variable. It is used
-# to distinguish if we are writing a configuration snippet or we should write defaults.
-__sshd_drop_in_dir: false
 # this is the path to the main sshd_config which is checked for Include directive when
 # drop-in directory is used
-__sshd_main_config_file: false
+__sshd_main_config_file: ~
+
+__sshd_drop_in_dir_mode: '0755'
 
 # The list of hostkeys to check when there are none listed in configuration file.
 # This is usually the case when the selection is up to the OpenSSH defaults or

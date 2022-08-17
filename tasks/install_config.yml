@@ -1,4 +1,13 @@
 ---
+- name: Create a directory for drop-in configuration snippets
+  ansible.builtin.file:
+    path: "{{ sshd_config_file | dirname }}"
+    state: directory
+    mode: "{{ sshd_drop_in_dir_mode }}"
+  when:
+    - sshd_main_config_file is not none
+    - sshd_config_file | dirname != sshd_main_config_file | dirname
+
 - name: Create the complete configuration file
   ansible.builtin.template:
     src: sshd_config.j2
@@ -18,8 +27,8 @@
 - name: Make sure the include path is present in the main sshd_config
   ansible.builtin.lineinfile:
     insertbefore: BOF
-    line: "Include {{ __sshd_defaults['Include'] }}"
-    path: "{{ __sshd_main_config_file }}"
+    line: "Include {{ sshd_config_file | dirname }}/*.conf"
+    path: "{{ sshd_main_config_file }}"
     owner: "{{ sshd_config_owner }}"
     group: "{{ sshd_config_group }}"
     mode: "{{ sshd_config_mode }}"
@@ -32,7 +41,5 @@
     backup: "{{ sshd_backup }}"
   notify: reload_sshd
   when:
-    - __sshd_defaults['Include'] | d(false)
-    - __sshd_main_config_file is not none
-    - __sshd_drop_in_dir is not none
-    - sshd_config_file.startswith(__sshd_drop_in_dir)
+    - sshd_main_config_file is not none
+    - sshd_config_file | dirname != sshd_main_config_file | dirname

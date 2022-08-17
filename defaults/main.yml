@@ -57,6 +57,9 @@ sshd_binary: "{{ __sshd_binary }}"
 sshd_service: "{{ __sshd_service }}"
 sshd_sftp_server: "{{ __sshd_sftp_server }}"
 
+sshd_drop_in_dir_mode: "{{ __sshd_drop_in_dir_mode }}"
+sshd_main_config_file: "{{ __sshd_main_config_file }}"
+
 # This lists by default all hostkeys as rendered in the generated configuration
 # file ("auto"). Before attempting to run sshd (either for verification of
 # configuration or restarting), we make sure the keys exist and have correct
