@@ -1,7 +1,4 @@
 ---
-- name: Set common variables and ensure basic facts are gathered
-  ansible.builtin.include_tasks: set_common_vars.yml
-
 - name: Set platform/version specific variables
   ansible.builtin.include_tasks: variables.yml
 
