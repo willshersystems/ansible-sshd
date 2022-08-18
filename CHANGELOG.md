@@ -1,6 +1,53 @@
 Changelog
 =========
 
+[v0.16.1] - 2022-07-28
+--------------------
+
+### New Features
+
+- add parameter RSAMinSize
+
+Add support for the new RSAMinSize parameter.
+
+### Bug Fixes
+
+- Ensure values are cast to correct type
+
+https://github.com/willshersystems/ansible-sshd/issues/188
+This shouldn't be necessary, but there seems no way to
+guarantee using a version of Jinja which doesn't have this
+problem.
+
+In addition - it is not good practice to compare values to
+`true` or `false` - instead, just ensure the value is a `bool`
+type and evaluate in a boolean context.
+
+### Other Changes
+
+- Addition notes about secondary variables
+- Fix various linting issues
+- Revert incorrect module name
+- tests: Do not be picky about spaces/tabs
+
+When testing with cloud-init, it modifies the sshd_configuration and can
+replace some tabs with whitespaces. This happens frequently around the
+subsystem keyword. There are no functional changes, but the matching
+did not work as expected.
+
+Signed-off-by: Jakub Jelen <jjelen@redhat.com>
+
+- the role still supports ansible 2.9
+
+- Add CHANGELOG.md
+
+- Add changelog_to_tag.yml to .github/workflows
+
+Description:
+When a new changelog section is added to CHANGELOG.md and pushed,
+changelog_to_tag.yml is triggered, which generates a new tag and
+a new release.
+
 [v0.15.1] - 2022-06-02
 ----------------------
 
