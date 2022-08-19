@@ -23,6 +23,7 @@
     - name: Configure config2
       ansible.builtin.include_role:
         name: ansible-sshd
+        public: true
 
 - hosts: all
   tasks:

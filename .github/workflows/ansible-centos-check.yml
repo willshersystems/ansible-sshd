@@ -10,7 +10,14 @@ jobs:
 
     # Workaround missing support for end_host in old ansible
     - run: "sed -i -e 's/meta: end_host/assert:\\n    that: __sshd_os_supported|bool/' tasks/install.yml"
-    - run: "sed -i -e 's/.*public: true//' tests/tasks/restore.yml"
+    - run: >-
+        printf '%s\n%s\n%s\n%s'
+        '- name: Convert variables to facts for testing with old Ansible version (pre 2.7)'
+        '  ansible.builtin.set_fact:'
+        '    __sshd_skip_virt_env: "{{ __sshd_skip_virt_env }}"'
+        '    __sshd_config_file: "{{ __sshd_config_file }}"'
+        >> tasks/variables.yml
+    - run: "sed -i -e 's/.*public: true//' tests/tasks/restore.yml tests/tests_duplicate_role.yml"
     - run: "sed -i -e 's/ansible.builtin.//g' */*.yml */*/*.yml"
 
     - name: ansible check with centos 6
