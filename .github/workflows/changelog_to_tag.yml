@@ -74,8 +74,3 @@ jobs:
           body_path: ./.tagmsg.txt
           draft: false
           prerelease: false
-      - name: Publish role to Galaxy
-        uses: robertdebock/galaxy-action@1.2.0
-        with:
-          galaxy_api_key: ${{ secrets.galaxy_api_key }}
-          git_branch: ${{ steps.tag.outputs.branch }}
