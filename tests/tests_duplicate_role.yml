@@ -2,6 +2,10 @@
 - hosts: all
   vars:
     sshd_config_file: /etc/ssh/dup_config1
+    __sshd_test_backup_files:
+      - /etc/ssh/dup_config1
+      - /etc/ssh/dup_config2
+      - /etc/ssh/sshd_config
   tasks:
     - name: "Backup configuration files"
       ansible.builtin.include_tasks: tasks/backup.yml
