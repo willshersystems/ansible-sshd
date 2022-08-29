@@ -23,5 +23,5 @@ __sshd_hostkeys_nofips:
 __sshd_hostkey_group: ssh_keys
 __sshd_hostkey_mode: "0640"
 
-__sshd_drop_in_dir: /etc/ssh/sshd_config.d/
+__sshd_drop_in_dir_mode: '0700'
 __sshd_main_config_file: /etc/ssh/sshd_config

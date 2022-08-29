@@ -119,7 +119,7 @@
         group: root
         mode: "{{ __sshd_runtime_directory_mode }}"
       when:
-        - __sshd_runtime_directory | d(false)
+        - __sshd_runtime_directory is not none
 
     - name: Create the complete configuration file
       ansible.builtin.include_tasks: install_config.yml

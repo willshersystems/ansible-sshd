@@ -59,8 +59,7 @@ If set to *false*, the role will be completely disabled. Defaults to *true*.
 If set to *true*, don't apply default values. This means that you must have a
 complete set of configuration defaults via either the `sshd` dict, or
 `sshd_Key` variables. Defaults to *false* unless `sshd_config_namespace` is
-set or `sshd_config_file` points to the drop-in directory defined by
-`__sshd_drop_in_dir` to avoid recursive include.
+set or `sshd_config_file` points to a drop-in directory to avoid recursive include.
 
 * `sshd_manage_service`
 
@@ -167,17 +166,17 @@ The path where the openssh configuration produced by this role should be saved.
 This is useful mostly when generating configuration snippets to Include from
 drop-in directory (default in Fedora and RHEL9).
 
-When this path points to system drop-in directory (defined with internal
-variable `__sshd_drop_in_dir`), the main configuration file (defined with
-internal variable `__sshd_main_config_file`) is checked to contain the
-default `Include` directive from `__sshd_defaults` dict.
+When this path points to a drop-in directory (like
+`/etc/ssh/sshd_confg.d/00-custom.conf`), the main configuration file (defined
+with the variable `sshd_main_config_file`) is checked to contain a proper
+`Include` directive.
 
 * `sshd_config_namespace`
 
 By default (*null*), the role defines whole content of the configuration file
 including system defaults. You can use this variable to invoke this role from
-other roles or from multiple places in a single playbook on systems that do not
-support drop-in directory. The `sshd_skip_defaults` is ignored and no system
+other roles or from multiple places in a single playbook as an alternative to
+using a drop-in directory. The `sshd_skip_defaults` is ignored and no system
 defaults are used in this case.
 
 When this variable is set, the role places the configuration that you specify
