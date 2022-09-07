@@ -61,7 +61,7 @@
             {{ __sshd_verify_hostkeys_default | to_json }}
           {% endif %}
         {% elif __sshd_hostkeys_from_config | from_json is string %}
-          {{ [ __sshd_hostkeys_from_config | from_json ] | to_json }}
+          {{ [__sshd_hostkeys_from_config | from_json] | to_json }}
         {% else %}
           {{ __sshd_hostkeys_from_config }}
         {% endif %}
@@ -70,7 +70,6 @@
       {% endif %}
   block:
     - name: Make sure hostkeys are available
-      # noqa var-spacing
       ansible.builtin.shell: |
         set -eu
         if set -o | grep pipefail 2>&1 /dev/null ; then
@@ -130,7 +129,7 @@
       when: sshd_config_namespace is not none
 
   rescue:
-    - name: re-raise the error
+    - name: Re-raise the error
       ansible.builtin.fail:
         msg: "{{ ansible_failed_result }}"
   always:
