@@ -1,6 +1,31 @@
 Changelog
 =========
 
+[v0.17.0] - 2022-08-31
+--------------------
+
+### New Features
+
+- Make drop-in config file functionality configurable by user
+
+This PR simplifies the logic behind the drop-in config files and also
+allows the user to use drop-in configs even if the distribution does not
+support it out of the box.
+
+### Bug Fixes
+
+- Allow user to override variables
+
+A previous commit hardcoded many variables to the values under vars/,
+making it impossible for the user to parameterize things like the systemd
+service name. The assumption was that the __sshd_* variables were useless
+in an effort to blindly adhere to best practices, but they were crucial in
+allowing flexibility to the user.
+
+### Other Changes
+
+- none
+
 [v0.16.1] - 2022-07-28
 --------------------
 
