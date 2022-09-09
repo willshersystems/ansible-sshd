@@ -21,7 +21,7 @@ jobs:
           set -euxo pipefail
           print=false
           while read -r line; do
-              if [[ "$line" =~ ^\[([0-9]+\.[0-9]+\.[0-9]+)\]\ -\ [0-9-]+ ]]; then
+              if [[ "$line" =~ ^\[(v[0-9]+\.[0-9]+\.[0-9]+)\]\ -\ [0-9-]+ ]]; then
                   if [ "$print" = false ]; then
                       _tagname="${BASH_REMATCH[1]}"
                       echo "$line"
