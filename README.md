@@ -40,6 +40,7 @@ Tested on:
 * FreeBSD 10.1
 * OpenBSD 6.0
 * AIX 7.1, 7.2
+* OpenWrt 21.03
 
 It will likely work on other flavours and more direct support via suitable
 [vars/](vars/) files is welcome.

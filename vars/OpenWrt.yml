@@ -1,0 +1,14 @@
+---
+__sshd_service: sshd
+__sshd_packages:
+  - openssh-server
+  - openssh-sftp-server
+__sshd_config_mode: "0644"
+__sshd_sftp_server: "/usr/lib/sftp-server"
+__sshd_defaults:
+  Subsystem: "sftp {{ __sshd_sftp_server }}"
+  AuthorizedKeysFile: .ssh/authorized_keys
+  HostKey:
+    - /etc/ssh/ssh_host_rsa_key
+    - /etc/ssh/ssh_host_ed25519_key
+__sshd_os_supported: yes

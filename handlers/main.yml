@@ -9,6 +9,7 @@
     - ansible_virtualization_type|default(None) not in __sshd_skip_virt_env
     - ansible_connection != 'chroot'
     - ansible_os_family != 'AIX'
+    - ansible_os_family != 'OpenWrt'
   listen: reload_sshd
 
 # sshd on AIX cannot be 'reloaded', it must be Stopped+Started.
@@ -29,3 +30,13 @@
   when:
     - sshd_allow_reload|bool
     - ansible_os_family == 'AIX'
+
+# sshd on OpenWrt does not support reloading a service, it has to be restarted instead
+- name: Reload the SSH service (OpenWrt)
+  ansible.builtin.service:
+    name: "{{ sshd_service }}"
+    state: restarted
+  when:
+    - sshd_allow_reload|bool
+    - ansible_os_family == 'OpenWrt'
+  listen: reload_sshd
