@@ -89,6 +89,7 @@ PubkeyAuthentication
 RSAAuthentication
 RSAMinSize
 RekeyLimit
+RequiredRSASize
 RevokedKeys
 RDomain
 RhostsRSAAuthentication
