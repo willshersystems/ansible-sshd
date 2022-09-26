@@ -31,6 +31,9 @@ __sshd_os_supported: no
 __sshd_sysconfig_supports_crypto_policy: false
 __sshd_sysconfig_supports_use_strong_rng: false
 
+# The runtime directory is used by systemd to provide termoporary directory for the service
+# This is used as a RuntimeDirectory= option in the service file and it needs to exist
+# before running sshd for example in the validate mode.
 __sshd_runtime_directory: ~
 __sshd_runtime_directory_mode: "0755"
 
