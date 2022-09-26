@@ -47,6 +47,7 @@ PubkeyAuthentication
 RDomain
 RekeyLimit
 RevokedKeys
+RequiredRSASize
 RhostsRSAAuthentication
 RSAAuthentication
 RSAMinSize

@@ -88,6 +88,7 @@ Match {{ match["Condition"] }}
 {{       render_option("RDomain",match["RDomain"],true) -}}
 {{       render_option("RekeyLimit",match["RekeyLimit"],true) -}}
 {{       render_option("RevokedKeys",match["RevokedKeys"],true) -}}
+{{       render_option("RequiredRSASize",match["RequiredRSASize"],true) -}}
 {{       render_option("RhostsRSAAuthentication",match["RhostsRSAAuthentication"],true) -}}
 {{       render_option("RSAAuthentication",match["RSAAuthentication"],true) -}}
 {{       render_option("RSAMinSize",match["RSAMinSize"],true) -}}
@@ -202,6 +203,7 @@ Match {{ match["Condition"] }}
 {{ body_option("RSAAuthentication",sshd_RSAAuthentication) -}}
 {{ body_option("RSAMinSize",sshd_RSAMinSize) -}}
 {{ body_option("RekeyLimit",sshd_RekeyLimit) -}}
+{{ body_option("RequiredRSASize",sshd_RequiredRSASize) -}}
 {{ body_option("RevokedKeys",sshd_RevokedKeys) -}}
 {{ body_option("RDomain",sshd_RDomain) -}}
 {{ body_option("RhostsRSAAuthentication",sshd_RhostsRSAAuthentication) -}}
