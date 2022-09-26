@@ -103,6 +103,7 @@
       changed_when: false
       when:
         - __sshd_hostkeys_from_config | from_json == []
+        - __sshd_supports_validate
 
     - name: Generate temporary hostkey
       ansible.builtin.command: >

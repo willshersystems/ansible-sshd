@@ -16,7 +16,9 @@
     group: "{{ sshd_config_group }}"
     mode: "{{ sshd_config_mode }}"
     validate: >-
-      {% if sshd_test_hostkey is defined and sshd_test_hostkey.path is defined %}
+      {% if not __sshd_supports_validate %}
+        true %s
+      {% elif sshd_test_hostkey is defined and sshd_test_hostkey.path is defined %}
         {{ sshd_binary }} -t -f %s -h {{ sshd_test_hostkey.path }}/rsa_key
       {% else %}
         {{ sshd_binary }} -t -f %s
@@ -33,7 +35,9 @@
     group: "{{ sshd_config_group }}"
     mode: "{{ sshd_config_mode }}"
     validate: >-
-      {% if sshd_test_hostkey is defined and sshd_test_hostkey.path is defined %}
+      {% if not __sshd_supports_validate %}
+        true %s
+      {% elif sshd_test_hostkey is defined and sshd_test_hostkey.path is defined %}
         {{ sshd_binary }} -t -f %s -h {{ sshd_test_hostkey.path }}/rsa_key
       {% else %}
         {{ sshd_binary }} -t -f %s
