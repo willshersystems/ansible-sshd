@@ -28,6 +28,7 @@ DebianBanner
 DenyGroups
 DenyUsers
 DisableForwarding
+ExposeAuthenticationMethods
 ExposeAuthInfo
 FingerprintHash
 ForceCommand
@@ -99,6 +100,7 @@ RhostsRSAAuthentication
 SecurityKeyProvider
 SetEnv
 ServerKeyBits
+ShowPatchLevel
 StreamLocalBindMask
 StreamLocalBindUnlink
 StrictModes

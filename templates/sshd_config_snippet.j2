@@ -142,6 +142,7 @@ Match {{ match["Condition"] }}
 {{ body_option("DenyGroups",sshd_DenyGroups) -}}
 {{ body_option("DenyUsers",sshd_DenyUsers) -}}
 {{ body_option("DisableForwarding",sshd_DisableForwarding) -}}
+{{ body_option("ExposeAuthenticationMethods",sshd_ExposeAuthenticationMethods) -}}
 {{ body_option("ExposeAuthInfo",sshd_ExposeAuthInfo) -}}
 {{ body_option("FingerprintHash",sshd_FingerprintHash) -}}
 {{ body_option("ForceCommand",sshd_ForceCommand) -}}
@@ -213,6 +214,7 @@ Match {{ match["Condition"] }}
 {{ body_option("SecurityKeyProvider",sshd_SecurityKeyProvider) -}}
 {{ body_option("SetEnv",sshd_SetEnv) -}}
 {{ body_option("ServerKeyBits",sshd_ServerKeyBits) -}}
+{{ body_option("ShowPatchLevel",sshd_ShowPatchLevel) -}}
 {{ body_option("StreamLocalBindMask",sshd_StreamLocalBindMask) -}}
 {{ body_option("StreamLocalBindUnlink",sshd_StreamLocalBindUnlink) -}}
 {{ body_option("StrictModes",sshd_StrictModes) -}}
