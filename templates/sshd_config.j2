@@ -149,6 +149,7 @@ Match {{ match["Condition"] }}
 {{ body_option("GatewayPorts",sshd_GatewayPorts) -}}
 {{ body_option("GSSAPIAuthentication",sshd_GSSAPIAuthentication) -}}
 {{ body_option("GSSAPICleanupCredentials",sshd_GSSAPICleanupCredentials) -}}
+{{ body_option("GSSAPIEnablek5users",sshd_GSSAPIEnablek5users) -}}
 {{ body_option("GSSAPIKeyExchange",sshd_GSSAPIKeyExchange) -}}
 {{ body_option("GSSAPIKexAlgorithms",sshd_GSSAPIKexAlgorithms) -}}
 {{ body_option("GSSAPIStoreCredentialsOnRekey",sshd_GSSAPIStoreCredentialsOnRekey) -}}
@@ -172,6 +173,8 @@ Match {{ match["Condition"] }}
 {{ body_option("KerberosOrLocalPasswd",sshd_KerberosOrLocalPasswd) -}}
 {{ body_option("KerberosTicketCleanup",sshd_KerberosTicketCleanup) -}}
 {{ body_option("KerberosUniqueTicket",sshd_KerberosUniqueTicket) -}}
+{{ body_option("KerberosUniqueCCache",sshd_KerberosUniqueCCache) -}}
+{{ body_option("KerberosUseKuserok",sshd_KerberosUseKuserok) -}}
 {{ body_option("KexAlgorithms",sshd_KexAlgorithms) -}}
 {{ body_option("KeyRegenerationInterval",sshd_KeyRegenerationInterval) -}}
 {{ body_option("LogLevel",sshd_LogLevel) -}}
