@@ -1,6 +1,36 @@
 Changelog
 =========
 
+[v0.18.0] - 2022-09-27
+--------------------
+
+### New Features
+
+- Adding support for OpenWrt 21.03
+
+- Add final version of RequiredRSASize
+
+Keep the old version for backward compatibility
+
+Upstream commit:
+https://github.com/openssh/openssh-portable/commit/1875042c
+
+### Bug Fixes
+
+- Update source template to match generated files
+
+### Other Changes
+
+- Remove legacy files
+
+- Update pre-commit plugins to latest
+
+- Linting fixes
+
+- keep v prefix in version/tag
+
+Keep the `v` prefix in the version/tag
+
 [v0.17.0] - 2022-08-31
 --------------------
 
