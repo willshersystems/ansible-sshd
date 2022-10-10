@@ -1,0 +1,105 @@
+---
+- name: Test we can handle all configuration options documented in manual page
+  hosts: all
+  gather_facts: true
+  vars:
+    __sshd_test_backup_files:
+      - /etc/dnf/dnf.conf
+      - /etc/yum.conf
+      - /tmp/sshd_config
+    sshd_c: {}
+    sshd_skip_test: false
+    pkg_mgr: "{{ 'dnf' if ansible_facts['distribution_version'] | int > 7 else 'yum' }}"
+  tasks:
+    - name: Backup configuration files
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+    - name: Skip test on EL6 as it has some crippled manpages
+      ansible.builtin.set_fact:
+        sshd_skip_test: true
+      when:
+        - ansible_facts['os_family'] == "RedHat"
+        - ansible_facts['distribution_version'] | int <= 6
+
+    - name: Enable installation of manual pages on Fedora/RHEL
+      ansible.builtin.lineinfile:
+        line: tsflags=nodocs
+        path: "{{ '/etc/dnf/dnf.conf' if ansible_facts['distribution_version'] | int > 7 else '/etc/yum.conf' }}"
+        state: absent
+      when:
+        - ansible_facts['os_family'] == "RedHat"
+
+    - name: Reinstall manual pages for openssh-server on RHEL
+      ansible.builtin.command: "{{ pkg_mgr|quote }} reinstall -y openssh-server"
+      when:
+        - ansible_facts['os_family'] == "RedHat"
+
+    - name: Unminimize image on Debian. It looks like there is no simpler way to get manual pages
+      ansible.builtin.shell: yes | unminimize
+      when:
+        - ansible_facts['distribution'] == "Ubuntu"
+
+    - name: Make sure manual pages and bash are installed
+      ansible.builtin.package:
+        name:
+          - man
+          - bash
+        state: present
+
+    - name: Get list of options from manual page
+      ansible.builtin.shell: >-
+        man sshd_config |cat
+
+    - name: Get list of options from manual page
+      ansible.builtin.shell: >-
+        set -o pipefail && man sshd_config \
+          | grep -o '^     [A-Z][A-Za-z0-9]*\(.\|  \)' \
+          | grep -v "[A-Za-z0-9] $" | grep -v "[^A-Za-z0-9 ]$" \
+          | awk '{ print $1 }' \
+          | grep -v '^$' | grep -v "^Match$"
+      args:
+        executable: /bin/bash
+      register: sshd_options
+      changed_when: false
+      when: not sshd_skip_test
+
+    - name: Print all the possible options
+      ansible.builtin.debug:
+        var: ssh_options.stdout_lines
+
+    - name: Construct the configuration list
+      ansible.builtin.set_fact:
+        sshd_c: "{{ sshd_c | combine({item: 'yes'}) }}"
+      loop:
+        "{{ sshd_options.stdout_lines }}"
+      when: not sshd_skip_test
+
+    - name: Run role
+      ansible.builtin.include_role:
+        name: ansible-sshd
+      vars:
+        # The configuration is not valid as we are using bogus values
+        __sshd_supports_validate: false
+        # The hostkeys are not valid either so do not validate them
+        sshd_verify_hostkeys: []
+        sshd_config_file: /tmp/sshd_config
+        sshd:
+          "{{ sshd_c }}"
+      when: not sshd_skip_test
+
+    - name: Download the configuration file
+      ansible.builtin.slurp:
+        src: /tmp/sshd_config
+      register: config
+      when: not sshd_skip_test
+
+    - name: Verify the options are in the file
+      ansible.builtin.assert:
+        that:
+          - "'{{ item }} yes' in config.content | b64decode "
+      loop:
+        "{{ sshd_options.stdout_lines }}"
+      when: not sshd_skip_test
+
+    - name: Restore configuration files
+      ansible.builtin.include_tasks: tasks/restore.yml

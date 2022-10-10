@@ -1,7 +1,8 @@
 [Unit]
 Description=OpenBSD Secure Shell server socket
+Documentation=man:sshd(8) man:sshd_config(5)
 Before={{ sshd_service }}.service
-Conflicts={{sshd_service }}.service
+Conflicts={{ sshd_service }}.service
 
 [Socket]
 ListenStream=22

@@ -31,6 +31,9 @@ __sshd_os_supported: no
 __sshd_sysconfig_supports_crypto_policy: false
 __sshd_sysconfig_supports_use_strong_rng: false
 
+# The runtime directory is used by systemd to provide termoporary directory for the service
+# This is used as a RuntimeDirectory= option in the service file and it needs to exist
+# before running sshd for example in the validate mode.
 __sshd_runtime_directory: ~
 __sshd_runtime_directory_mode: "0755"
 
@@ -44,3 +47,7 @@ __sshd_drop_in_dir_mode: '0755'
 # This is usually the case when the selection is up to the OpenSSH defaults or
 # drop-in directory is used.
 __sshd_verify_hostkeys_default: []
+
+# This switch can control if the validate step is supported by the target OS.
+# This is useful for very old OpenSSH or for tests that generate invalid configurations
+__sshd_supports_validate: true
