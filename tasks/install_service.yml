@@ -1,5 +1,6 @@
 ---
 - name: Install systemd service files
+  when: sshd_install_service | bool
   block:
     - name: Install service unit file
       ansible.builtin.template:
@@ -25,7 +26,6 @@
         group: root
         mode: "0644"
       notify: reload_sshd
-  when: sshd_install_service | bool
 
 - name: Service enabled and running
   ansible.builtin.service:
