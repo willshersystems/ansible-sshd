@@ -1,0 +1,127 @@
+---
+- hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+  tasks:
+    - name: "Backup configuration files"
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+    ##########
+    # First test: default port
+    ##########
+    - name: Configure the role on default port and let it handle firewall settings
+      ansible.builtin.include_role:
+        name: ansible-sshd
+      vars:
+        sshd_manage_selinux: true
+        sshd_manage_firewall: true
+        sshd:
+          Port: 22
+
+    - name: Verify the options are correctly set
+      block:
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
+
+        - name: Print current configuration file
+          ansible.builtin.slurp:
+            src: "{{ main_sshd_config }}"
+          register: config
+
+        - name: Check the options are in configuration file
+          ansible.builtin.assert:
+            that:
+              - "'Port 22' in config.content | b64decode"
+      tags: tests::verify
+
+    ##########
+    # Second test: non-default port
+    ##########
+    # is this going to break some tests running ansible through ssh?
+    - name: Configure the role on another port and let it handle firewall settings
+      ansible.builtin.include_role:
+        name: ansible-sshd
+      vars:
+        sshd_manage_firewall: true
+        sshd_manage_selinux: true
+        sshd:
+          Port: 222
+
+    - name: Verify the options are correctly set
+      block:
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
+
+        - name: Print current configuration file
+          ansible.builtin.slurp:
+            src: "{{ main_sshd_config }}"
+          register: config
+
+        - name: Check the options are in configuration file
+          ansible.builtin.assert:
+            that:
+              - "'Port 222' in config.content | b64decode"
+      tags: tests::verify
+
+    ##########
+    # Third test: multiple ports
+    ##########
+    - name: Configure the role on several ports and let it handle firewall settings
+      ansible.builtin.include_role:
+        name: ansible-sshd
+      vars:
+        sshd_manage_firewall: true
+        sshd_manage_selinux: true
+        sshd:
+          Port:
+            - 22
+            - 222
+
+    - name: Verify the options are correctly set
+      block:
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
+
+        - name: Print current configuration file
+          ansible.builtin.slurp:
+            src: "{{ main_sshd_config }}"
+          register: config
+
+        - name: Check the options are in configuration file
+          ansible.builtin.assert:
+            that:
+              - "'Port 222' in config.content | b64decode"
+      tags: tests::verify
+
+    ##########
+    # Cleanup
+    ##########
+    - name: "Restore configuration files"
+      ansible.builtin.include_tasks: tasks/restore.yml
+
+    - name: Remove the modification to the firewall rules
+      ansible.builtin.include_role:
+        name: fedora.linux_system_roles.firewall
+      vars:
+        firewall:
+          - port: "222/tcp"
+            state: disabled
+      when:
+        - ansible_facts['os_family'] == 'RedHat'
+        - ansible_virtualization_type|default(None) not in __sshd_skip_virt_env
+
+    - name: Remove the modification to the selinux policy
+      ansible.builtin.include_role:
+        name: fedora.linux_system_roles.firewall
+      vars:
+        selinux:
+          port: 222
+          proto: tcp
+          setype: ssh_port_t
+          state: absent
+          local: true
+      when:
+        - ansible_facts['os_family'] == 'RedHat'
+        - ansible_virtualization_type|default(None) not in __sshd_skip_virt_env

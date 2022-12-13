@@ -1,0 +1,16 @@
+---
+- name: Ensure the custom ports are configured in selinux
+  ansible.builtin.include_role:
+    name: fedora.linux_system_roles.selinux
+  vars:
+    selinux_ports:
+      - ports: "{{ sshd_item }}"
+        proto: tcp
+        setype: ssh_port_t
+        state: present
+        local: true
+  loop: "{{ __sshd_ports_from_config | from_json | d([]) }}"
+  loop_control:
+    loop_var: sshd_item  # avoid conflicts with the selinux loops
+  when:
+    - __sshd_ports_from_config | from_json != [22]
