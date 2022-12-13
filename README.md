@@ -45,6 +45,21 @@ Tested on:
 It will likely work on other flavours and more direct support via suitable
 [vars/](vars/) files is welcome.
 
+
+### Optional requirements
+
+If you want to use advanced functionality of this role that can configure
+firewall and selinux for you, which is mostly useful when custom port is used,
+the role requires additional collections which are specified in
+`meta/collection-requirements.yml`. These are not automatically installed.
+You must install them like this:
+```
+ansible-galaxy install -vv -r meta/collection-requirements.yml
+```
+
+For more information, see `sshd_manage_firewall` and `sshd_manage_selinux`
+options below. These roles are supported only on Red Hat based Linux.
+
 Role variables
 ---------------
 
@@ -92,6 +107,25 @@ The templates for the service files to be used are pointed to by the variables
 Using these variables, you can use your own custom templates. With the above
 default templates, the name of the installed ssh service will be provided by
 the `sshd_service` variable.
+
+* `sshd_manage_firewall`
+
+If set to *true*, the the SSH port(s) will be opened in firewall. Note, this
+works only on Red Hat based OS. The default is *false*.
+
+NOTE: `sshd_manage_firewall` is limited to *adding* ports. It cannot be used
+for *removing* ports. If you want to remove ports, you will need to use the
+firewall system role directly.
+
+* `sshd_manage_selinux`
+
+If set to *true*, the the selinux will be configured to allow sshd listening
+on the given SSH port(s). Note, this works only on Red Hat based OS.
+The default is *false*.
+
+NOTE: `sshd_manage_selinux` is limited to *adding* policy. It cannot be used
+for *removing* policy. If you want to remove ports, you will need to use the
+selinux system role directly.
 
 * `sshd`
 

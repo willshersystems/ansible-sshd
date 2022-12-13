@@ -73,3 +73,11 @@ sshd_hostkey_mode: "{{ __sshd_hostkey_mode }}"
 # instead of replacing the whole configuration file, just add a specified
 # snippet
 sshd_config_namespace: null
+
+# If this option is enabled, the role will configure firewall to open the ports
+# defined in the configuration. This works only on Red Hat based systems.
+sshd_manage_firewall: false
+
+# If this option is enabled, the role will configure selinux to allow sshd to
+# bind the ports defined in the configuration. This works only on Red Hat based systems.
+sshd_manage_selinux: false

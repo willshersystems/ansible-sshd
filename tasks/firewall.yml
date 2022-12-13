@@ -1,0 +1,25 @@
+---
+- name: Ensure the ssh service or custom ports are opened in firewall
+  block:
+    - name: Enable the ssh service on default port
+      ansible.builtin.include_role:
+        name: fedora.linux_system_roles.firewall
+      vars:
+        firewall:
+          - service: ssh
+            state: enabled
+      when:
+        - __sshd_ports_from_config | from_json == [22]
+
+    - name: Enable the non-default port(s)
+      ansible.builtin.include_role:
+        name: fedora.linux_system_roles.firewall
+      vars:
+        firewall:
+          - port: "{{ sshd_item }}/tcp"
+            state: enabled
+      loop: "{{ __sshd_ports_from_config | from_json | d([]) }}"
+      loop_control:
+        loop_var: sshd_item  # avoid conflicts with the firewall loops
+      when:
+        - __sshd_ports_from_config | from_json != [22]
