@@ -1,4 +1,5 @@
 ---
 
-- ansible.builtin.include_tasks: sshd.yml
+- name: Invoke the role, if enabled
+  ansible.builtin.include_tasks: sshd.yml
   when: sshd_enable|bool
