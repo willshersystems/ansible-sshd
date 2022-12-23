@@ -98,7 +98,7 @@
     - name: "Backup configuration files"
       ansible.builtin.include_tasks: tasks/backup.yml
 
-    - name: Create dummy main configuration file
+    - name: Create sample main configuration file
       # Normally, this should not be needed. For test, however, we need a file
       # different to the one in the first play.
       file:
