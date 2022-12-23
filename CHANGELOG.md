@@ -283,7 +283,7 @@ a new release.
 
 ### Other Changes
 
-- Implement more sanity tests
+- Implement more coherence check tests
 
 [v0.10.1] - 2020-09-23
 ----------------------
