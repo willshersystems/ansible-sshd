@@ -1,0 +1,12 @@
+---
+__sshd_packages:
+  - openssh
+__sshd_defaults:
+  AllowTcpForwarding: no
+  AuthorizedKeysFile: .ssh/authorized_keys
+  ChallengeResponseAuthentication: no
+  GatewayPorts: no
+  PrintMotd: no
+  Subsystem: 'sftp internal-sftp'
+  X11Forwarding: no
+__sshd_os_supported: yes
