@@ -1,0 +1,18 @@
+name: Run Ansible Check on Alpine
+
+on: [push, pull_request]
+
+jobs:
+  alpine-latest:
+    runs-on: ubuntu-latest
+    steps:
+      # Important: This sets up your GITHUB_WORKSPACE environment variable
+      - name: checkout PR
+        uses: actions/checkout@v2
+
+      - name: ansible check with alpine:latest
+        uses: roles-ansible/check-ansible-alpine-latest-action@master
+        with:
+          group: local
+          hosts: localhost
+          targets: "tests/tests_*.yml"
