@@ -61,7 +61,7 @@
 
     - name: Get list of options from manual page
       ansible.builtin.shell: >-
-        man sshd_config |cat
+        man sshd_config | cat
 
     - name: Get list of options from manual page
       ansible.builtin.shell: >-
