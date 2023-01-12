@@ -39,12 +39,25 @@
       when:
         - ansible_facts['distribution'] == "Ubuntu"
 
-    - name: Make sure manual pages and bash are installed
+    - name: Make sure manual pages and bash are installed on Alpine
+      ansible.builtin.package:
+        name:
+          - mandoc
+          - man-pages
+          - openssh-doc
+          - bash
+        state: present
+      when:
+        - ansible_facts['distribution'] == "Alpine"
+
+    - name: Make sure manual pages and bash are installed elsewhere
       ansible.builtin.package:
         name:
           - man
           - bash
         state: present
+      when:
+        - ansible_facts['distribution'] != "Alpine"
 
     - name: Get list of options from manual page
       ansible.builtin.shell: >-
