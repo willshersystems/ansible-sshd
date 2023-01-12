@@ -33,7 +33,7 @@
           PermitRootLogin: no
           Match:
             Condition: Address 127.0.0.1
-            AllowTcpForwarding: no
+            Banner: /etc/issue
 
     - name: Verify the options are correctly set
       block:
@@ -91,8 +91,8 @@
               - "'PermitRootLogin no' in config.content | b64decode"
               - "'PasswordAuthentication no' in config.content | b64decode"
               - "'Match Address 127.0.0.1' in config.content | b64decode"
-              - "'AllowTcpForwarding no' in config.content | b64decode"
-              - "config.content | b64decode | regex_search('Match Address 127.0.0.1\\s*AllowTcpForwarding no')"
+              - "'Banner /etc/issue' in config.content | b64decode"
+              - "config.content | b64decode | regex_search('Match Address 127.0.0.1\\s*Banner /etc/issue')"
 
         - name: Check the configuration values are effective
           # note, the options are in lower-case here
@@ -100,7 +100,7 @@
             that:
               - "'permitrootlogin yes' in runtime.stdout"
               - "'allowagentforwarding no' in runtime.stdout"
-              - "'allowtcpforwarding no' in runtime.stdout"
+              - "'banner /etc/issue' in runtime.stdout"
               - "'passwordauthentication yes' in runtime.stdout"
 
         - name: Check the configuration values are not effective for non-matching connection
@@ -109,7 +109,7 @@
             that:
               - "'permitrootlogin yes' in runtime.stdout"
               - "'allowAgentforwarding no' not in nonmatching.stdout"
-              - "'allowtcpforwarding no' not in nonmatching.stdout"
+              - "'banner /etc/issue' not in nonmatching.stdout"
               - "'passwordauthentication yes' in nonmatching.stdout"
       tags: tests::verify
 
