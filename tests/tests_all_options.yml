@@ -66,6 +66,7 @@
     - name: Get list of options from manual page
       ansible.builtin.shell: >-
         set -o pipefail && man sshd_config \
+          | sed 's/\x08.//g' \
           | grep -o '^     [A-Z][A-Za-z0-9]*\(.\|  \)' \
           | grep -v "[A-Za-z0-9] $" | grep -v "[^A-Za-z0-9 ]$" \
           | awk '{ print $1 }' \
