@@ -37,6 +37,8 @@ Tested on:
   * [![Run tests on CentOS](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos-check.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos-check.yml)
 * All Fedora
   * [![Run tests on Fedora latest](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-fedora.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-fedora.yml)
+* Latest Alpine
+  * [![Run tests on Alpine](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-alpine.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-alpine.yml)
 * FreeBSD 10.1
 * OpenBSD 6.0
 * AIX 7.1, 7.2
