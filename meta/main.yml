@@ -42,6 +42,9 @@ galaxy_info:
       versions:
         - "7.1"
         - "7.2"
+    - name: Alpine
+      versions:
+        - all
   galaxy_tags:
     - networking
     - system
