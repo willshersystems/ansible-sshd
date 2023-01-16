@@ -1,6 +1,23 @@
 Changelog
 =========
 
+[v0.18.1] - 2023-01-17
+--------------------
+
+### New Features
+
+ - Add support for Alpine OS (#212)
+ - Add support for managing selinux and firewall on RHEL-based systems (#211)
+
+### Bug Fixes
+
+ - Update tests to not use configuration options available in system defaults (#213)
+ - Improve manual pages processing in tests to accommodate Alpine's busybox man (#213)
+
+### Other Changes
+
+ - Add a Github action to check for non-inclusive language (#215)
+
 [v0.18.0] - 2022-09-27
 --------------------
 
