@@ -12,7 +12,7 @@ __sshd_config_file: /etc/ssh/sshd_config.d/00-ansible_system_role.conf
 __sshd_defaults:
   Include: /etc/ssh/sshd_config.d/*.conf
   AuthorizedKeysFile: .ssh/authorized_keys
-  Subsystem: sftp /usr/libexec/sftp-server
+  Subsystem: "sftp {{ __sshd_sftp_server }}"
 
 __sshd_verify_hostkeys_default:
   - /etc/ssh/ssh_host_rsa_key
