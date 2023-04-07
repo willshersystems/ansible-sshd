@@ -1,6 +1,21 @@
 Changelog
 =========
 
+[v0.18.2] - 2023-04-06
+--------------------
+
+### New Features
+
+- none
+
+### Bug Fixes
+
+- Fedora 38 has no longer non-standard hostkey permissions
+
+### Other Changes
+
+- Fingerprint ansible-sshd managed config files
+    
 [v0.18.1] - 2023-01-17
 --------------------
 
