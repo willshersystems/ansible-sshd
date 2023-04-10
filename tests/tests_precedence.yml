@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Test precedence
+  hosts: all
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
@@ -27,6 +28,7 @@
         sshd_HostKey: /tmp/ssh_host_rsa_key
 
     - name: Verify the options are correctly set
+      tags: tests::verify
       block:
         - name: Flush metadata
           ansible.builtin.meta: flush_handlers
@@ -55,7 +57,6 @@
               - "'Banner /etc/good-issue' in config.content | b64decode"
               - "'Ciphers aes128-ctr' in config.content | b64decode"
               - "'HostKey /tmp/ssh_host_rsa_key' in config.content | b64decode"
-      tags: tests::verify
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml

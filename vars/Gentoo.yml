@@ -5,7 +5,7 @@ __sshd_sftp_server: /usr/lib64/misc/sftp-server
 __sshd_defaults:
   Subsystem: "sftp {{ __sshd_sftp_server }}"
   # Replace tcp keepalive with unspoofable keepalive
-  TCPKeepAlive: no
+  TCPKeepAlive: false
   ClientAliveInterval: 300
   ClientAliveCountMax: 2
   # Secure cipher and algorithm settings
@@ -18,15 +18,15 @@ __sshd_defaults:
   MACs: "hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com"
   AuthorizedKeysFile: .ssh/authorized_keys
   # Security settings
-  PasswordAuthentication: no
-  ChallengeResponseAuthentication: no
-  PermitRootLogin: no
+  PasswordAuthentication: false
+  ChallengeResponseAuthentication: false
+  PermitRootLogin: false
   # Login settings
-  UsePAM: yes
-  PrintMotd: no
-  PrintLastLog: yes
+  UsePAM: true
+  PrintMotd: false
+  PrintLastLog: true
   # Disable most forwarding types for more security
-  AllowAgentForwarding: no
-  AllowTcpForwarding: no
-  AllowStreamLocalForwarding: no
-__sshd_os_supported: yes
+  AllowAgentForwarding: false
+  AllowTcpForwarding: false
+  AllowStreamLocalForwarding: false
+__sshd_os_supported: true

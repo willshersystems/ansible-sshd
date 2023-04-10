@@ -10,23 +10,23 @@ __sshd_defaults:
     - /etc/ssh/ssh_host_ed25519_key
   SyslogFacility: AUTHPRIV
   AuthorizedKeysFile: .ssh/authorized_keys
-  PasswordAuthentication: yes
-  PermitRootLogin: yes
-  ChallengeResponseAuthentication: no
-  GSSAPIAuthentication: yes
-  GSSAPICleanupCredentials: no
+  PasswordAuthentication: true
+  PermitRootLogin: true
+  ChallengeResponseAuthentication: false
+  GSSAPIAuthentication: true
+  GSSAPICleanupCredentials: false
   # Note that UsePAM: no is not supported under RHEL/CentOS. See
   # https://github.com/willshersystems/ansible-sshd/pull/51#issuecomment-287333218
-  UsePAM: yes
-  X11Forwarding: yes
-  PrintMotd: no
+  UsePAM: true
+  X11Forwarding: true
+  PrintMotd: false
   AcceptEnv:
     - LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
     - LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
     - LC_IDENTIFICATION LC_ALL LANGUAGE
     - XMODIFIERS
   Subsystem: "sftp {{ __sshd_sftp_server }}"
-__sshd_os_supported: yes
+__sshd_os_supported: true
 __sshd_sysconfig_supports_use_strong_rng: true
 __sshd_sysconfig_supports_crypto_policy: true
 __sshd_hostkey_group: ssh_keys

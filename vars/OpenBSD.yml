@@ -5,5 +5,5 @@ __sshd_sftp_server: /usr/libexec/sftp-server
 __sshd_defaults:
   AuthorizedKeysFile: .ssh/authorized_keys
   Subsystem: "sftp {{ __sshd_sftp_server }}"
-__sshd_os_supported: yes
-__sshd_manage_var_run: no
+__sshd_os_supported: true
+__sshd_manage_var_run: false

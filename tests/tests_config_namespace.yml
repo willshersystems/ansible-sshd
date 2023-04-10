@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Test config namespaces
+  hosts: all
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
@@ -16,11 +17,11 @@
         sshd_config_file: /etc/ssh/sshd_config
         sshd_config_namespace: nm1
         sshd:
-          PasswordAuthentication: yes
-          PermitRootLogin: yes
+          PasswordAuthentication: true
+          PermitRootLogin: true
           Match:
             Condition: user root
-            AllowAgentForwarding: no
+            AllowAgentForwarding: false
 
     - name: Add second configuration block to default configuration file
       ansible.builtin.include_role:
@@ -29,13 +30,14 @@
         sshd_config_file: /etc/ssh/sshd_config
         sshd_config_namespace: nm2
         sshd:
-          PasswordAuthentication: no
-          PermitRootLogin: no
+          PasswordAuthentication: false
+          PermitRootLogin: false
           Match:
             Condition: Address 127.0.0.1
             Banner: /etc/issue
 
     - name: Verify the options are correctly set
+      tags: tests::verify
       block:
         - name: Flush handlers
           ansible.builtin.meta: flush_handlers
@@ -111,7 +113,6 @@
               - "'allowAgentforwarding no' not in nonmatching.stdout"
               - "'banner /etc/issue' not in nonmatching.stdout"
               - "'passwordauthentication yes' in nonmatching.stdout"
-      tags: tests::verify
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml

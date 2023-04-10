@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Test hostkeys via role - setup
+  hosts: all
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
@@ -23,11 +24,12 @@
         name: nobody
         group: nobody
         comment: nobody
-        create_home: no
+        create_home: false
         shell: /sbin/nologin
 
 # invoke role through "roles"
-- hosts: all
+- name: Test hostkeys via role
+  hosts: all
   roles:
     - ansible-sshd
   vars:
@@ -39,7 +41,8 @@
       HostKey:
         - /tmp/ssh_host_rsa_key2
 
-- hosts: all
+- name: Test hostkeys via role - verify
+  hosts: all
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
@@ -50,6 +53,7 @@
       ansible.builtin.include_tasks: tasks/setup.yml
 
     - name: Verify the options are correctly set
+      tags: tests::verify
       block:
         - name: Flush metadata
           ansible.builtin.meta: flush_handlers
@@ -82,7 +86,6 @@
               - privkey.stat.pw_name == 'nobody'
               - privkey.stat.mode == '0664'
               - pubkey.stat.exists
-      tags: tests::verify
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml

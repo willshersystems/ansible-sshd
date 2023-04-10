@@ -10,7 +10,7 @@
     block: |
       {{ __sshd_compat_match_all }}
       {{ lookup('template', 'sshd_config_snippet.j2') }}
-    create: yes
+    create: true
     marker: "# {mark} sshd system role managed block: namespace {{ sshd_config_namespace }}"
     validate: >-
       {% if not __sshd_supports_validate %}

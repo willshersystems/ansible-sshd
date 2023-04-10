@@ -7,8 +7,8 @@ __sshd_sftp_server: /usr/sbin/sftp-server
 __sshd_config_group: system
 __sshd_defaults:
   Subsystem: "sftp {{ __sshd_sftp_server }}"
-__sshd_os_supported: yes
+__sshd_os_supported: true
 
-sshd_install_service: no
-sshd_manage_service: no
-sshd_allow_reload: yes
+sshd_install_service: false
+sshd_manage_service: falselse
+sshd_allow_reload: true

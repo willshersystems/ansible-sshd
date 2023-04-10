@@ -10,19 +10,19 @@ __sshd_defaults:
     - /etc/ssh/ssh_host_ed25519_key
   SyslogFacility: AUTHPRIV
   AuthorizedKeysFile: .ssh/authorized_keys
-  PasswordAuthentication: yes
-  ChallengeResponseAuthentication: no
-  GSSAPIAuthentication: yes
-  GSSAPICleanupCredentials: no
-  UsePAM: yes
-  X11Forwarding: yes
+  PasswordAuthentication: true
+  ChallengeResponseAuthentication: false
+  GSSAPIAuthentication: true
+  GSSAPICleanupCredentials: false
+  UsePAM: true
+  X11Forwarding: true
   AcceptEnv:
     - LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
     - LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
     - LC_IDENTIFICATION LC_ALL LANGUAGE
     - XMODIFIERS
   Subsystem: "sftp {{ __sshd_sftp_server }}"
-__sshd_os_supported: yes
+__sshd_os_supported: true
 __sshd_sysconfig_supports_crypto_policy: true
 __sshd_hostkey_group: ssh_keys
 __sshd_hostkey_mode: "0640"

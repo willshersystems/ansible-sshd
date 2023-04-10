@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Test uncommon options
+  hosts: all
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
@@ -9,6 +10,8 @@
       ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Configure sshd with uncommon options, making sure it keeps running
+      when:
+        - not (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6')
       block:
         - name: Configure ssh with unsupported options
           ansible.builtin.include_role:
@@ -17,20 +20,20 @@
             sshd:
               # Unsupported in new versions, but ignored ?
               Protocol: 1
-              UsePrivilegeSeparation: no
-              UseLogin: yes
+              UsePrivilegeSeparation: false
+              UseLogin: true
               # Debian only
               DebianBanner: /etc/motd
               # Used in FreeBSD ?
               VersionAddendum: FreeBSD-20180909
               # HPN only
-              HPNDisabled: yes
+              HPNDisabled: true
               HPNBufferSize: 2MB
-              TcpRcvBufPoll: yes
-              NoneEnabled: yes
+              TcpRcvBufPoll: true
+              NoneEnabled: true
               # some builds might be without kerberos/GSSAPI
-              KerberosAuthentication: yes
-              GSSAPIStoreCredentialsOnRekey: yes
+              KerberosAuthentication: true
+              GSSAPIStoreCredentialsOnRekey: true
               # SSHv1 options
               KeyRegenerationInterval: 1h
               ServerKeyBits: 1024
@@ -38,7 +41,7 @@
               RDomain: 2
           register: role_result
 
-        - name: unreachable task
+        - name: Unreachable task
           ansible.builtin.fail:
             msg: UNREACH
       rescue:
@@ -48,8 +51,6 @@
               - ansible_failed_result.msg != 'UNREACH'
               - not role_result.changed
             msg: "Role has not failed when it should have"
-      when:
-        - not (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6')
 
     - name: Make sure service is still running
       ansible.builtin.service:

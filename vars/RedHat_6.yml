@@ -8,18 +8,18 @@ __sshd_defaults:
     - /etc/ssh/ssh_host_rsa_key
   Protocol: 2
   SyslogFacility: AUTHPRIV
-  PasswordAuthentication: yes
-  ChallengeResponseAuthentication: no
-  GSSAPIAuthentication: yes
-  GSSAPICleanupCredentials: yes
-  UsePAM: yes
+  PasswordAuthentication: true
+  ChallengeResponseAuthentication: false
+  GSSAPIAuthentication: true
+  GSSAPICleanupCredentials: true
+  UsePAM: true
   AcceptEnv:
     - LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
     - LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
     - LC_IDENTIFICATION LC_ALL LANGUAGE
     - XMODIFIERS
-  X11Forwarding: yes
+  X11Forwarding: true
   Subsystem: "sftp {{ __sshd_sftp_server }}"
-__sshd_os_supported: yes
+__sshd_os_supported: true
 __sshd_sysconfig_supports_use_strong_rng: true
 __sshd_compat_match_all: Match address *

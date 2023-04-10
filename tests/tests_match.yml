@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Test match blocks
+  hosts: all
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
@@ -18,11 +19,11 @@
         sshd:
           Match:
             Condition: "User xusers"
-            X11Forwarding: yes
+            X11Forwarding: true
             Banner: /tmp/xusers-banner
         sshd_match:
           - Condition: "User bot"
-            AllowTcpForwarding: no
+            AllowTcpForwarding: false
             Banner: /tmp/bot-banner
         sshd_match_1:
           - Condition: "User sftponly"
@@ -30,10 +31,11 @@
             ChrootDirectory: "/var/uploads/"
         sshd_match_2:
           - Condition: "User root"
-            PasswordAuthentication: no
-            AllowTcpForwarding: yes
+            PasswordAuthentication: false
+            AllowTcpForwarding: true
 
     - name: Verify the options are correctly set
+      tags: tests::verify
       block:
         - name: Flush handlers
           ansible.builtin.meta: flush_handlers
@@ -83,7 +85,6 @@
               - "'Match User bot' in config.content | b64decode"
               - "'Match User sftponly' in config.content | b64decode"
               - "'Match User root' in config.content | b64decode"
-      tags: tests::verify
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml

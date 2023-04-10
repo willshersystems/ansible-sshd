@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Test alternative config file
+  hosts: all
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
@@ -20,7 +21,7 @@
         name: nobody
         group: nobody
         comment: nobody
-        create_home: no
+        create_home: false
         shell: /sbin/nologin
 
     - name: Configure alternative sshd_config file
@@ -36,7 +37,7 @@
           AcceptEnv: LANG
           Banner: /etc/issue
           Ciphers: aes256-ctr
-        sshd_Compression: no  # noqa var-naming
+        sshd_Compression: false  # noqa var-naming
 
     - name: Configure second alternative sshd_config file
       ansible.builtin.include_role:
@@ -60,9 +61,10 @@
           Ciphers: aes192-ctr
           HostKey:
             - /tmp/ssh_host_ecdsa_key
-        sshd_PasswordAuthentication: no  # noqa var-naming
+        sshd_PasswordAuthentication: false  # noqa var-naming
 
     - name: Verify the options are correctly set
+      tags: tests::verify
       block:
         - name: Flush handlers
           ansible.builtin.meta: flush_handlers
@@ -179,7 +181,6 @@
               - config_stat.stat.gr_name == 'nobody'
               - config_stat.stat.pw_name == 'nobody'
               - config_stat.stat.mode == '0660'
-      tags: tests::verify
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml

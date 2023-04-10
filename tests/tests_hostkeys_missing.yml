@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Test missing hostkeys
+  hosts: all
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
@@ -10,6 +11,10 @@
       ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Configure sshd with missing host keys and prevent their creation
+      when:
+        - ansible_facts['os_family'] != 'Debian'
+        - not (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6')
+      tags: tests::verify
       block:
         - name: Configure missing hostkey
           ansible.builtin.include_role:
@@ -21,7 +26,7 @@
                 - /tmp/missing_ssh_host_rsa_key
           register: role_result
 
-        - name: unreachable task
+        - name: Unreachable task
           ansible.builtin.fail:
             msg: UNREACH
 
@@ -32,10 +37,6 @@
               - ansible_failed_result.msg != 'UNREACH'
               - not role_result.changed
             msg: "Role has not failed when it should have"
-      when:
-        - ansible_facts['os_family'] != 'Debian'
-        - not (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6')
-      tags: tests::verify
 
     - name: Make sure the key was not created
       ansible.builtin.file:

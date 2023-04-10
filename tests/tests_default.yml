@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Test default - setup
+  hosts: all
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
@@ -8,11 +9,13 @@
     - name: "Backup configuration files"
       ansible.builtin.include_tasks: tasks/backup.yml
 
-- hosts: all
+- name: Test defaults
+  hosts: all
   roles:
     - ansible-sshd
 
-- hosts: all
+- name: Test default - restore
+  hosts: all
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config

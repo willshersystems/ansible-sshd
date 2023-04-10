@@ -4,4 +4,4 @@ __sshd_config_mode: "0644"
 __sshd_sftp_server: /usr/libexec/sftp-server
 __sshd_defaults:
   Subsystem: "sftp {{ __sshd_sftp_server }}"
-__sshd_os_supported: yes
+__sshd_os_supported: true
