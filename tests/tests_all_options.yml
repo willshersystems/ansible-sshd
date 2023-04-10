@@ -36,7 +36,7 @@
       changed_when: true
 
     - name: Unminimize image on Debian. It looks like there is no simpler way to get manual pages
-      ansible.builtin.shell: set -eu; set -o pipefail || echo no pipefail; yes | unminimize
+      ansible.builtin.shell: set -eu; set -o | grep -q pipefail && set -o pipefail; yes | unminimize
       when:
         - ansible_facts['distribution'] == "Ubuntu"
       changed_when: true
@@ -63,7 +63,7 @@
 
     - name: Get list of options from manual page
       ansible.builtin.shell: >-
-        set -eu; set -o pipefail || echo no pipefail; man sshd_config | cat
+        set -eu; set -o | grep -q pipefail && set -o pipefail; man sshd_config | cat
       changed_when: false
 
     - name: Get list of options from manual page
