@@ -11,4 +11,4 @@ __sshd_defaults:
   HostKey:
     - /etc/ssh/ssh_host_rsa_key
     - /etc/ssh/ssh_host_ed25519_key
-__sshd_os_supported: yes
+__sshd_os_supported: true

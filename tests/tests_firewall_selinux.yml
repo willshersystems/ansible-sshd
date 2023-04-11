@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Test managing firewall and selinux from role
+  hosts: all
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
@@ -21,6 +22,7 @@
           Port: 22
 
     - name: Verify the options are correctly set
+      tags: tests::verify
       block:
         - name: Flush handlers
           ansible.builtin.meta: flush_handlers
@@ -34,7 +36,6 @@
           ansible.builtin.assert:
             that:
               - "'Port 22' in config.content | b64decode"
-      tags: tests::verify
 
     ##########
     # Second test: non-default port
@@ -50,6 +51,7 @@
           Port: 222
 
     - name: Verify the options are correctly set
+      tags: tests::verify
       block:
         - name: Flush handlers
           ansible.builtin.meta: flush_handlers
@@ -63,7 +65,6 @@
           ansible.builtin.assert:
             that:
               - "'Port 222' in config.content | b64decode"
-      tags: tests::verify
 
     ##########
     # Third test: multiple ports
@@ -80,6 +81,7 @@
             - 222
 
     - name: Verify the options are correctly set
+      tags: tests::verify
       block:
         - name: Flush handlers
           ansible.builtin.meta: flush_handlers
@@ -93,7 +95,6 @@
           ansible.builtin.assert:
             that:
               - "'Port 222' in config.content | b64decode"
-      tags: tests::verify
 
     ##########
     # Cleanup
@@ -110,7 +111,7 @@
             state: disabled
       when:
         - ansible_facts['os_family'] == 'RedHat'
-        - ansible_virtualization_type|default(None) not in __sshd_skip_virt_env
+        - ansible_virtualization_type | default(None) not in __sshd_skip_virt_env
 
     - name: Remove the modification to the selinux policy
       ansible.builtin.include_role:
@@ -124,4 +125,4 @@
           local: true
       when:
         - ansible_facts['os_family'] == 'RedHat'
-        - ansible_virtualization_type|default(None) not in __sshd_skip_virt_env
+        - ansible_virtualization_type | default(None) not in __sshd_skip_virt_env

@@ -1,5 +1,5 @@
 ---
-__sshd_os_supported: yes
+__sshd_os_supported: true
 
 __sshd_packages:
   - openssh

@@ -6,8 +6,8 @@ __sshd_sftp_server: internal-sftp
 __sshd_defaults:
   Subsystem: "sftp {{ __sshd_sftp_server }}"
   ClientAliveInterval: 180
-  UseDNS: no
-  UsePAM: yes
-  PrintLastLog: no
-  PrintMotd: no
-__sshd_os_supported: yes
+  UseDNS: false
+  UsePAM: true
+  PrintLastLog: false
+  PrintMotd: false
+__sshd_os_supported: true

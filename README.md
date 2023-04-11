@@ -307,14 +307,14 @@ provides. Running it will likely break your SSH access to the server!
       ListenAddress:
         - "0.0.0.0"
         - "::"
-      GSSAPIAuthentication: no
+      GSSAPIAuthentication: false
       Match:
         - Condition: "Group user"
-          GSSAPIAuthentication: yes
-    sshd_UsePrivilegeSeparation: no
+          GSSAPIAuthentication: true
+    sshd_UsePrivilegeSeparation: false
     sshd_match:
         - Condition: "Group xusers"
-          X11Forwarding: yes
+          X11Forwarding: true
   roles:
     - role: willshersystems.sshd
 ```
@@ -350,14 +350,14 @@ for example:
         ListenAddress:
           - "0.0.0.0"
           - "::"
-        GSSAPIAuthentication: no
+        GSSAPIAuthentication: false
         Match:
           - Condition: "Group user"
-            GSSAPIAuthentication: yes
-      sshd_UsePrivilegeSeparation: no
+            GSSAPIAuthentication: true
+      sshd_UsePrivilegeSeparation: false
       sshd_match:
           - Condition: "Group xusers"
-            X11Forwarding: yes
+            X11Forwarding: true
 ```
 
 You can just add a configuration snippet with the `sshd_config_namespace`

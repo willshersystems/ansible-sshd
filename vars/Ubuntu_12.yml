@@ -10,27 +10,27 @@ __sshd_defaults:
     - /etc/ssh/ssh_host_rsa_key
     - /etc/ssh/ssh_host_dsa_key
     - /etc/ssh/ssh_host_ecdsa_key
-  UsePrivilegeSeparation: yes
+  UsePrivilegeSeparation: true
   KeyRegenerationInterval: 3600
   ServerKeyBits: 768
   SyslogFacility: AUTH
   LogLevel: INFO
   LoginGraceTime: 120
-  PermitRootLogin: yes
-  StrictModes: yes
-  RSAAuthentication: yes
-  PubkeyAuthentication: yes
-  IgnoreRhosts: yes
-  RhostsRSAAuthentication: no
-  HostbasedAuthentication: no
-  PermitEmptyPasswords: no
-  ChallengeResponseAuthentication: no
-  X11Forwarding: yes
+  PermitRootLogin: true
+  StrictModes: true
+  RSAAuthentication: true
+  PubkeyAuthentication: true
+  IgnoreRhosts: true
+  RhostsRSAAuthentication: false
+  HostbasedAuthentication: false
+  PermitEmptyPasswords: false
+  ChallengeResponseAuthentication: false
+  X11Forwarding: true
   X11DisplayOffset: 10
-  PrintMotd: no
-  PrintLastLog: yes
-  TCPKeepAlive: yes
+  PrintMotd: false
+  PrintLastLog: true
+  TCPKeepAlive: true
   AcceptEnv: LANG LC_*
   Subsystem: "sftp {{ __sshd_sftp_server }}"
-  UsePAM: yes
-__sshd_os_supported: yes
+  UsePAM: true
+__sshd_os_supported: true

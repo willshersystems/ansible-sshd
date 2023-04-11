@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Test indentation
+  hosts: all
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
@@ -13,13 +14,14 @@
         name: ansible-sshd
       vars:
         sshd:
-          PasswordAuthentication: yes
-          PermitRootLogin: yes
+          PasswordAuthentication: true
+          PermitRootLogin: true
           Match:
             Condition: user root
-            AllowAgentForwarding: no
+            AllowAgentForwarding: false
 
     - name: Verify the options are correctly set
+      tags: tests::verify
       block:
         - name: Flush handlers
           ansible.builtin.meta: flush_handlers
@@ -35,8 +37,6 @@
               - "config.content | b64decode | regex_search('^PasswordAuthentication yes$', multiline=True)"
               - "config.content | b64decode | regex_search('^PermitRootLogin yes$', multiline=True)"
               - "config.content | b64decode | regex_search('^Match user root\\n\\s+AllowAgentForwarding no$', multiline=True)"
-
-      tags: tests::verify
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml

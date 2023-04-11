@@ -44,3 +44,4 @@
     - ansible_connection == 'chroot'
     - ansible_os_family == 'RedHat'
     - ansible_distribution_major_version|int >= 7
+  changed_when: true

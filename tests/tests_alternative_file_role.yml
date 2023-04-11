@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Test alternative role file - setup tasks
+  hosts: all
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
@@ -20,11 +21,12 @@
         name: nobody
         group: nobody
         comment: nobody
-        create_home: no
+        create_home: false
         shell: /sbin/nologin
 
 # Configure alternative sshd_config file
-- hosts: all
+- name: Test first alternative role file
+  hosts: all
   roles:
     - ansible-sshd
   vars:
@@ -37,10 +39,11 @@
       AcceptEnv: LANG
       Banner: /etc/issue
       Ciphers: aes256-ctr
-    sshd_Compression: no  # noqa var-naming
+    sshd_Compression: false  # noqa var-naming
 
 # Configure second alternative sshd_config file
-- hosts: all
+- name: Test first alternative role file
+  hosts: all
   roles:
     - ansible-sshd
   vars:
@@ -53,7 +56,8 @@
     sshd_MaxStartups: 100  # noqa var-naming
 
 # Now configure the main sshd_config file
-- hosts: all
+- name: Test main config file
+  hosts: all
   roles:
     - ansible-sshd
   vars:
@@ -63,9 +67,10 @@
       Ciphers: aes192-ctr
       HostKey:
         - /tmp/ssh_host_ecdsa_key
-    sshd_PasswordAuthentication: no  # noqa var-naming
+    sshd_PasswordAuthentication: false  # noqa var-naming
 
-- hosts: all
+- name: Verify config files are correct
+  hosts: all
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
@@ -74,9 +79,10 @@
       - /etc/ssh/sshd_config_custom_second
   tasks:
     - name: Setup variables
-      include_tasks: tasks/setup.yml
+      ansible.builtin.include_tasks: tasks/setup.yml
 
     - name: Verify the options are correctly set
+      tags: tests::verify
       block:
         - name: Flush handlers
           ansible.builtin.meta: flush_handlers
@@ -194,7 +200,6 @@
               - config_stat.stat.gr_name == 'nobody'
               - config_stat.stat.pw_name == 'nobody'
               - config_stat.stat.mode == '0660'
-      tags: tests::verify
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml

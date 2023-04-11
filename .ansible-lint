@@ -1,4 +1,2 @@
-warn_list:  # or 'skip_list' to silence them completely
-  - '306'  # Shells that use pipes should set the pipefail option
 exclude_paths:
   - tests/roles/

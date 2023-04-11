@@ -27,7 +27,7 @@ __sshd_service: sshd
 __sshd_sftp_server: /usr/lib/openssh/sftp-server
 
 __sshd_defaults: {}
-__sshd_os_supported: no
+__sshd_os_supported: false
 __sshd_sysconfig_supports_crypto_policy: false
 __sshd_sysconfig_supports_use_strong_rng: false
 

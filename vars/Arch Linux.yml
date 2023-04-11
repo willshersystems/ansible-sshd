@@ -4,8 +4,8 @@ __sshd_packages:
 __sshd_sftp_server: /usr/lib/ssh/sftp-server
 __sshd_defaults:
   AuthorizedKeysFile: .ssh/authorized_keys
-  ChallengeResponseAuthentication: no
-  PrintMotd: no
+  ChallengeResponseAuthentication: false
+  PrintMotd: false
   Subsystem: "sftp {{ __sshd_sftp_server }}"
-  UsePAM: yes
-__sshd_os_supported: yes
+  UsePAM: true
+__sshd_os_supported: true

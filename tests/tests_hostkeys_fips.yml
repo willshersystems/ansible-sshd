@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Test hostkeys with FIPS
+  hosts: all
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
@@ -16,6 +17,10 @@
         name: ansible-sshd
 
     - name: Verify the options are correctly set
+      when:
+        - ansible_facts['os_family'] == 'RedHat'
+        - ansible_facts['distribution_major_version'] | int > 6
+      tags: tests::verify
       block:
         - name: Flush handlers
           ansible.builtin.meta: flush_handlers
@@ -41,17 +46,13 @@
               - "'HostKey /etc/ssh/ssh_host_ed25519_key' in config.content | b64decode"
           when:
             - ansible_facts['os_family'] == 'RedHat'
-            - ansible_facts['distribution_major_version']|int < 9
+            - ansible_facts['distribution_major_version'] | int < 9
 
         - name: Check host key was generated
           ansible.builtin.assert:
             that:
               - privkey.stat.exists
               - pubkey.stat.exists
-      when:
-        - ansible_facts['os_family'] == 'RedHat'
-        - ansible_facts['distribution_major_version']|int > 6
-      tags: tests::verify
 
     - name: Fake FIPS mode
       block:
@@ -69,11 +70,11 @@
         - name: Create a fips_enabled file
           ansible.builtin.copy:
             dest: "{{ fips_directory.path }}/fips_enabled"
-            content: 1
+            content: "1"
             mode: "0644"
 
         - name: Bind mount the file where we need it
-          ansible.builtin.mount:
+          ansible.posix.mount:
             path: /proc/sys/crypto/fips_enabled
             src: "{{ fips_directory.path }}/fips_enabled"
             opts: bind
@@ -98,6 +99,10 @@
         name: ansible-sshd
 
     - name: Verify the options are correctly set
+      when:
+        - ansible_facts['os_family'] == 'RedHat'
+        - ansible_facts['distribution_major_version'] | int > 6
+      tags: tests::verify
       block:
         - name: Flush handlers
           ansible.builtin.meta: flush_handlers
@@ -127,15 +132,11 @@
             that:
               - not privkey.stat.exists
               - not pubkey.stat.exists
-      when:
-        - ansible_facts['os_family'] == 'RedHat'
-        - ansible_facts['distribution_major_version']|int > 6
-      tags: tests::verify
 
     - name: Remove the FIPS mode indicators
       block:
         - name: Unmount the file
-          mount:
+          ansible.posix.mount:
             path: /proc/sys/crypto/fips_enabled
             state: unmounted
           failed_when: false

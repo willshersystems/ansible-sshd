@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Test default with include tasks
+  hosts: all
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
