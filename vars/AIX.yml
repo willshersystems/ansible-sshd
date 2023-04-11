@@ -10,5 +10,5 @@ __sshd_defaults:
 __sshd_os_supported: true
 
 sshd_install_service: false
-sshd_manage_service: falselse
+sshd_manage_service: false
 sshd_allow_reload: true
