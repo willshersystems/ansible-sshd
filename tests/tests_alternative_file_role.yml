@@ -188,7 +188,7 @@
             that:
               - "'Include /etc/ssh/sshd_config.d/*.conf' in config3.content | b64decode"
               - "'AuthorizedKeysFile .ssh/authorized_keys' in config3.content | b64decode"
-              - "'Subsystem sftp /usr/libexec/sftp-server' in config3.content | b64decode"
+              - "'Subsystem sftp /usr/libexec/openssh/sftp-server' in config3.content | b64decode"
           when:
             - ansible_facts['os_family'] == 'RedHat'
             - ansible_facts['distribution_major_version']|int > 8
