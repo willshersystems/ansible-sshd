@@ -16,12 +16,22 @@
         sshd:
           PasswordAuthentication: true
           PermitRootLogin: true
+          AcceptEnv:
+            - TEST
+            - LC_ALL
           Match:
             Condition: user root
             AllowAgentForwarding: false
+            AcceptEnv:
+              - TESTENV
+              - LANG
+      when:
+        - not (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6')
 
     - name: Verify the options are correctly set
       tags: tests::verify
+      when:
+        - not (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6')
       block:
         - name: Flush handlers
           ansible.builtin.meta: flush_handlers
@@ -34,9 +44,16 @@
         - name: Check the options are correctly indented in configuration file
           ansible.builtin.assert:
             that:
-              - "config.content | b64decode | regex_search('^PasswordAuthentication yes$', multiline=True)"
-              - "config.content | b64decode | regex_search('^PermitRootLogin yes$', multiline=True)"
-              - "config.content | b64decode | regex_search('^Match user root\\n\\s+AllowAgentForwarding no$', multiline=True)"
+              - content is search ('^PasswordAuthentication yes$', multiline=True)
+              - content is search ('^PermitRootLogin yes$', multiline=True)
+              - content is search ("^AcceptEnv TEST$", multiline=True)
+              - content is search ("^AcceptEnv LC_ALL$", multiline=True)
+              - content is search ('^Match user root$', multiline=True)
+              - content is search ("^  AcceptEnv TESTENV$", multiline=True)
+              - content is search ("^  AcceptEnv LANG$", multiline=True)
+              - content is search ('^  AllowAgentForwarding no$', multiline=True)
+          vars:
+            content: "{{ config.content | b64decode }}"
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml

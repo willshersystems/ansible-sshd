@@ -1,14 +1,17 @@
 {% macro render_option(key,value,indent=false) %}
 {%   if value is defined %}
-{%     if indent %}  {% endif %}
 {%     if value is sameas true %}
+{%     if indent %}  {% endif %}
 {{ key }} yes
 {%     elif value is sameas false %}
+{%     if indent %}  {% endif %}
 {{ key }} no
 {%     elif value is string or value is number %}
+{%     if indent %}  {% endif %}
 {{ key }} {{ value | string }}
 {%     else %}
 {%       for i in value %}
+{%     if indent %}  {% endif %}
 {{ key }} {{ i | string }}
 {%       endfor %}
 {%     endif %}
