@@ -118,5 +118,12 @@
         "{{ sshd_options.stdout_lines }}"
       when: not sshd_skip_test
 
+    - name: Check generated files for ansible_managed, fingerprint
+      ansible.builtin.include_tasks: tasks/check_header.yml
+      vars:
+        __file_content: "{{ config }}"
+        __fingerprint: "willshersystems:ansible-sshd"
+      when: not sshd_skip_test
+
     - name: Restore configuration files
       ansible.builtin.include_tasks: tasks/restore.yml
