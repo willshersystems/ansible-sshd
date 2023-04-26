@@ -1,6 +1,7 @@
 ---
 - name: Test managing firewall and selinux from role
   hosts: all
+  gather_facts: true  # needs os_family, etc.
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
@@ -9,6 +10,23 @@
     - name: "Backup configuration files"
       ansible.builtin.include_tasks: tasks/backup.yml
 
+    - name: Call role with no args to get access to __sshd_skip_virt_env
+      ansible.builtin.include_role:
+        name: ansible-sshd
+        public: true
+      vars:
+        sshd_enable: false  # skip everything but loading vars
+
+    - name: See if we can test firewall or selinux
+      ansible.builtin.set_fact:
+        sshd_enable: true  # reset to true
+        __sshd_test_firewall: "{{ ansible_facts['os_family'] == 'RedHat' and
+          ansible_facts['distribution_version'] is version('7', '>=') and
+          ansible_virtualization_type | d(None) not in __sshd_skip_virt_env }}"
+        __sshd_test_selinux: "{{ ansible_facts['os_family'] == 'RedHat' and
+          ansible_facts['distribution_version'] is version('6', '>=') and
+          ansible_virtualization_type | d(None) not in __sshd_skip_virt_env }}"
+
     ##########
     # First test: default port
     ##########
@@ -16,8 +34,8 @@
       ansible.builtin.include_role:
         name: ansible-sshd
       vars:
-        sshd_manage_selinux: true
-        sshd_manage_firewall: true
+        sshd_manage_selinux: "{{ __sshd_test_selinux }}"
+        sshd_manage_firewall: "{{ __sshd_test_firewall }}"
         sshd:
           Port: 22
 
@@ -45,8 +63,8 @@
       ansible.builtin.include_role:
         name: ansible-sshd
       vars:
-        sshd_manage_firewall: true
-        sshd_manage_selinux: true
+        sshd_manage_firewall: "{{ __sshd_test_firewall }}"
+        sshd_manage_selinux: "{{ __sshd_test_selinux }}"
         sshd:
           Port: 222
 
@@ -73,8 +91,8 @@
       ansible.builtin.include_role:
         name: ansible-sshd
       vars:
-        sshd_manage_firewall: true
-        sshd_manage_selinux: true
+        sshd_manage_firewall: "{{ __sshd_test_firewall }}"
+        sshd_manage_selinux: "{{ __sshd_test_selinux }}"
         sshd:
           Port:
             - 22
@@ -109,13 +127,11 @@
         firewall:
           - port: "222/tcp"
             state: disabled
-      when:
-        - ansible_facts['os_family'] == 'RedHat'
-        - ansible_virtualization_type | default(None) not in __sshd_skip_virt_env
+      when: __sshd_test_firewall
 
     - name: Remove the modification to the selinux policy
       ansible.builtin.include_role:
-        name: fedora.linux_system_roles.firewall
+        name: fedora.linux_system_roles.selinux
       vars:
         selinux:
           port: 222
@@ -123,6 +139,4 @@
           setype: ssh_port_t
           state: absent
           local: true
-      when:
-        - ansible_facts['os_family'] == 'RedHat'
-        - ansible_virtualization_type | default(None) not in __sshd_skip_virt_env
+      when: __sshd_test_selinux

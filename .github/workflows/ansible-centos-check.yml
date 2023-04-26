@@ -22,6 +22,7 @@ jobs:
         tests/tasks/restore.yml
         tests/tests_duplicate_role.yml
         tests/tests_os_defaults.yml
+        tests/tests_firewall_selinux.yml
     - run: "sed -i -e 's/ansible.builtin.//g' -e 's/ansible.posix.//g' */*.yml */*/*.yml"
 
     - name: ansible check with centos 6
