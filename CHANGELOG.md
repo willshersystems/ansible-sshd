@@ -1,6 +1,25 @@
 Changelog
 =========
 
+[v0.19.0] - 2023-04-27
+
+### New Features
+
+- feat: add support for FreeBSD, OpenBSD
+
+### Bug Fixes
+
+- none
+
+### Other Changes
+
+- test: skip selinux or firewall role test where not supported
+- test: check generated files for ansible_managed, fingerprint
+- ci: Add commitlint GitHub action to ensure conventional commits
+- ci: Drop testing on Debian stretch (9)
+- ci: add dependabot check for github action updates
+- style: ansible-lint - align with current Ansible recommendations
+
 [v0.18.2] - 2023-04-06
 --------------------
 
