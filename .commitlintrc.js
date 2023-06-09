@@ -30,6 +30,7 @@ module.exports = {
 				'revert',
 				'style',
 				'test',
+				'tests',
 			],
 		],
 	},
@@ -71,6 +72,11 @@ module.exports = {
 						emoji: '🚀',
 					},
 					test: {
+						description: 'Adding missing tests or correcting existing tests',
+						title: 'Tests',
+						emoji: '🚨',
+					},
+					tests: {
 						description: 'Adding missing tests or correcting existing tests',
 						title: 'Tests',
 						emoji: '🚨',
