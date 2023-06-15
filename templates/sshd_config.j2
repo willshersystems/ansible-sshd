@@ -58,6 +58,7 @@ Match {{ match["Condition"] }}
 {{       render_option("AuthorizedPrincipalsCommandUser",match["AuthorizedPrincipalsCommandUser"],true) -}}
 {{       render_option("AuthorizedPrincipalsFile",match["AuthorizedPrincipalsFile"],true) -}}
 {{       render_option("Banner",match["Banner"],true) -}}
+{{       render_option("CASignatureAlgorithms",match["CASignatureAlgorithms"],true) -}}
 {{       render_option("ChrootDirectory",match["ChrootDirectory"],true) -}}
 {{       render_option("ChannelTimeout",match["ChannelTimeout"],true) -}}
 {{       render_option("ClientAliveCountMax",match["ClientAliveCountMax"],true) -}}
@@ -65,6 +66,7 @@ Match {{ match["Condition"] }}
 {{       render_option("DenyGroups",match["DenyGroups"],true) -}}
 {{       render_option("DenyUsers",match["DenyUsers"],true) -}}
 {{       render_option("DisableForwarding",match["DisableForwarding"],true) -}}
+{{       render_option("ExposeAuthInfo",match["ExposeAuthInfo"],true) -}}
 {{       render_option("ForceCommand",match["ForceCommand"],true) -}}
 {{       render_option("GatewayPorts",match["GatewayPorts"],true) -}}
 {{       render_option("GSSAPIAuthentication",match["GSSAPIAuthentication"],true) -}}
@@ -91,6 +93,7 @@ Match {{ match["Condition"] }}
 {{       render_option("PubkeyAcceptedKeyTypes",match["PubkeyAcceptedKeyTypes"],true) -}}
 {{       render_option("PubkeyAcceptedAlgorithms",match["PubkeyAcceptedAlgorithms"],true) -}}
 {{       render_option("PubkeyAuthentication",match["PubkeyAuthentication"],true) -}}
+{{       render_option("PubkeyAuthOptions",match["PubkeyAuthOptions"],true) -}}
 {{       render_option("RDomain",match["RDomain"],true) -}}
 {{       render_option("RekeyLimit",match["RekeyLimit"],true) -}}
 {{       render_option("RevokedKeys",match["RevokedKeys"],true) -}}
