@@ -13,6 +13,7 @@ AuthorizedPrincipalsCommandUser
 AuthorizedPrincipalsFile
 Banner
 ChrootDirectory
+ChannelTimeout
 ClientAliveCountMax
 ClientAliveInterval
 DenyGroups
@@ -55,6 +56,7 @@ SetEnv
 StreamLocalBindMask
 StreamLocalBindUnlink
 TrustedUserCAKeys
+UnusedConnectionTimeout
 X11DisplayOffset
 X11MaxDisplays
 X11Forwarding
