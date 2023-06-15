@@ -57,6 +57,7 @@ Match {{ match["Condition"] }}
 {{       render_option("AuthorizedPrincipalsFile",match["AuthorizedPrincipalsFile"],true) -}}
 {{       render_option("Banner",match["Banner"],true) -}}
 {{       render_option("ChrootDirectory",match["ChrootDirectory"],true) -}}
+{{       render_option("ChannelTimeout",match["ChannelTimeout"],true) -}}
 {{       render_option("ClientAliveCountMax",match["ClientAliveCountMax"],true) -}}
 {{       render_option("ClientAliveInterval",match["ClientAliveInterval"],true) -}}
 {{       render_option("DenyGroups",match["DenyGroups"],true) -}}
@@ -99,6 +100,7 @@ Match {{ match["Condition"] }}
 {{       render_option("StreamLocalBindMask",match["StreamLocalBindMask"],true) -}}
 {{       render_option("StreamLocalBindUnlink",match["StreamLocalBindUnlink"],true) -}}
 {{       render_option("TrustedUserCAKeys",match["TrustedUserCAKeys"],true) -}}
+{{       render_option("UnusedConnectionTimeout",match["UnusedConnectionTimeout"],true) -}}
 {{       render_option("X11DisplayOffset",match["X11DisplayOffset"],true) -}}
 {{       render_option("X11MaxDisplays",match["X11MaxDisplays"],true) -}}
 {{       render_option("X11Forwarding",match["X11Forwarding"],true) -}}
@@ -136,6 +138,7 @@ Match {{ match["Condition"] }}
 {{ body_option("Banner",sshd_Banner) -}}
 {{ body_option("CASignatureAlgorithms",sshd_CASignatureAlgorithms) -}}
 {{ body_option("ChallengeResponseAuthentication",sshd_ChallengeResponseAuthentication) -}}
+{{ body_option("ChannelTimeout",sshd_ChannelTimeout) -}}
 {{ body_option("ChrootDirectory",sshd_ChrootDirectory) -}}
 {{ body_option("Ciphers",sshd_Ciphers) -}}
 {{ body_option("ClientAliveCountMax",sshd_ClientAliveCountMax) -}}
@@ -226,6 +229,7 @@ Match {{ match["Condition"] }}
 {{ body_option("TCPKeepAlive",sshd_TCPKeepAlive) -}}
 {{ body_option("TcpRcvBufPoll",sshd_TcpRcvBufPoll) -}}
 {{ body_option("TrustedUserCAKeys",sshd_TrustedUserCAKeys) -}}
+{{ body_option("UnusedConnectionTimeout",sshd_UnusedConnectionTimeout) -}}
 {{ body_option("UseDNS",sshd_UseDNS) -}}
 {{ body_option("UseLogin",sshd_UseLogin) -}}
 {{ body_option("UsePAM",sshd_UsePAM) -}}

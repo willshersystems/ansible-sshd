@@ -19,6 +19,7 @@ AuthorizedPrincipalsFile
 Banner
 CASignatureAlgorithms
 ChallengeResponseAuthentication
+ChannelTimeout
 ChrootDirectory
 Ciphers
 ClientAliveCountMax
@@ -109,6 +110,7 @@ SyslogFacility
 TCPKeepAlive
 TcpRcvBufPoll
 TrustedUserCAKeys
+UnusedConnectionTimeout
 UseDNS
 UseLogin
 UsePAM
