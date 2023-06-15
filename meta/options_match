@@ -12,6 +12,7 @@ AuthorizedPrincipalsCommand
 AuthorizedPrincipalsCommandUser
 AuthorizedPrincipalsFile
 Banner
+CASignatureAlgorithms
 ChrootDirectory
 ChannelTimeout
 ClientAliveCountMax
@@ -19,6 +20,7 @@ ClientAliveInterval
 DenyGroups
 DenyUsers
 DisableForwarding
+ExposeAuthInfo
 ForceCommand
 GatewayPorts
 GSSAPIAuthentication
@@ -45,6 +47,7 @@ PermitUserRC
 PubkeyAcceptedKeyTypes
 PubkeyAcceptedAlgorithms
 PubkeyAuthentication
+PubkeyAuthOptions
 RDomain
 RekeyLimit
 RevokedKeys
