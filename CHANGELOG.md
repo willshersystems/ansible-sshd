@@ -1,6 +1,41 @@
 Changelog
 =========
 
+[v0.20.0] - 2023-06-19
+--------------------
+
+### New Features
+
+- feat: debian 12 support and small config fixes for debian (#238)
+
+  This PR adds Debian 12 (aka bookworm) support to the role.
+  The workflow fails at the moment because there is no roles-ansible/check-ansible-debian-bookworm-action repo yet. As soon as @DO1JLR has created the repo it should pass all checks.
+  
+  Furthermore i fixed some small oversights in older debian defaults.
+
+- feat: Fix alpine tests by adding a new configuration options (#240)
+
+### Other Changes
+
+- proper Subsystem sftp default for RHEL9 (#220)
+
+  Basically the same as for RHEL6/7/8
+
+- ci: Add pull request template and run commitlint on PR title only (#237)
+
+  We now ensure the conventional commits format only on PR titles and not on
+  commits to let developers keep commit messages targeted for other developers
+  i.e. describe actual changes to code that users should not care about.
+  And PR titles, on the contrary, must be aimed at end users.
+  
+  For more info, see
+  https://linux-system-roles.github.io/contribute.html#write-a-good-pr-title-and-description
+
+- chore: moved debian 7 (wheezy) config to explicit file (#239)
+
+  This removes the `defaults/Debian.yml` file and moves it to the `defaults/Debian_7.yml` file. This prohibits rolling out ancient config on new Debian-Systems which aren't supported by this role.
+
+
 [v0.19.0] - 2023-04-27
 
 ### New Features
