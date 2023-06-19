@@ -1,4 +1,10 @@
 ---
+- name: Ensure apt sources are up to date on debian systems
+  ansible.builtin.apt:
+    update_cache: true
+  when:
+    - ansible_facts['distribution'] == 'Debian'
+
 - name: Make sure openssh is installed before creating backup
   ansible.builtin.package:
     name: openssh-server
