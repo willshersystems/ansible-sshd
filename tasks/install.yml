@@ -80,7 +80,7 @@
         {% if sshd_sysconfig %}
           source /etc/sysconfig/sshd
         {% endif %}
-        ssh-keygen -q -t {{ item | regex_search('(rsa|dsa|ecdsa|ed25519)') }} -f {{ item }} -C '' -N ''
+        ssh-keygen -q -t {{ item | regex_search('(rsa|dsa|ecdsa|ed25519)') }} -f {{ item | quote }} -C '' -N ''
       args:
         creates: "{{ item }}"
       loop: "{{ __sshd_verify_hostkeys | from_json | list }}"
@@ -109,7 +109,7 @@
 
     - name: Generate temporary hostkey
       ansible.builtin.command: >
-        ssh-keygen -q -t rsa -f '{{ sshd_test_hostkey.path }}/rsa_key' -C '' -N ''
+        ssh-keygen -q -t rsa -f {{ sshd_test_hostkey.path | quote }}/rsa_key -C '' -N ''
       changed_when: false
       when: sshd_test_hostkey.path is defined
 
