@@ -10,23 +10,23 @@
   vars:
     _distribution_lts_offset: >-
       {{
-        ansible_distribution_major_version | int % 2
-        if ansible_distribution == "Ubuntu"
+        ansible_facts['distribution_major_version'] | int % 2
+        if ansible_facts['distribution'] == "Ubuntu"
         else 0
       }}
     _distribution_lts_version: >-
       {{
-        ansible_distribution_major_version | int -
+        ansible_facts['distribution_major_version'] | int -
         _distribution_lts_offset | int
-        if ansible_distribution == "Ubuntu"
-        else ansible_distribution_version
+        if ansible_facts['distribution'] == "Ubuntu"
+        else ansible_facts['distribution_version']
       }}
     params:
       files:
-        - "{{ ansible_distribution }}_{{ _distribution_lts_version }}.yml"
-        - "{{ ansible_os_family }}_{{ ansible_distribution_major_version }}.yml"
-        - "{{ ansible_distribution }}.yml"
-        - "{{ ansible_os_family }}.yml"
+        - "{{ ansible_facts['distribution'] }}_{{ _distribution_lts_version }}.yml"
+        - "{{ ansible_facts['os_family'] }}_{{ ansible_facts['distribution_major_version'] }}.yml"
+        - "{{ ansible_facts['distribution'] }}.yml"
+        - "{{ ansible_facts['os_family'] }}.yml"
         - main.yml  # fallback, vars/main.yml is always loaded by Ansible
       paths:
         - "{{ role_path }}/vars"
