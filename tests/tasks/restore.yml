@@ -5,10 +5,10 @@
     if set -o | grep pipefail 2>&1 /dev/null ; then
       set -o pipefail
     fi
-    if test -f {{ __sshd_test_backup.path }}/{{ item }}; then
-      cp -a {{ __sshd_test_backup.path }}/{{ item }} $(dirname {{ item }})
-    elif test -f {{ item }}; then
-      rm {{ item }}
+    if test -f {{ __sshd_test_backup.path | quote }}/{{ item | quote }}; then
+      cp -a {{ __sshd_test_backup.path | quote }}/{{ item | quote }} $(dirname {{ item | quote }})
+    elif test -f {{ item | quote }}; then
+      rm {{ item | quote }}
     fi
   changed_when: false
   loop: "{{ __sshd_test_backup_files | d([]) }}"
