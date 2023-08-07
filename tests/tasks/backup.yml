@@ -16,9 +16,9 @@
       set -o pipefail
     fi
     set -eu
-    if test -f {{ item }}; then
-      mkdir -p {{ __sshd_test_backup.path }}/$(dirname {{ item }})
-      cp {{ item }} {{ __sshd_test_backup.path }}/$(dirname {{ item }})
+    if test -f {{ item | quote }}; then
+      mkdir -p {{ __sshd_test_backup.path | quote }}/$(dirname {{ item | quote }})
+      cp {{ item }} {{ __sshd_test_backup.path | quote }}/$(dirname {{ item | quote }})
     fi
   changed_when: false
   loop: "{{ __sshd_test_backup_files | d([]) }}"
