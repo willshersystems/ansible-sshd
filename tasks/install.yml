@@ -159,7 +159,7 @@
         path: /etc/ssh/auth_principals/
         state: directory
         mode: '0755'
-      when: sshd_principals is not none
+      when: sshd_principals != {}
 
     - name: Copy Pincipals files
       ansible.builtin.template:
@@ -167,7 +167,7 @@
         dest: "/etc/ssh/auth_principals/{{ item.key }}"
         mode: '0644'
       loop: "{{ q('dict', sshd_principals) }}"
-      when: sshd_principals is not none
+      when: sshd_principals != {}
 
   rescue:
     - name: Re-raise the error

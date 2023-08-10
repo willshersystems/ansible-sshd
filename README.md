@@ -411,7 +411,7 @@ List of trusted CA keys.
 
 * `sshd_principals`
 
-A dict containing principals for user in the os. e.g.
+A dict containing principals for users in the os. e.g.
 ```yaml
 sshd_principals:
   admin:
