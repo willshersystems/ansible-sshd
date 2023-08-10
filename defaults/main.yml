@@ -85,5 +85,5 @@ sshd_manage_selinux: false
 # If not null, list of trusted CA keys
 sshd_trusted_user_ca_keys_list: null
 
-# If not null, dict containing prinxipals for users in the os
+# If not empty, dict containing prinxipals for users in the os
 sshd_principals: {}
