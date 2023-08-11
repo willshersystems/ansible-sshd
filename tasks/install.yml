@@ -156,7 +156,7 @@
 
     - name: Create Pincipals directory
       ansible.builtin.file:
-        path: /etc/ssh/auth_principals/
+        path: "{{ __sshd_auth_principals_directory }}"
         state: directory
         mode: '0755'
       when: sshd_principals != {}
@@ -164,7 +164,7 @@
     - name: Copy Pincipals files
       ansible.builtin.template:
         src: "auth_principals.j2"
-        dest: "/etc/ssh/auth_principals/{{ item.key }}"
+        dest: "{{ __sshd_auth_principals_directory }}{{ item.key }}"
         mode: '0644'
       loop: "{{ q('dict', sshd_principals) }}"
       when: sshd_principals != {}
