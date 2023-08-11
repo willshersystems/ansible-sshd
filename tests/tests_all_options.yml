@@ -100,12 +100,8 @@
         # The hostkeys are not valid either so do not validate them
         sshd_verify_hostkeys: []
         sshd_config_file: /tmp/sshd_config
-        sshd_auth_principals_directory: /etc/ssh/auth_principals/
         sshd:
           "{{ sshd_c }}"
-          PasswordAuthentication: no
-          TrustedUserCAKeys: "/etc/ssh/trusted-user-ca-keys.pem"
-          AuthorizedPrincipalsFile: "{{ sshd_auth_principals_directory }}%u"
       when: not sshd_skip_test
 
     - name: Download the configuration file
