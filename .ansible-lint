@@ -1,3 +1,5 @@
 exclude_paths:
   - tests/roles/
   - .tox/
+skip_list:
+  - var-naming[no-role-prefix]
