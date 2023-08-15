@@ -1,5 +1,6 @@
 exclude_paths:
   - tests/roles/
   - .tox/
+  - .markdownlint.yaml
 skip_list:
   - var-naming[no-role-prefix]
