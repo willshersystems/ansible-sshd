@@ -17,7 +17,7 @@ __sshd_defaults:
   AcceptEnv: LANG LC_*
   Subsystem: "sftp  /usr/lib/openssh/sftp-server"
 
-__sshd_runtime_directory: /run/sshd
+__sshd_runtime_directory: sshd
 
 __sshd_drop_in_dir_mode: '0755'
 __sshd_main_config_file: /etc/ssh/sshd_config
