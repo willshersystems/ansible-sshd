@@ -147,27 +147,9 @@
       ansible.builtin.include_tasks: install_namespace.yml
       when: sshd_config_namespace is not none
 
-    - name: Copy Trusted user CA Keys
-      ansible.builtin.template:
-        src: "trusted-user-ca-keys.pem.j2"
-        dest: "/etc/ssh/trusted-user-ca-keys.pem"
-        mode: '0600'
+    - name: Configure sshd to use SSH certificates
+      ansible.builtin.include_tasks: certificates.yml
       when: sshd_trusted_user_ca_keys_list is not none
-
-    - name: Create Pincipals directory
-      ansible.builtin.file:
-        path: "{{ __sshd_auth_principals_directory }}"
-        state: directory
-        mode: '0755'
-      when: sshd_principals != {}
-
-    - name: Copy Pincipals files
-      ansible.builtin.template:
-        src: "auth_principals.j2"
-        dest: "{{ __sshd_auth_principals_directory }}{{ item.key }}"
-        mode: '0644'
-      loop: "{{ q('dict', sshd_principals) }}"
-      when: sshd_principals != {}
 
   rescue:
     - name: Re-raise the error

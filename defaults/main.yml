@@ -44,6 +44,12 @@ sshd: {}
 # configuration file snippet or configuring second sshd service
 sshd_config_file: "{{ __sshd_config_file }}"
 
+# If not null, list of trusted CA keys
+sshd_trusted_user_ca_keys_list: null
+
+# If not empty, dict containing principals for users in the os
+sshd_principals: {}
+
 ### VARS DEFAULTS
 ### The following are defaults for OS specific configuration in var files in
 ### this role. They should not be set directly by role users, unless they know
@@ -82,8 +88,6 @@ sshd_manage_firewall: false
 # bind the ports defined in the configuration. This works only on Red Hat based systems.
 sshd_manage_selinux: false
 
-# If not null, list of trusted CA keys
-sshd_trusted_user_ca_keys_list: null
-
-# If not empty, dict containing prinxipals for users in the os
-sshd_principals: {}
+# Paths to trusted user ca keys file and principals directory to use SSH certificats
+sshd_trusted_user_ca_keys_file: "{{ __sshd_trusted_user_ca_keys_file }}"
+sshd_auth_principals_directory: "{{ __sshd_auth_principals_directory }}"

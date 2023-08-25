@@ -18,7 +18,7 @@
           Banner: /etc/issue
           Ciphers: aes256-ctr
           Subsystem: "sftp internal-sftp"
-          PasswordAuthentication: no
+          PasswordAuthentication: false
           TrustedUserCAKeys: /etc/ssh/trusted-user-ca-keys.pem
           AuthorizedPrincipalsFile: "/etc/ssh/auth_principals/%u"
         sshd_trusted_user_ca_keys_list:

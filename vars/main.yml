@@ -53,3 +53,4 @@ __sshd_verify_hostkeys_default: []
 __sshd_supports_validate: true
 
 __sshd_auth_principals_directory: /etc/ssh/auth_principals/
+__sshd_trusted_user_ca_keys_file: /etc/ssh/trusted-user-ca-keys.pem
