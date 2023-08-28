@@ -421,12 +421,16 @@ sshd_principals:
     - some-principal-defined-in-certificate
 ```
 
-Of course, we need to set this configuration to disable password authentication and configure paths to principals and trusted CA keys: 
+We can configure paths to principals and trusted CA keys: 
 ```yaml
 sshd:
-  PasswordAuthentication: no
-  TrustedUserCAKeys: /etc/ssh/trusted-user-ca-keys.pem
-  AuthorizedPrincipalsFile: "/etc/ssh/auth_principals/%u"
+  TrustedUserCAKeys: /etc/ssh/path-to-trusted-user-ca-keys/trusted-user-ca-keys.pem
+  AuthorizedPrincipalsFile: "/etc/ssh/path-to-auth-principals/auth_principals/%u"
+```
+If they are not specified, the default values will be used: 
+```
+TrustedUserCAKeys: /etc/ssh/trusted-user-ca-keys.pem
+AuthorizedPrincipalsFile: "/etc/ssh/auth-principals/%u"
 ```
 To learn more about SSH Certificate, here is a [nice tutorial from Hashicorp](https://www.hashicorp.com/blog/managing-ssh-access-at-scale-with-hashicorp-vault)
 
