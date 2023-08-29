@@ -18,7 +18,7 @@ jobs:
   markdownlint:
     runs-on: ubuntu-latest
     steps:
-      - name: Update pip, git
+      - name: Update git
         run: |
           set -euxo pipefail
           sudo apt update
