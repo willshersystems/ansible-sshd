@@ -139,7 +139,7 @@ sshd:
     - 0.0.0.0
 ```
 
-#### sshd_
+#### sshd_`<OptionName>`
 
 Simple variables can be used rather than a dict. Simple values override dict
 values. e.g.:
