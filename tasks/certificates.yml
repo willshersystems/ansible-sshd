@@ -1,66 +1,19 @@
 ---
-- name: Get sshd config files
-  ansible.builtin.slurp:
-    src: "{{ __sshd_config_file }}"
-  register: sshd_config_file_content
-
-- name: Print sshd_config_file_content
-  ansible.builtin.debug:
-    msg: "{{ sshd_config_file_content['content'] | b64decode }}"
-
-- name: Decode sshd config files
-  ansible.builtin.set_fact:
-    sshd_config_file_decoded: "{{ sshd_config_file_content['content'] | b64decode }}"
-
-- name: Get TrustedUserCAKeys value
-  ansible.builtin.set_fact:
-    sshd_trusted_user_ca_keys_file: "{{ sshd_config_file_decoded | regex_search('(?<=TrustedUserCAKeys\\s)(.*)$', multiline=True) }}"
-  when: 
-    - sshd_trusted_user_ca_keys_list is not none
-    - sshd_config_file_decoded | regex_search('(?<=TrustedUserCAKeys\\s)(.*)$', multiline=True)
-
-- name: Get Trusted user CA Keys directory
-  ansible.builtin.set_fact:
-    sshd_trusted_user_ca_keys_directory: "{{ sshd_trusted_user_ca_keys_file | regex_search('(.*)?(?<=\\/)') }}"
-  when: 
-      - sshd_principals != {}
-      - sshd_trusted_user_ca_keys_file is defined
-
-- name: Get AuthorizedPrincipalsFile value
-  ansible.builtin.set_fact:
-    sshd_auth_principals_file: "{{ sshd_config_file_decoded | regex_search('(?<=AuthorizedPrincipalsFile\\s)(.*)$', multiline=True) }}"
-  when: 
-    - sshd_principals != {}
-    - sshd_config_file_decoded | regex_search('(?<=AuthorizedPrincipalsFile\\s)(.*)$', multiline=True)
-
-- name: Get authorized principals directory
-  ansible.builtin.set_fact:
-    sshd_auth_principals_directory: "{{ sshd_auth_principals_file | regex_search('(.*)?(?=%)') }}"
-  when: 
-    - sshd_principals != {}
-    - sshd_auth_principals_file is defined
-
-- name: Print sshd_trusted_user_ca_keys_value
-  ansible.builtin.debug:
-    msg: "TrustedUserCAKeys {{ sshd_trusted_user_ca_keys_file }}"
-
 - name: Create Trusted user CA Keys directory
   ansible.builtin.file:
-    path: "{{ sshd_trusted_user_ca_keys_directory }}"
+    path: "{{ sshd['TrustedUserCAKeys'] | dirname }}"
     state: directory
     mode: '0755'
-  when: sshd_principals != {}
 
 - name: Copy Trusted user CA Keys
   ansible.builtin.template:
     src: "trusted-user-ca-keys.pem.j2"
-    dest: "{{ sshd_trusted_user_ca_keys_file }}"
+    dest: "{{ sshd['TrustedUserCAKeys'] }}"
     mode: '0600'
-  when: sshd_trusted_user_ca_keys_list is not none
 
 - name: Create Pincipals directory
   ansible.builtin.file:
-    path: "{{ sshd_auth_principals_directory }}"
+    path: "{{ sshd['AuthorizedPrincipalsFile'] | dirname }}"
     state: directory
     mode: '0755'
   when: sshd_principals != {}
@@ -68,29 +21,7 @@
 - name: Copy Pincipals files
   ansible.builtin.template:
     src: "auth_principals.j2"
-    dest: "{{ sshd_auth_principals_directory }}{{ item.key }}"
+    dest: "{{ sshd['AuthorizedPrincipalsFile'] | dirname }}/{{ item.key }}"
     mode: '0644'
   loop: "{{ q('dict', sshd_principals) }}"
   when: sshd_principals != {}
-
-- name: Enforce PasswordAuthentication to no
-  ansible.builtin.lineinfile:
-    path: "{{ __sshd_config_file }}"
-    regexp: "^PasswordAuthentication "
-    line: PasswordAuthentication no
-
-- name: Configure TrustedUserCAKeys into sshd configuration
-  ansible.builtin.lineinfile:
-    path: "{{ __sshd_config_file }}"
-    line: "TrustedUserCAKeys {{ sshd_trusted_user_ca_keys_file }}"
-  when:
-    - sshd_trusted_user_ca_keys_list is not none
-    - (sshd_config_file_decoded | regex_search('(?<=TrustedUserCAKeys\\s)(.*)$', multiline=True)) is none
-
-- name: Configure AuthorizedPrincipalsFile into sshd configuration
-  ansible.builtin.lineinfile:
-    path: "{{ __sshd_config_file }}"
-    line: "AuthorizedPrincipalsFile {{ sshd_auth_principals_directory }}%u"
-  when:
-    - sshd_principals != {}
-    - (sshd_config_file_decoded | regex_search('(?<=AuthorizedPrincipalsFile\\s)(.*)$', multiline=True)) is none

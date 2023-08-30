@@ -283,6 +283,35 @@ Default path to the sftp server binary.
 
 This variable is set to *true* after the role was successfully executed.
 
+Configure SSH certificate authentication
+-------
+
+To configure SSH certificate authentication, we need 2 variables: 
+* `sshd_trusted_user_ca_keys_list`
+
+List of trusted CA keys. 
+
+* `sshd_principals`
+
+A dict containing principals for users in the os. e.g.
+```yaml
+sshd_principals:
+  admin:
+    - frontend-admin
+    - backend-admin
+  somelinuxuser: 
+    - some-principal-defined-in-certificate
+```
+
+We need to configure the paths to principals and the trusted CA keys file: 
+```yaml
+sshd:
+  PasswordAuthentication: false
+  TrustedUserCAKeys: /etc/ssh/path-to-trusted-user-ca-keys/trusted-user-ca-keys.pem
+  AuthorizedPrincipalsFile: "/etc/ssh/path-to-auth-principals/auth_principals/%u"
+```
+To learn more about SSH Certificate, here is a [nice tutorial from Hashicorp](https://www.hashicorp.com/blog/managing-ssh-access-at-scale-with-hashicorp-vault)
+
 Dependencies
 ------------
 
@@ -400,39 +429,6 @@ to the `options_body` and/or `options_match`.
 
 To regenerate the templates, from within the `meta/` directory run:
 `./make_option_lists`
-
-Configure SSH certificate authentication
--------
-
-To configure SSH certificate authentication, we need 2 variables: 
-* `sshd_trusted_user_ca_keys_list`
-
-List of trusted CA keys. 
-
-* `sshd_principals`
-
-A dict containing principals for users in the os. e.g.
-```yaml
-sshd_principals:
-  admin:
-    - frontend-admin
-    - backend-admin
-  somelinuxuser: 
-    - some-principal-defined-in-certificate
-```
-
-We can configure paths to principals and trusted CA keys: 
-```yaml
-sshd:
-  TrustedUserCAKeys: /etc/ssh/path-to-trusted-user-ca-keys/trusted-user-ca-keys.pem
-  AuthorizedPrincipalsFile: "/etc/ssh/path-to-auth-principals/auth_principals/%u"
-```
-If they are not specified, the default values will be used: 
-```
-TrustedUserCAKeys: /etc/ssh/trusted-user-ca-keys.pem
-AuthorizedPrincipalsFile: "/etc/ssh/auth-principals/%u"
-```
-To learn more about SSH Certificate, here is a [nice tutorial from Hashicorp](https://www.hashicorp.com/blog/managing-ssh-access-at-scale-with-hashicorp-vault)
 
 License
 -------

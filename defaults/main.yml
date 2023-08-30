@@ -45,7 +45,7 @@ sshd: {}
 sshd_config_file: "{{ __sshd_config_file }}"
 
 # If not null, list of trusted CA keys
-sshd_trusted_user_ca_keys_list: null
+sshd_trusted_user_ca_keys_list: []
 
 # If not empty, dict containing principals for users in the os
 sshd_principals: {}
@@ -87,7 +87,3 @@ sshd_manage_firewall: false
 # If this option is enabled, the role will configure selinux to allow sshd to
 # bind the ports defined in the configuration. This works only on Red Hat based systems.
 sshd_manage_selinux: false
-
-# Paths to trusted user ca keys file and principals directory to use SSH certificats
-sshd_trusted_user_ca_keys_file: "{{ __sshd_trusted_user_ca_keys_file }}"
-sshd_auth_principals_directory: "{{ __sshd_auth_principals_directory }}"

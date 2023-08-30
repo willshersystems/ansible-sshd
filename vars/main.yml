@@ -51,6 +51,3 @@ __sshd_verify_hostkeys_default: []
 # This switch can control if the validate step is supported by the target OS.
 # This is useful for very old OpenSSH or for tests that generate invalid configurations
 __sshd_supports_validate: true
-
-__sshd_auth_principals_directory: /etc/ssh/auth_principals/
-__sshd_trusted_user_ca_keys_file: /etc/ssh/trusted-user-ca-keys.pem
