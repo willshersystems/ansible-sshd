@@ -282,6 +282,34 @@ Default path to the sftp server binary.
 
 This variable is set to *true* after the role was successfully executed.
 
+## Configure SSH certificate authentication
+
+To configure SSH certificate authentication, we need 2 variables: 
+#### sshd_trusted_user_ca_keys_list
+
+List of trusted CA keys. 
+
+#### sshd_principals
+
+A dict containing principals for users in the os. e.g.
+```yaml
+sshd_principals:
+  admin:
+    - frontend-admin
+    - backend-admin
+  somelinuxuser: 
+    - some-principal-defined-in-certificate
+```
+
+We need to configure the paths to principals and the trusted CA keys file: 
+```yaml
+sshd:
+  PasswordAuthentication: false
+  TrustedUserCAKeys: /etc/ssh/path-to-trusted-user-ca-keys/trusted-user-ca-keys.pem
+  AuthorizedPrincipalsFile: "/etc/ssh/path-to-auth-principals/auth_principals/%u"
+```
+To learn more about SSH Certificate, here is a [nice tutorial from Hashicorp](https://www.hashicorp.com/blog/managing-ssh-access-at-scale-with-hashicorp-vault)
+
 ## Dependencies
 
 None
@@ -359,7 +387,6 @@ for example:
 
 You can just add a configuration snippet with the `sshd_config_namespace`
 option:
-
 ```yaml
 ---
 - hosts: all

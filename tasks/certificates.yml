@@ -1,0 +1,27 @@
+---
+- name: Create Trusted user CA Keys directory
+  ansible.builtin.file:
+    path: "{{ sshd['TrustedUserCAKeys'] | dirname }}"
+    state: directory
+    mode: '0755'
+
+- name: Copy Trusted user CA Keys
+  ansible.builtin.template:
+    src: "trusted-user-ca-keys.pem.j2"
+    dest: "{{ sshd['TrustedUserCAKeys'] }}"
+    mode: '0600'
+
+- name: Create Pincipals directory
+  ansible.builtin.file:
+    path: "{{ sshd['AuthorizedPrincipalsFile'] | dirname }}"
+    state: directory
+    mode: '0755'
+  when: sshd_principals != {}
+
+- name: Copy Pincipals files
+  ansible.builtin.template:
+    src: "auth_principals.j2"
+    dest: "{{ sshd['AuthorizedPrincipalsFile'] | dirname }}/{{ item.key }}"
+    mode: '0644'
+  loop: "{{ q('dict', sshd_principals) }}"
+  when: sshd_principals != {}

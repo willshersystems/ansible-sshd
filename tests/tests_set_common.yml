@@ -18,6 +18,15 @@
           Banner: /etc/issue
           Ciphers: aes256-ctr
           Subsystem: "sftp internal-sftp"
+          PasswordAuthentication: false
+          TrustedUserCAKeys: /etc/ssh/trusted-user-ca-keys.pem
+          AuthorizedPrincipalsFile: "/etc/ssh/auth_principals/%u"
+        sshd_trusted_user_ca_keys_list:
+          - ssh-rsa AAAAB3NzxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxwARd65YFPTgb6xxbaIB4z9Vw==
+        # Key is the user in the os, values are *Principals* defined in the certificate
+        sshd_principals:
+          user:
+            - principal
         sshd_config_file: /etc/ssh/sshd_config
 
     - name: Verify the options are correctly set
