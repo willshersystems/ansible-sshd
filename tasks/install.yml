@@ -130,14 +130,14 @@
         - sshd_manage_firewall | bool
         - ansible_facts['os_family'] == 'RedHat'
         - ansible_facts['distribution_version'] is version('7', '>=')
-        - ansible_virtualization_type|default(None) not in __sshd_skip_virt_env
+        - ansible_facts['virtualization_type']|default(None) not in __sshd_skip_virt_env
 
     - name: Configure selinux
       ansible.builtin.include_tasks: selinux.yml
       when:
         - sshd_manage_selinux | bool
         - ansible_facts['os_family'] == 'RedHat'
-        - ansible_virtualization_type|default(None) not in __sshd_skip_virt_env
+        - ansible_facts['virtualization_type']|default(None) not in __sshd_skip_virt_env
 
     - name: Create the complete configuration file
       ansible.builtin.include_tasks: install_config.yml

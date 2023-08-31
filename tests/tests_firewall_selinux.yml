@@ -22,10 +22,10 @@
         sshd_enable: true  # reset to true
         __sshd_test_firewall: "{{ ansible_facts['os_family'] == 'RedHat' and
           ansible_facts['distribution_version'] is version('7', '>=') and
-          ansible_virtualization_type | d(None) not in __sshd_skip_virt_env }}"
+          ansible_facts['virtualization_type'] | d(None) not in __sshd_skip_virt_env }}"
         __sshd_test_selinux: "{{ ansible_facts['os_family'] == 'RedHat' and
           ansible_facts['distribution_version'] is version('6', '>=') and
-          ansible_virtualization_type | d(None) not in __sshd_skip_virt_env }}"
+          ansible_facts['virtualization_type'] | d(None) not in __sshd_skip_virt_env }}"
 
     ##########
     # First test: default port

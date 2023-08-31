@@ -1,5 +1,4 @@
-OpenSSH Server
-==============
+# OpenSSH Server
 
 [![Ansible Lint](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-lint.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-lint.yml)
 [![Ansible Galaxy](http://img.shields.io/badge/galaxy-willshersystems.sshd-660198.svg?style=flat)](https://galaxy.ansible.com/willshersystems/sshd/)
@@ -24,8 +23,7 @@ Ubuntu. This is not the default assigned by this module - it will set
 via simple password. If you need this functionality, be sure to set
 `sshd_PermitRootLogin yes` for those hosts.
 
-Requirements
-------------
+## Requirements
 
 Tested on:
 
@@ -47,7 +45,6 @@ Tested on:
 It will likely work on other flavours and more direct support via suitable
 [vars/](vars/) files is welcome.
 
-
 ### Optional requirements
 
 If you want to use advanced functionality of this role that can configure
@@ -55,31 +52,33 @@ firewall and selinux for you, which is mostly useful when custom port is used,
 the role requires additional collections which are specified in
 `meta/collection-requirements.yml`. These are not automatically installed.
 You must install them like this:
-```
+
+```bash
 ansible-galaxy install -vv -r meta/collection-requirements.yml
 ```
 
 For more information, see `sshd_manage_firewall` and `sshd_manage_selinux`
 options below. These roles are supported only on Red Hat based Linux.
 
-Role variables
----------------
+## Role variables
+
+### Primary role variables
 
 Unconfigured, this role will provide a `sshd_config` that matches the OS default,
 minus the comments and in a different order.
 
-* `sshd_enable`
+#### sshd_enable
 
 If set to *false*, the role will be completely disabled. Defaults to *true*.
 
-* `sshd_skip_defaults`
+#### sshd_skip_defaults
 
 If set to *true*, don't apply default values. This means that you must have a
 complete set of configuration defaults via either the `sshd` dict, or
 `sshd_Key` variables. Defaults to *false* unless `sshd_config_namespace` is
 set or `sshd_config_file` points to a drop-in directory to avoid recursive include.
 
-* `sshd_manage_service`
+#### sshd_manage_service
 
 If set to *false*, the service/daemon won't be **managed** at all, i.e. will not
 try to enable on boot or start or reload the service.  Defaults to *true*
@@ -87,7 +86,7 @@ unless: Running inside a docker container (it is assumed ansible is used during
 build phase) or AIX (Ansible `service` module does not currently support `enabled`
 for AIX)
 
-* `sshd_allow_reload`
+#### sshd_allow_reload
 
 If set to *false*, a reload of sshd wont happen on change. This can help with
 troubleshooting. You'll need to manually reload sshd if you want to apply the
@@ -95,22 +94,22 @@ changed configuration. Defaults to the same value as `sshd_manage_service`.
 (Except on AIX, where `sshd_manage_service` is default *false*, but
 `sshd_allow_reload` is default *true*)
 
-* `sshd_install_service`
+#### sshd_install_service
 
 If set to *true*, the role will install service files for the ssh service.
 Defaults to *false*.
 
 The templates for the service files to be used are pointed to by the variables
 
-  - `sshd_service_template_service` (__default__: `templates/sshd.service.j2`)
-  - `sshd_service_template_at_service` (__default__: `templates/sshd@.service.j2`)
-  - `sshd_service_template_socket` (__default__: `templates/sshd.socket.j2`)
+* `sshd_service_template_service` (**default**: `templates/sshd.service.j2`)
+* `sshd_service_template_at_service` (**default**: `templates/sshd@.service.j2`)
+* `sshd_service_template_socket` (**default**: `templates/sshd.socket.j2`)
 
 Using these variables, you can use your own custom templates. With the above
 default templates, the name of the installed ssh service will be provided by
 the `sshd_service` variable.
 
-* `sshd_manage_firewall`
+#### sshd_manage_firewall
 
 If set to *true*, the the SSH port(s) will be opened in firewall. Note, this
 works only on Red Hat based OS. The default is *false*.
@@ -119,7 +118,7 @@ NOTE: `sshd_manage_firewall` is limited to *adding* ports. It cannot be used
 for *removing* ports. If you want to remove ports, you will need to use the
 firewall system role directly.
 
-* `sshd_manage_selinux`
+#### sshd_manage_selinux
 
 If set to *true*, the the selinux will be configured to allow sshd listening
 on the given SSH port(s). Note, this works only on Red Hat based OS.
@@ -129,7 +128,7 @@ NOTE: `sshd_manage_selinux` is limited to *adding* policy. It cannot be used
 for *removing* policy. If you want to remove ports, you will need to use the
 selinux system role directly.
 
-* `sshd`
+#### sshd
 
 A dict containing configuration.  e.g.
 
@@ -140,7 +139,7 @@ sshd:
     - 0.0.0.0
 ```
 
-* `sshd_...`
+#### sshd_`<OptionName>`
 
 Simple variables can be used rather than a dict. Simple values override dict
 values. e.g.:
@@ -160,44 +159,44 @@ sshd_ListenAddress:
 
 Renders as:
 
-```
+```text
 ListenAddress 0.0.0.0
 ListenAddress ::
 ```
 
-* `sshd_match`, `sshd_match_1` through `sshd_match_9`
+#### sshd_match, sshd_match_1 through sshd_match_9
 
 A list of dicts or just a dict for a Match section. Note, that these variables
 do not override match blocks as defined in the `sshd` dict. All of the sources
 will be reflected in the resulting configuration file. The use of
 `sshd_match_*` variant is deprecated and no longer recommended.
 
-* `sshd_backup`
+#### sshd_backup
 
 When set to *false*, the original `sshd_config` file is not backed up. Default
 is *true*.
 
-* `sshd_sysconfig`
+#### sshd_sysconfig
 
 On RHEL-based systems, sysconfig is used for configuring more details of sshd
 service. If set to *true*, this role will manage also the `/etc/sysconfig/sshd`
 configuration file based on the following configurations. Default is *false*.
 
-* `sshd_sysconfig_override_crypto_policy`
+#### sshd_sysconfig_override_crypto_policy
 
 In RHEL8-based systems, this can be used to override system-wide crypto policy
 by setting to *true*. Without this option, changes to ciphers, MACs, public
 key algorithms will have no effect on the resulting service in RHEL8. Defaults
 to *false*.
 
-* `sshd_sysconfig_use_strong_rng`
+#### sshd_sysconfig_use_strong_rng
 
 In RHEL-based systems (before RHEL9), this can be used to force sshd to reseed
 openssl random number generator with the given amount of bytes as an argument.
 The default is *0*, which disables this functionality. It is not recommended to
 turn this on if the system does not have hardware random number generator.
 
-* `sshd_config_file`
+#### sshd_config_file
 
 The path where the openssh configuration produced by this role should be saved.
 This is useful mostly when generating configuration snippets to Include from
@@ -208,7 +207,7 @@ When this path points to a drop-in directory (like
 with the variable `sshd_main_config_file`) is checked to contain a proper
 `Include` directive.
 
-* `sshd_config_namespace`
+#### sshd_config_namespace
 
 By default (*null*), the role defines whole content of the configuration file
 including system defaults. You can use this variable to invoke this role from
@@ -230,12 +229,12 @@ other match blocks, to ensure they are applied regardless of the previous match
 blocks in the existing configuration file. This allows configuring any
 non-conflicting options from different roles invocations.
 
-* `sshd_config_owner`, `sshd_config_group`, `sshd_config_mode`
+#### sshd_config_owner, sshd_config_group, sshd_config_mode
 
 Use these variables to set the ownership and permissions for the openssh config
 file that this role produces.
 
-* `sshd_verify_hostkeys`
+#### sshd_verify_hostkeys
 
 By default (*auto*), this list contains all the host keys that are present in
 the produced configuration file. If there are none, the OpenSSH default list
@@ -247,7 +246,7 @@ able to start on the first attempt.
 
 To disable this check, set this to empty list.
 
-* `sshd_hostkey_owner`, `sshd_hostkey_group`, `sshd_hostkey_mode`
+#### sshd_hostkey_owner, sshd_hostkey_group, sshd_hostkey_mode
 
 Use these variables to set the ownership and permissions for the host keys from
 the above list.
@@ -258,40 +257,39 @@ These variables are used by the role internals and can be used to override the
 defaults that correspond to each supported platform. They are not tested and
 generally are not needed as the role will determine them from the OS type.
 
-* `sshd_packages`
+#### sshd_packages
 
 Use this variable to override the default list of packages to install.
 
-* `sshd_binary`
+#### sshd_binary
 
 The path to the openssh executable
 
-* `sshd_service`
+#### sshd_service
 
 The name of the openssh service. By default, this variable contains the name of
 the ssh service that the target platform uses. But it can also be used to set
 the name of the custom ssh service when the `sshd_install_service` variable is
 used.
 
-* `sshd_sftp_server`
+#### sshd_sftp_server
 
 Default path to the sftp server binary.
 
 ### Variables Exported by the Role
 
-* `sshd_has_run`
+#### sshd_has_run
 
 This variable is set to *true* after the role was successfully executed.
 
-Configure SSH certificate authentication
--------
+## Configure SSH certificate authentication
 
 To configure SSH certificate authentication, we need 2 variables: 
-* `sshd_trusted_user_ca_keys_list`
+#### sshd_trusted_user_ca_keys_list
 
 List of trusted CA keys. 
 
-* `sshd_principals`
+#### sshd_principals
 
 A dict containing principals for users in the os. e.g.
 ```yaml
@@ -312,16 +310,14 @@ sshd:
 ```
 To learn more about SSH Certificate, here is a [nice tutorial from Hashicorp](https://www.hashicorp.com/blog/managing-ssh-access-at-scale-with-hashicorp-vault)
 
-Dependencies
-------------
+## Dependencies
 
 None
 
-For tests the `ansible.posix` collection is required for the `mount` role to
+For tests, the `ansible.posix` collection is required for the `mount` role to
 emulate FIPS mode.
 
-Example Playbook
-----------------
+## Example Playbook
 
 **DANGER!** This example is to show the range of configuration this role
 provides. Running it will likely break your SSH access to the server!
@@ -350,7 +346,7 @@ provides. Running it will likely break your SSH access to the server!
 
 Results in:
 
-```
+```text
 # Ansible managed: ...
 Compression yes
 GSSAPIAuthentication no
@@ -407,20 +403,20 @@ option:
           LS_COLORS
           EDITOR
 ```
+
 The following snippet will be added to the default configuration file
 (if not yet present):
-```
+
+```text
 # BEGIN sshd system role managed block: namespace accept-env
 Match all
   AcceptEnv LANG LS_COLORS EDITOR
 # END sshd system role managed block: namespace accept-env
 ```
 
-
 More example playbooks can be found in [`examples/`](examples/) directory.
 
-Template Generation
--------------------
+## Template Generation
 
 The [`sshd_config.j2`](templates/sshd_config.j2) and
 [`sshd_config_snippet.j2`](templates/sshd_config_snippet.j2) templates are
@@ -430,14 +426,11 @@ to the `options_body` and/or `options_match`.
 To regenerate the templates, from within the `meta/` directory run:
 `./make_option_lists`
 
-License
--------
+## License
 
 LGPLv3
 
-
-Authors
--------
+## Authors
 
 Matt Willsher <matt@willsher.systems>
 
