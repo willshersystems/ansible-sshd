@@ -1,6 +1,21 @@
 Changelog
 =========
 
+[v0.21.0] - 2023-08-31
+----------------------
+
+### New features
+
+- none
+
+### Other changes
+
+- chore: drop support of Fedora 31, EOL 2020-11-24 (#243)
+- fix: Support inject_facts_as_vars = false (#244)
+- ci: Add markdownlint, test_converting_readme, and build_docs workflows (#247)
+- ci: Ignore var-naming[no-role-prefix] ansible-lint rule that fails expectedly (#248)
+- fix: Makes runtime dir relative (#249)
+
 [v0.20.0] - 2023-06-19
 --------------------
 
