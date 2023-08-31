@@ -61,6 +61,29 @@
               - "'Banner /etc/issue' in config.content | b64decode"
               - "'Ciphers aes256-ctr' in config.content | b64decode"
               - "'Subsystem sftp internal-sftp' in config.content | b64decode"
+              - "'PasswordAuthentication no' in config.content | b64decode"
+              - "'TrustedUserCAKeys /etc/ssh/trusted-user-ca-keys.pem' in config.content | b64decode"
+              - "'AuthorizedPrincipalsFile /etc/ssh/auth_principals/%u' in config.content | b64decode"
+
+        - name: Get TrustedUserCAKeys file stat
+          ansible.builtin.stat:
+            path: /etc/ssh/trusted-user-ca-keys.pem
+          register: trustedusercakeys_file_stat
+
+        - name: Check TrustedUserCAKeys file exists
+          ansible.builtin.assert:
+            that:
+              - trustedusercakeys_file_stat.stat.exists
+
+        - name: Get AuthorizedPrincipalsFile stat
+          ansible.builtin.stat:
+            path: /etc/ssh/auth_principals/user
+          register: authorizedprincipalsfile_stat
+
+        - name: Check AuthorizedPrincipalsFile exists
+          ansible.builtin.assert:
+            that:
+              - authorizedprincipalsfile_stat.stat.exists
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml

@@ -44,7 +44,7 @@ sshd: {}
 # configuration file snippet or configuring second sshd service
 sshd_config_file: "{{ __sshd_config_file }}"
 
-# If not null, list of trusted CA keys
+# If not empty, list of trusted CA keys
 sshd_trusted_user_ca_keys_list: []
 
 # If not empty, dict containing principals for users in the os
