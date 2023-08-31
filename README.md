@@ -286,11 +286,11 @@ This variable is set to *true* after the role was successfully executed.
 
 To configure SSH certificate authentication, we need some variables.
 
-### Mandatory variable 
+### Mandatory variable
 
 #### sshd_trusted_user_ca_keys_list
 
-List of trusted CA keys. 
+List of trusted CA keys.
 
 ### Optional variable
 
@@ -397,6 +397,7 @@ for example:
 
 You can just add a configuration snippet with the `sshd_config_namespace`
 option:
+
 ```yaml
 ---
 - hosts: all
