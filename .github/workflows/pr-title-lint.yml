@@ -9,6 +9,7 @@ on:  # yamllint disable-line rule:truthy
   merge_group:
     branches:
       - main
+      - master
     types:
       - checks_requested
 permissions:
