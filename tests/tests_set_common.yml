@@ -19,7 +19,7 @@
           Ciphers: aes256-ctr
           Subsystem: "sftp internal-sftp"
           PasswordAuthentication: false
-          TrustedUserCAKeys: /etc/ssh/trusted-user-ca-keys.pem
+          TrustedUserCAKeys: /etc/ssh/trusted-user-ca-keys.pub
           AuthorizedPrincipalsFile: "/etc/ssh/auth_principals/%u"
         sshd_trusted_user_ca_keys_list:
           - ssh-rsa AAAAB3NzxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxwARd65YFPTgb6xxbaIB4z9Vw==
@@ -62,12 +62,12 @@
               - "'Ciphers aes256-ctr' in config.content | b64decode"
               - "'Subsystem sftp internal-sftp' in config.content | b64decode"
               - "'PasswordAuthentication no' in config.content | b64decode"
-              - "'TrustedUserCAKeys /etc/ssh/trusted-user-ca-keys.pem' in config.content | b64decode"
+              - "'TrustedUserCAKeys /etc/ssh/trusted-user-ca-keys.pub' in config.content | b64decode"
               - "'AuthorizedPrincipalsFile /etc/ssh/auth_principals/%u' in config.content | b64decode"
 
         - name: Get TrustedUserCAKeys file stat
           ansible.builtin.stat:
-            path: /etc/ssh/trusted-user-ca-keys.pem
+            path: /etc/ssh/trusted-user-ca-keys.pub
           register: trustedusercakeys_file_stat
 
         - name: Check TrustedUserCAKeys file exists

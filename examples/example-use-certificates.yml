@@ -9,7 +9,7 @@
         sshd:
           # Disable password authentication, use SSH Certificates and configure authorized principals
           PasswordAuthentication: false
-          TrustedUserCAKeys: /etc/ssh/trusted-user-ca-keys.pem
+          TrustedUserCAKeys: /etc/ssh/trusted-user-ca-keys.pub
           AuthorizedPrincipalsFile: "/etc/ssh/auth_principals/%u"
         # List of trusted user CA keys
         sshd_trusted_user_ca_keys_list:

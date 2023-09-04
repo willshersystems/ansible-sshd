@@ -7,7 +7,7 @@
 
 - name: Copy Trusted user CA Keys
   ansible.builtin.template:
-    src: "trusted-user-ca-keys.pem.j2"
+    src: "trusted-user-ca-keys.pub.j2"
     dest: "{{ sshd['TrustedUserCAKeys'] }}"
     mode: '0600'
 

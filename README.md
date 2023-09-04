@@ -314,7 +314,7 @@ We need to configure the paths to principals (optional) and the trusted CA keys 
 ```yaml
 sshd:
   PasswordAuthentication: false
-  TrustedUserCAKeys: /etc/ssh/path-to-trusted-user-ca-keys/trusted-user-ca-keys.pem
+  TrustedUserCAKeys: /etc/ssh/path-to-trusted-user-ca-keys/trusted-user-ca-keys.pub
   AuthorizedPrincipalsFile: "/etc/ssh/path-to-auth-principals/auth_principals/%u"
 ```
 
