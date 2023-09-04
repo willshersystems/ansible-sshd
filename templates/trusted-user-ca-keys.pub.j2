@@ -1,3 +1,4 @@
+{{ ansible_managed | comment }}
 {% for key in sshd_trusted_user_ca_keys_list %}
 {{ key }}
 {% endfor %}
