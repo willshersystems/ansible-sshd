@@ -284,19 +284,28 @@ This variable is set to *true* after the role was successfully executed.
 
 ## Configure SSH certificate authentication
 
-To configure SSH certificate authentication, we need some variables.
+To configure SSH certificate authentication on your SSH server, you need to provide at least the trusted user CA key, which will be used to validate client certificates against.
+This is done with the `sshd_trusted_user_ca_keys_list` variable.
 
-### Mandatory variable
+If you need to map some of the authorized principals to system users, you can do that using the `sshd_principals` variable.
+
+### Additional variables
 
 #### sshd_trusted_user_ca_keys_list
 
-List of trusted CA keys.
+List of the trusted user CA public keys in OpenSSH (one-line) format (mandatory).
 
-### Optional variable
+#### sshd_trustedusercakeys_directory_owner, shsd_trustedusercakeys_directory_group, sshd_trustedusercakeys_directory_mode
+
+Use these variables to set the ownership and permissions for the Trusted User CA Keys directory. Defaults are respectively *0750*, *root* and *root*.
+
+#### sshd_trustedusercakeys_file_owner, shsd_trustedusercakeys_file_group, sshd_trustedusercakeys_file_mode
+
+Use these variables to set the ownership and permissions for the Trusted User CA Keys file. Defaults are respectively *0640*, *root* and *root*.
 
 #### sshd_principals
 
-A dict containing principals for users in the os. e.g.
+A dict containing principals for users in the os (optional). e.g.
 
 ```yaml
 sshd_principals:
@@ -307,18 +316,27 @@ sshd_principals:
     - some-principal-defined-in-certificate
 ```
 
-### Configuration needed
+#### sshd_authorizedprincipals_directory_owner, shsd_authorizedprincipals_directory_group, sshd_authorizedprincipals_directory_mode
 
-We need to configure the paths to principals (optional) and the trusted CA keys file:
+Use these variables to set the ownership and permissions for the Authorized Principals directory. Defaults are respectively *0755*, *root* and *root*.
+
+#### sshd_authorizedprincipals_file_owner, shsd_authorizedprincipals_file_group, sshd_authorizedprincipals_file_mode
+
+Use these variables to set the ownership and permissions for the Authorized Principals file. Defaults are respectively *0644*, *root* and *root*.
+
+### Additional configuration
+
+The SSH server needs this information stored in files so in addition to the above variables, respective configuration options `TrustedUserCAKeys` (mandatory) and `AuthorizedPrincipalsFile` (optional) need to be present the `sshd` dictionary when invoking the role. For example:
 
 ```yaml
 sshd:
-  PasswordAuthentication: false
   TrustedUserCAKeys: /etc/ssh/path-to-trusted-user-ca-keys/trusted-user-ca-keys.pub
   AuthorizedPrincipalsFile: "/etc/ssh/path-to-auth-principals/auth_principals/%u"
 ```
 
-To learn more about SSH Certificate, here is a [nice tutorial from Hashicorp](https://www.hashicorp.com/blog/managing-ssh-access-at-scale-with-hashicorp-vault)
+To learn more about SSH Certificates, here is a [nice tutorial to pure SSH certificates, from wikibooks](https://en.wikibooks.org/wiki/OpenSSH/Cookbook/Certificate-based_Authentication).
+
+To understand principals and to set up SSH certificates with Vault, this is a [well-explained tutorial from Hashicorp](https://www.hashicorp.com/blog/managing-ssh-access-at-scale-with-hashicorp-vault).
 
 ## Dependencies
 

@@ -13,7 +13,7 @@
           AuthorizedPrincipalsFile: "/etc/ssh/auth_principals/%u"
         # List of trusted user CA keys
         sshd_trusted_user_ca_keys_list:
-          - ssh-rsa AAAAB3Nzxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxd65YFPTgb6xxbaIB4z9Vw==
+          - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICwqRjI9gAwkQF9iIylhRVAOFy2Joodh3fXJ7CbGWqUd
         # Key is the user in the os, values are *Principals* defined in the certificate
         sshd_principals:
           admin:

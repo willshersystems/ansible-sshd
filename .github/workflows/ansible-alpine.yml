@@ -8,7 +8,7 @@ jobs:
     steps:
       # Important: This sets up your GITHUB_WORKSPACE environment variable
       - name: checkout PR
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: ansible check with alpine:latest
         uses: roles-ansible/check-ansible-alpine-latest-action@master

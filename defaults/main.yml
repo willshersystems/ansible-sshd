@@ -66,6 +66,20 @@ sshd_sftp_server: "{{ __sshd_sftp_server }}"
 sshd_drop_in_dir_mode: "{{ __sshd_drop_in_dir_mode }}"
 sshd_main_config_file: "{{ __sshd_main_config_file }}"
 
+sshd_trustedusercakeys_directory_owner: "{{ __sshd_trustedusercakeys_directory_owner }}"
+sshd_trustedusercakeys_directory_group: "{{ __sshd_trustedusercakeys_directory_group }}"
+sshd_trustedusercakeys_directory_mode: "{{ __sshd_trustedusercakeys_directory_mode }}"
+sshd_trustedusercakeys_file_owner: "{{ __sshd_trustedusercakeys_file_owner }}"
+sshd_trustedusercakeys_file_group: "{{ __sshd_trustedusercakeys_file_group }}"
+sshd_trustedusercakeys_file_mode: "{{ __sshd_trustedusercakeys_file_mode }}"
+
+sshd_authorizedprincipals_directory_owner: "{{ __sshd_authorizedprincipals_directory_owner }}"
+sshd_authorizedprincipals_directory_group: "{{ __sshd_authorizedprincipals_directory_group }}"
+sshd_authorizedprincipals_directory_mode: "{{ __sshd_authorizedprincipals_directory_mode }}"
+sshd_authorizedprincipals_file_owner: "{{ __sshd_authorizedprincipals_file_owner }}"
+sshd_authorizedprincipals_file_group: "{{ __sshd_authorizedprincipals_file_group }}"
+sshd_authorizedprincipals_file_mode: "{{ __sshd_authorizedprincipals_file_mode }}"
+
 # This lists by default all hostkeys as rendered in the generated configuration
 # file ("auto"). Before attempting to run sshd (either for verification of
 # configuration or restarting), we make sure the keys exist and have correct

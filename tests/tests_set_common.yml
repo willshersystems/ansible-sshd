@@ -22,7 +22,7 @@
           TrustedUserCAKeys: /etc/ssh/trusted-user-ca-keys.pub
           AuthorizedPrincipalsFile: "/etc/ssh/auth_principals/%u"
         sshd_trusted_user_ca_keys_list:
-          - ssh-rsa AAAAB3NzxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxwARd65YFPTgb6xxbaIB4z9Vw==
+          - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICwqRjI9gAwkQF9iIylhRVAOFy2Joodh3fXJ7CbGWqUd
         # Key is the user in the os, values are *Principals* defined in the certificate
         sshd_principals:
           user:
@@ -72,8 +72,7 @@
 
         - name: Check TrustedUserCAKeys file exists
           ansible.builtin.assert:
-            that:
-              - trustedusercakeys_file_stat.stat.exists
+            that: trustedusercakeys_file_stat.stat.exists
 
         - name: Get AuthorizedPrincipalsFile stat
           ansible.builtin.stat:
@@ -82,8 +81,7 @@
 
         - name: Check AuthorizedPrincipalsFile exists
           ansible.builtin.assert:
-            that:
-              - authorizedprincipalsfile_stat.stat.exists
+            that: authorizedprincipalsfile_stat.stat.exists
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml

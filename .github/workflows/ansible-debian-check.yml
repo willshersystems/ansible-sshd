@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout PR
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: ansible check with debian bookworm (12)
         uses: roles-ansible/check-ansible-debian-bookworm-action@v1
@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout PR
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: ansible check with debian bullseye (11)
         uses: roles-ansible/check-ansible-debian-bullseye-action@main
@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout PR
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: ansible check with debian buster (10)
         uses: roles-ansible/check-ansible-debian-buster-action@master
