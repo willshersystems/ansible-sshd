@@ -8,7 +8,7 @@ jobs:
     steps:
       # Important: This sets up your GITHUB_WORKSPACE environment variable
       - name: checkout PR
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: ansible check with ubuntu:latest
         uses: roles-ansible/check-ansible-ubuntu-latest-action@master
@@ -22,7 +22,7 @@ jobs:
     steps:
       # Important: This sets up your GITHUB_WORKSPACE environment variable
       - name: checkout PR
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: ansible check with ubuntu:20 (focal)
         uses: roles-ansible/check-ansible-ubuntu-focal-action@master
