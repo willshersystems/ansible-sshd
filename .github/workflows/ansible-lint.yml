@@ -7,6 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout PR
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Lint Ansible playbook
         uses: ansible/ansible-lint-action@main
