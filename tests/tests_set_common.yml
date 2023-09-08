@@ -18,15 +18,6 @@
           Banner: /etc/issue
           Ciphers: aes256-ctr
           Subsystem: "sftp internal-sftp"
-          PasswordAuthentication: false
-          TrustedUserCAKeys: /etc/ssh/trusted-user-ca-keys.pub
-          AuthorizedPrincipalsFile: "/etc/ssh/auth_principals/%u"
-        sshd_trusted_user_ca_keys_list:
-          - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICwqRjI9gAwkQF9iIylhRVAOFy2Joodh3fXJ7CbGWqUd
-        # Key is the user in the os, values are *Principals* defined in the certificate
-        sshd_principals:
-          user:
-            - principal
         sshd_config_file: /etc/ssh/sshd_config
 
     - name: Verify the options are correctly set
@@ -61,27 +52,6 @@
               - "'Banner /etc/issue' in config.content | b64decode"
               - "'Ciphers aes256-ctr' in config.content | b64decode"
               - "'Subsystem sftp internal-sftp' in config.content | b64decode"
-              - "'PasswordAuthentication no' in config.content | b64decode"
-              - "'TrustedUserCAKeys /etc/ssh/trusted-user-ca-keys.pub' in config.content | b64decode"
-              - "'AuthorizedPrincipalsFile /etc/ssh/auth_principals/%u' in config.content | b64decode"
-
-        - name: Get TrustedUserCAKeys file stat
-          ansible.builtin.stat:
-            path: /etc/ssh/trusted-user-ca-keys.pub
-          register: trustedusercakeys_file_stat
-
-        - name: Check TrustedUserCAKeys file exists
-          ansible.builtin.assert:
-            that: trustedusercakeys_file_stat.stat.exists
-
-        - name: Get AuthorizedPrincipalsFile stat
-          ansible.builtin.stat:
-            path: /etc/ssh/auth_principals/user
-          register: authorizedprincipalsfile_stat
-
-        - name: Check AuthorizedPrincipalsFile exists
-          ansible.builtin.assert:
-            that: authorizedprincipalsfile_stat.stat.exists
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml

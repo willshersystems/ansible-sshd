@@ -1,0 +1,124 @@
+---
+- name: Test SSH certificates options
+  hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+  tasks:
+    - name: "Backup configuration files"
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+    - name: Ensure group 'nobody' exists
+      ansible.builtin.group:
+        name: nobody
+
+    - name: Ensure the user 'nobody' exists
+      ansible.builtin.user:
+        name: nobody
+        group: nobody
+        comment: nobody
+        create_home: false
+        shell: /sbin/nologin
+
+    - name: Configure sshd
+      ansible.builtin.include_role:
+        name: ansible-sshd
+      vars:
+        sshd:
+          PasswordAuthentication: false
+          TrustedUserCAKeys: /etc/ssh/ca-keys/trusted-user-ca-keys.pub
+          AuthorizedPrincipalsFile: "/etc/ssh/auth_principals/%u"
+        sshd_trusted_user_ca_keys_list:
+          - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICwqRjI9gAwkQF9iIylhRVAOFy2Joodh3fXJ7CbGWqUd
+        # Key is the user in the os, values are *Principals* defined in the certificate
+        sshd_principals:
+          user:
+            - principal
+        sshd_config_file: /etc/ssh/sshd_config
+        # very BAD example
+        sshd_trustedusercakeys_directory_owner: "nobody"
+        sshd_trustedusercakeys_directory_group: "nobody"
+        sshd_trustedusercakeys_directory_mode: "0770"
+        sshd_trustedusercakeys_file_owner: "nobody"
+        sshd_trustedusercakeys_file_group: "nobody"
+        sshd_trustedusercakeys_file_mode: "0750"
+        sshd_authorizedprincipals_directory_owner: "nobody"
+        sshd_authorizedprincipals_directory_group: "nobody"
+        sshd_authorizedprincipals_directory_mode: "0777"
+        sshd_authorizedprincipals_file_owner: "nobody"
+        sshd_authorizedprincipals_file_group: "nobody"
+        sshd_authorizedprincipals_file_mode: "0755"
+
+    - name: Verify the options are correctly set
+      tags: tests::verify
+      block:
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
+
+        - name: Print current configuration file
+          ansible.builtin.slurp:
+            src: /etc/ssh/sshd_config
+          register: config
+
+        - name: Check the options are in configuration file
+          ansible.builtin.assert:
+            that:
+              - "'PasswordAuthentication no' in config.content | b64decode"
+              - "'TrustedUserCAKeys /etc/ssh/ca-keys/trusted-user-ca-keys.pub' in config.content | b64decode"
+              - "'AuthorizedPrincipalsFile /etc/ssh/auth_principals/%u' in config.content | b64decode"
+
+        - name: Get trusted user CA keys directory stat
+          ansible.builtin.stat:
+            path: /etc/ssh/ca-keys
+          register: trustedusercakeys_directory_stat
+
+        - name: Check trusted user CA keys directory has requested properties
+          ansible.builtin.assert:
+            that:
+              - trustedusercakeys_directory_stat.stat.isdir
+              - trustedusercakeys_directory_stat.stat.pw_name == "nobody"
+              - trustedusercakeys_directory_stat.stat.gr_name == "nobody"
+              - trustedusercakeys_directory_stat.stat.mode == "0770"
+
+        - name: Get trusted user CA keys file stat
+          ansible.builtin.stat:
+            path: /etc/ssh/ca-keys/trusted-user-ca-keys.pub
+          register: trustedusercakeys_file_stat
+
+        - name: Check trusted user CA keys file has requested properties
+          ansible.builtin.assert:
+            that:
+              - trustedusercakeys_file_stat.stat.exists
+              - trustedusercakeys_file_stat.stat.pw_name == "nobody"
+              - trustedusercakeys_file_stat.stat.gr_name == "nobody"
+              - trustedusercakeys_file_stat.stat.mode == "0750"
+
+        - name: Get authorized principals directory stat
+          ansible.builtin.stat:
+            path: /etc/ssh/auth_principals
+          register: authorizedprincipals_directory_stat
+
+        - name: Check authorized principals directory has requested properties
+          ansible.builtin.assert:
+            that:
+              - authorizedprincipals_directory_stat.stat.isdir
+              - authorizedprincipals_directory_stat.stat.pw_name == "nobody"
+              - authorizedprincipals_directory_stat.stat.gr_name == "nobody"
+              - authorizedprincipals_directory_stat.stat.mode == "0777"
+
+        - name: Get authorized principals file stat
+          ansible.builtin.stat:
+            path: /etc/ssh/auth_principals/user
+          register: authorizedprincipals_file_stat
+
+        - name: Check authorized principals file has requested properties
+          ansible.builtin.assert:
+            that:
+              - authorizedprincipals_file_stat.stat.exists
+              - authorizedprincipals_file_stat.stat.pw_name == "nobody"
+              - authorizedprincipals_file_stat.stat.gr_name == "nobody"
+              - authorizedprincipals_file_stat.stat.mode == "0755"
+
+    - name: "Restore configuration files"
+      ansible.builtin.include_tasks: tasks/restore.yml
