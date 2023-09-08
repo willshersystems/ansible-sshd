@@ -297,11 +297,11 @@ List of the trusted user CA public keys in OpenSSH (one-line) format (mandatory)
 
 #### sshd_trustedusercakeys_directory_owner, shsd_trustedusercakeys_directory_group, sshd_trustedusercakeys_directory_mode
 
-Use these variables to set the ownership and permissions for the Trusted User CA Keys directory. Defaults are respectively *0750*, *root* and *root*.
+Use these variables to set the ownership and permissions for the Trusted User CA Keys directory. Defaults are respectively *root*, *root* and *0755*.
 
 #### sshd_trustedusercakeys_file_owner, shsd_trustedusercakeys_file_group, sshd_trustedusercakeys_file_mode
 
-Use these variables to set the ownership and permissions for the Trusted User CA Keys file. Defaults are respectively *0640*, *root* and *root*.
+Use these variables to set the ownership and permissions for the Trusted User CA Keys file. Defaults are respectively *root*, *root* and *0640*.
 
 #### sshd_principals
 
@@ -318,11 +318,11 @@ sshd_principals:
 
 #### sshd_authorizedprincipals_directory_owner, shsd_authorizedprincipals_directory_group, sshd_authorizedprincipals_directory_mode
 
-Use these variables to set the ownership and permissions for the Authorized Principals directory. Defaults are respectively *0755*, *root* and *root*.
+Use these variables to set the ownership and permissions for the Authorized Principals directory. Defaults are respectively *root*, *root* and *0755*.
 
 #### sshd_authorizedprincipals_file_owner, shsd_authorizedprincipals_file_group, sshd_authorizedprincipals_file_mode
 
-Use these variables to set the ownership and permissions for the Authorized Principals file. Defaults are respectively *0644*, *root* and *root*.
+Use these variables to set the ownership and permissions for the Authorized Principals file. Defaults are respectively *root*, *root* and *0644*.
 
 ### Additional configuration
 
