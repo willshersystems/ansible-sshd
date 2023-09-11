@@ -1,0 +1,5 @@
+{{ ansible_managed | comment }}
+{{ "willshersystems:ansible-sshd" | comment(prefix="", postfix="") }}
+{% for key in sshd_trusted_user_ca_keys_list %}
+{{ key }}
+{% endfor %}

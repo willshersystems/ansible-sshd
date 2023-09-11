@@ -1,0 +1,54 @@
+---
+- name: Configure Trusted user CA Keys
+  vars:
+    # The explicit to_json filter is needed for Python 2 compatibility
+    __sshd_trustedusercakeys_from_config: >-
+      {% if sshd_TrustedUserCAKeys is defined %}
+        {{ sshd_TrustedUserCAKeys | to_json }}
+      {% else %}
+        {{ sshd['TrustedUserCAKeys'] | to_json }}
+      {% endif %}
+  block:
+    - name: Create Trusted user CA Keys directory
+      ansible.builtin.file:
+        path: "{{ (__sshd_trustedusercakeys_from_config | from_json) | dirname }}"
+        state: directory
+        owner: "{{ sshd_trustedusercakeys_directory_owner }}"
+        group: "{{ sshd_trustedusercakeys_directory_group }}"
+        mode: "{{ sshd_trustedusercakeys_directory_mode }}"
+
+    - name: Copy Trusted user CA Keys
+      ansible.builtin.template:
+        src: "trusted-user-ca-keys.pub.j2"
+        dest: "{{ __sshd_trustedusercakeys_from_config | from_json }}"
+        owner: "{{ sshd_trustedusercakeys_file_owner }}"
+        group: "{{ sshd_trustedusercakeys_file_group }}"
+        mode: "{{ sshd_trustedusercakeys_file_mode }}"
+
+- name: Configure Principals
+  vars:
+    # The explicit to_json filter is needed for Python 2 compatibility
+    __sshd_authorizedprincipalsfile_from_config: >-
+      {% if sshd_AuthorizedPrincipalsFile is defined %}
+        {{ sshd_AuthorizedPrincipalsFile | to_json }}
+      {% else %}
+        {{ sshd['AuthorizedPrincipalsFile'] | to_json }}
+      {% endif %}
+  when: sshd_principals != {}
+  block:
+    - name: Create Principals directory
+      ansible.builtin.file:
+        path: "{{ (__sshd_authorizedprincipalsfile_from_config | from_json) | dirname }}"
+        state: directory
+        owner: "{{ sshd_authorizedprincipals_directory_owner }}"
+        group: "{{ sshd_authorizedprincipals_directory_group }}"
+        mode: "{{ sshd_authorizedprincipals_directory_mode }}"
+
+    - name: Copy Principals files
+      ansible.builtin.template:
+        src: "auth_principals.j2"
+        dest: "{{ (__sshd_authorizedprincipalsfile_from_config | from_json) | dirname }}/{{ item.key }}"
+        owner: "{{ sshd_authorizedprincipals_file_owner }}"
+        group: "{{ sshd_authorizedprincipals_file_group }}"
+        mode: "{{ sshd_authorizedprincipals_file_mode }}"
+      with_dict: "{{ sshd_principals }}"

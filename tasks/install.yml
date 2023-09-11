@@ -147,6 +147,10 @@
       ansible.builtin.include_tasks: install_namespace.yml
       when: sshd_config_namespace is not none
 
+    - name: Configure sshd to use SSH certificates
+      ansible.builtin.include_tasks: certificates.yml
+      when: sshd_trusted_user_ca_keys_list != []
+
   rescue:
     - name: Re-raise the error
       ansible.builtin.fail:

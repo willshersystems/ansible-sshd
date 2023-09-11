@@ -1,0 +1,23 @@
+---
+- name: Use SSH certificates
+  hosts: all
+  tasks:
+    - name: Configure sshd to enable SSH Certificate login
+      ansible.builtin.include_role:
+        name: ansible-sshd
+      vars:
+        sshd:
+          # Disable password authentication, use SSH Certificates and configure authorized principals
+          PasswordAuthentication: false
+          TrustedUserCAKeys: /etc/ssh/trusted-user-ca-keys.pub
+          AuthorizedPrincipalsFile: "/etc/ssh/auth_principals/%u"
+        # List of trusted user CA keys
+        sshd_trusted_user_ca_keys_list:
+          - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICwqRjI9gAwkQF9iIylhRVAOFy2Joodh3fXJ7CbGWqUd
+        # Key is the user in the os, values are *Principals* defined in the certificate
+        sshd_principals:
+          admin:
+            - frontend-admin
+            - backend-admin
+          somelinuxuser:
+            - some-principal-defined-in-certificate
