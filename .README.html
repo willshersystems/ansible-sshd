@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<!--
+==============================================================================
+           "GitHub HTML5 Pandoc Template" v2.2 — by Tristano Ajmone
+==============================================================================
+Copyright © Tristano Ajmone, 2017-2020, MIT License (MIT). Project's home:
+
+- https://github.com/tajmone/pandoc-goodies
+
+The CSS in this template reuses source code taken from the following projects:
+
+- GitHub Markdown CSS: Copyright © Sindre Sorhus, MIT License (MIT):
+  https://github.com/sindresorhus/github-markdown-css
+
+- Primer CSS: Copyright © 2016-2017 GitHub Inc., MIT License (MIT):
+  http://primercss.io/
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The MIT License
+
+Copyright (c) Tristano Ajmone, 2017-2020 (github.com/tajmone/pandoc-goodies)
+Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
+Copyright (c) 2017 GitHub Inc.
+
+"GitHub Pandoc HTML5 Template" is Copyright (c) Tristano Ajmone, 2017-2020,
+released under the MIT License (MIT); it contains readaptations of substantial
+portions of the following third party softwares:
+
+(1) "GitHub Markdown CSS", Copyright (c) Sindre Sorhus, MIT License (MIT).
+(2) "Primer CSS", Copyright (c) 2016 GitHub Inc., MIT License (MIT).
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+==============================================================================-->
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>OpenSSH Server</title>
+  <style type="text/css">
+@charset "UTF-8";.markdown-body{-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#24292e;font-family:-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";font-size:16px;line-height:1.5;word-wrap:break-word;box-sizing:border-box;min-width:200px;margin:0 auto;padding:45px}.markdown-body a{color:#0366d6;background-color:transparent;text-decoration:none;-webkit-text-decoration-skip:objects}.markdown-body a:active,.markdown-body a:hover{outline-width:0}.markdown-body a:hover{text-decoration:underline}.markdown-body a:not([href]){color:inherit;text-decoration:none}.markdown-body strong{font-weight:600}.markdown-body h1,.markdown-body h2,.markdown-body h3,.markdown-body h4,.markdown-body h5,.markdown-body h6{margin-top:24px;margin-bottom:16px;font-weight:600;line-height:1.25}.markdown-body h1{font-size:2em;margin:.67em 0;padding-bottom:.3em;border-bottom:1px solid #eaecef}.markdown-body h2{padding-bottom:.3em;font-size:1.5em;border-bottom:1px solid #eaecef}.markdown-body h3{font-size:1.25em}.markdown-body h4{font-size:1em}.markdown-body h5{font-size:.875em}.markdown-body h6{font-size:.85em;color:#6a737d}.markdown-body img{border-style:none}.markdown-body svg:not(:root){overflow:hidden}.markdown-body hr{box-sizing:content-box;height:.25em;margin:24px 0;padding:0;overflow:hidden;background-color:#e1e4e8;border:0}.markdown-body hr::before{display:table;content:""}.markdown-body hr::after{display:table;clear:both;content:""}.markdown-body input{margin:0;overflow:visible;font:inherit;font-family:inherit;font-size:inherit;line-height:inherit}.markdown-body [type=checkbox]{box-sizing:border-box;padding:0}.markdown-body *{box-sizing:border-box}.markdown-body blockquote{margin:0}.markdown-body ol,.markdown-body ul{padding-left:2em}.markdown-body ol ol,.markdown-body ul ol{list-style-type:lower-roman}.markdown-body ol ol,.markdown-body ol ul,.markdown-body ul ol,.markdown-body ul ul{margin-top:0;margin-bottom:0}.markdown-body ol ol ol,.markdown-body ol ul ol,.markdown-body ul ol ol,.markdown-body ul ul ol{list-style-type:lower-alpha}.markdown-body li>p{margin-top:16px}.markdown-body li+li{margin-top:.25em}.markdown-body dd{margin-left:0}.markdown-body dl{padding:0}.markdown-body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:600}.markdown-body dl dd{padding:0 16px;margin-bottom:16px}.markdown-body code{font-family:SFMono-Regular,Consolas,"Liberation Mono",Menlo,Courier,monospace}.markdown-body pre{font:12px SFMono-Regular,Consolas,"Liberation Mono",Menlo,Courier,monospace;word-wrap:normal}.markdown-body blockquote,.markdown-body dl,.markdown-body ol,.markdown-body p,.markdown-body pre,.markdown-body table,.markdown-body ul{margin-top:0;margin-bottom:16px}.markdown-body blockquote{padding:0 1em;color:#6a737d;border-left:.25em solid #dfe2e5}.markdown-body blockquote>:first-child{margin-top:0}.markdown-body blockquote>:last-child{margin-bottom:0}.markdown-body table{display:block;width:100%;overflow:auto;border-spacing:0;border-collapse:collapse}.markdown-body table th{font-weight:600}.markdown-body table td,.markdown-body table th{padding:6px 13px;border:1px solid #dfe2e5}.markdown-body table tr{background-color:#fff;border-top:1px solid #c6cbd1}.markdown-body table tr:nth-child(2n){background-color:#f6f8fa}.markdown-body img{max-width:100%;box-sizing:content-box;background-color:#fff}.markdown-body code{padding:.2em 0;margin:0;font-size:85%;background-color:rgba(27,31,35,.05);border-radius:3px}.markdown-body code::after,.markdown-body code::before{letter-spacing:-.2em;content:" "}.markdown-body pre>code{padding:0;margin:0;font-size:100%;word-break:normal;white-space:pre;background:0 0;border:0}.markdown-body .highlight{margin-bottom:16px}.markdown-body .highlight pre{margin-bottom:0;word-break:normal}.markdown-body .highlight pre,.markdown-body pre{padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#f6f8fa;border-radius:3px}.markdown-body pre code{display:inline;max-width:auto;padding:0;margin:0;overflow:visible;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}.markdown-body pre code::after,.markdown-body pre code::before{content:normal}.markdown-body .full-commit .btn-outline:not(:disabled):hover{color:#005cc5;border-color:#005cc5}.markdown-body kbd{box-shadow:inset 0 -1px 0 #959da5;display:inline-block;padding:3px 5px;font:11px/10px SFMono-Regular,Consolas,"Liberation Mono",Menlo,Courier,monospace;color:#444d56;vertical-align:middle;background-color:#fcfcfc;border:1px solid #c6cbd1;border-bottom-color:#959da5;border-radius:3px;box-shadow:inset 0 -1px 0 #959da5}.markdown-body :checked+.radio-label{position:relative;z-index:1;border-color:#0366d6}.markdown-body .task-list-item{list-style-type:none}.markdown-body .task-list-item+.task-list-item{margin-top:3px}.markdown-body .task-list-item input{margin:0 .2em .25em -1.6em;vertical-align:middle}.markdown-body::before{display:table;content:""}.markdown-body::after{display:table;clear:both;content:""}.markdown-body>:first-child{margin-top:0!important}.markdown-body>:last-child{margin-bottom:0!important}.Alert,.Error,.Note,.Success,.Warning{padding:11px;margin-bottom:24px;border-style:solid;border-width:1px;border-radius:4px}.Alert p,.Error p,.Note p,.Success p,.Warning p{margin-top:0}.Alert p:last-child,.Error p:last-child,.Note p:last-child,.Success p:last-child,.Warning p:last-child{margin-bottom:0}.Alert{color:#246;background-color:#e2eef9;border-color:#bac6d3}.Warning{color:#4c4a42;background-color:#fff9ea;border-color:#dfd8c2}.Error{color:#911;background-color:#fcdede;border-color:#d2b2b2}.Success{color:#22662c;background-color:#e2f9e5;border-color:#bad3be}.Note{color:#2f363d;background-color:#f6f8fa;border-color:#d5d8da}.Alert h1,.Alert h2,.Alert h3,.Alert h4,.Alert h5,.Alert h6{color:#246;margin-bottom:0}.Warning h1,.Warning h2,.Warning h3,.Warning h4,.Warning h5,.Warning h6{color:#4c4a42;margin-bottom:0}.Error h1,.Error h2,.Error h3,.Error h4,.Error h5,.Error h6{color:#911;margin-bottom:0}.Success h1,.Success h2,.Success h3,.Success h4,.Success h5,.Success h6{color:#22662c;margin-bottom:0}.Note h1,.Note h2,.Note h3,.Note h4,.Note h5,.Note h6{color:#2f363d;margin-bottom:0}.Alert h1:first-child,.Alert h2:first-child,.Alert h3:first-child,.Alert h4:first-child,.Alert h5:first-child,.Alert h6:first-child,.Error h1:first-child,.Error h2:first-child,.Error h3:first-child,.Error h4:first-child,.Error h5:first-child,.Error h6:first-child,.Note h1:first-child,.Note h2:first-child,.Note h3:first-child,.Note h4:first-child,.Note h5:first-child,.Note h6:first-child,.Success h1:first-child,.Success h2:first-child,.Success h3:first-child,.Success h4:first-child,.Success h5:first-child,.Success h6:first-child,.Warning h1:first-child,.Warning h2:first-child,.Warning h3:first-child,.Warning h4:first-child,.Warning h5:first-child,.Warning h6:first-child{margin-top:0}h1.title,p.subtitle{text-align:center}h1.title.followed-by-subtitle{margin-bottom:0}p.subtitle{font-size:1.5em;font-weight:600;line-height:1.25;margin-top:0;margin-bottom:16px;padding-bottom:.3em}div.line-block{white-space:pre-line}
+  </style>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<article class="markdown-body">
+<header>
+<h1 class="title">OpenSSH Server</h1>
+</header>
+<hr>
+<nav id="TOC">
+<h1 class="toc-title">Contents</h1>
+<ul>
+<li><a href="#requirements" id="toc-requirements">Requirements</a>
+<ul>
+<li><a href="#optional-requirements"
+id="toc-optional-requirements">Optional requirements</a></li>
+</ul></li>
+<li><a href="#role-variables" id="toc-role-variables">Role variables</a>
+<ul>
+<li><a href="#primary-role-variables"
+id="toc-primary-role-variables">Primary role variables</a>
+<ul>
+<li><a href="#sshd_enable" id="toc-sshd_enable">sshd_enable</a></li>
+<li><a href="#sshd_skip_defaults"
+id="toc-sshd_skip_defaults">sshd_skip_defaults</a></li>
+<li><a href="#sshd_manage_service"
+id="toc-sshd_manage_service">sshd_manage_service</a></li>
+<li><a href="#sshd_allow_reload"
+id="toc-sshd_allow_reload">sshd_allow_reload</a></li>
+<li><a href="#sshd_install_service"
+id="toc-sshd_install_service">sshd_install_service</a></li>
+<li><a href="#sshd_manage_firewall"
+id="toc-sshd_manage_firewall">sshd_manage_firewall</a></li>
+<li><a href="#sshd_manage_selinux"
+id="toc-sshd_manage_selinux">sshd_manage_selinux</a></li>
+<li><a href="#sshd" id="toc-sshd">sshd</a></li>
+<li><a href="#sshd_optionname"
+id="toc-sshd_optionname">sshd_<code>&lt;OptionName&gt;</code></a></li>
+<li><a href="#sshd_match-sshd_match_1-through-sshd_match_9"
+id="toc-sshd_match-sshd_match_1-through-sshd_match_9">sshd_match,
+sshd_match_1 through sshd_match_9</a></li>
+<li><a href="#sshd_backup" id="toc-sshd_backup">sshd_backup</a></li>
+<li><a href="#sshd_sysconfig"
+id="toc-sshd_sysconfig">sshd_sysconfig</a></li>
+<li><a href="#sshd_sysconfig_override_crypto_policy"
+id="toc-sshd_sysconfig_override_crypto_policy">sshd_sysconfig_override_crypto_policy</a></li>
+<li><a href="#sshd_sysconfig_use_strong_rng"
+id="toc-sshd_sysconfig_use_strong_rng">sshd_sysconfig_use_strong_rng</a></li>
+<li><a href="#sshd_config_file"
+id="toc-sshd_config_file">sshd_config_file</a></li>
+<li><a href="#sshd_config_namespace"
+id="toc-sshd_config_namespace">sshd_config_namespace</a></li>
+<li><a href="#sshd_config_owner-sshd_config_group-sshd_config_mode"
+id="toc-sshd_config_owner-sshd_config_group-sshd_config_mode">sshd_config_owner,
+sshd_config_group, sshd_config_mode</a></li>
+<li><a href="#sshd_verify_hostkeys"
+id="toc-sshd_verify_hostkeys">sshd_verify_hostkeys</a></li>
+<li><a href="#sshd_hostkey_owner-sshd_hostkey_group-sshd_hostkey_mode"
+id="toc-sshd_hostkey_owner-sshd_hostkey_group-sshd_hostkey_mode">sshd_hostkey_owner,
+sshd_hostkey_group, sshd_hostkey_mode</a></li>
+</ul></li>
+<li><a href="#secondary-role-variables"
+id="toc-secondary-role-variables">Secondary role variables</a>
+<ul>
+<li><a href="#sshd_packages"
+id="toc-sshd_packages">sshd_packages</a></li>
+<li><a href="#sshd_binary" id="toc-sshd_binary">sshd_binary</a></li>
+<li><a href="#sshd_service" id="toc-sshd_service">sshd_service</a></li>
+<li><a href="#sshd_sftp_server"
+id="toc-sshd_sftp_server">sshd_sftp_server</a></li>
+</ul></li>
+<li><a href="#variables-exported-by-the-role"
+id="toc-variables-exported-by-the-role">Variables Exported by the
+Role</a>
+<ul>
+<li><a href="#sshd_has_run" id="toc-sshd_has_run">sshd_has_run</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#configure-ssh-certificate-authentication"
+id="toc-configure-ssh-certificate-authentication">Configure SSH
+certificate authentication</a>
+<ul>
+<li><a href="#additional-variables"
+id="toc-additional-variables">Additional variables</a>
+<ul>
+<li><a href="#sshd_trusted_user_ca_keys_list"
+id="toc-sshd_trusted_user_ca_keys_list">sshd_trusted_user_ca_keys_list</a></li>
+<li><a
+href="#sshd_trustedusercakeys_directory_owner-shsd_trustedusercakeys_directory_group-sshd_trustedusercakeys_directory_mode"
+id="toc-sshd_trustedusercakeys_directory_owner-shsd_trustedusercakeys_directory_group-sshd_trustedusercakeys_directory_mode">sshd_trustedusercakeys_directory_owner,
+shsd_trustedusercakeys_directory_group,
+sshd_trustedusercakeys_directory_mode</a></li>
+<li><a
+href="#sshd_trustedusercakeys_file_owner-shsd_trustedusercakeys_file_group-sshd_trustedusercakeys_file_mode"
+id="toc-sshd_trustedusercakeys_file_owner-shsd_trustedusercakeys_file_group-sshd_trustedusercakeys_file_mode">sshd_trustedusercakeys_file_owner,
+shsd_trustedusercakeys_file_group,
+sshd_trustedusercakeys_file_mode</a></li>
+<li><a href="#sshd_principals"
+id="toc-sshd_principals">sshd_principals</a></li>
+<li><a
+href="#sshd_authorizedprincipals_directory_owner-shsd_authorizedprincipals_directory_group-sshd_authorizedprincipals_directory_mode"
+id="toc-sshd_authorizedprincipals_directory_owner-shsd_authorizedprincipals_directory_group-sshd_authorizedprincipals_directory_mode">sshd_authorizedprincipals_directory_owner,
+shsd_authorizedprincipals_directory_group,
+sshd_authorizedprincipals_directory_mode</a></li>
+<li><a
+href="#sshd_authorizedprincipals_file_owner-shsd_authorizedprincipals_file_group-sshd_authorizedprincipals_file_mode"
+id="toc-sshd_authorizedprincipals_file_owner-shsd_authorizedprincipals_file_group-sshd_authorizedprincipals_file_mode">sshd_authorizedprincipals_file_owner,
+shsd_authorizedprincipals_file_group,
+sshd_authorizedprincipals_file_mode</a></li>
+</ul></li>
+<li><a href="#additional-configuration"
+id="toc-additional-configuration">Additional configuration</a></li>
+</ul></li>
+<li><a href="#dependencies" id="toc-dependencies">Dependencies</a></li>
+<li><a href="#example-playbook" id="toc-example-playbook">Example
+Playbook</a></li>
+<li><a href="#template-generation" id="toc-template-generation">Template
+Generation</a></li>
+<li><a href="#license" id="toc-license">License</a></li>
+<li><a href="#authors" id="toc-authors">Authors</a></li>
+</ul>
+</nav>
+<hr>
+<p>This role configures the OpenSSH daemon. It:</p>
+<ul>
+<li>By default configures the SSH daemon with the normal OS
+defaults.</li>
+<li>Works across a variety of <code>UN*X</code> distributions</li>
+<li>Can be configured by dict or simple variables</li>
+<li>Supports Match sets</li>
+<li>Supports all <code>sshd_config</code> options. Templates are
+programmatically generated. (see <a
+href="meta/make_option_lists"><code>meta/make_option_lists</code></a>)</li>
+<li>Tests the <code>sshd_config</code> before reloading sshd.</li>
+</ul>
+<p><strong>WARNING</strong> Misconfiguration of this role can lock you
+out of your server! Please test your configuration and its interaction
+with your users configuration before using in production!</p>
+<p><strong>WARNING</strong> Digital Ocean allows root with passwords via
+SSH on Debian and Ubuntu. This is not the default assigned by this
+module - it will set <code>PermitRootLogin without-password</code> which
+will allow access via SSH key but not via simple password. If you need
+this functionality, be sure to set <code>sshd_PermitRootLogin yes</code>
+for those hosts.</p>
+<h1 id="requirements">Requirements</h1>
+<p>Tested on:</p>
+<ul>
+<li>Ubuntu precise, trusty, xenial, bionic, focal, jammy
+<ul>
+<li><a
+href="https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-ubuntu.yml"><img
+src="https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-ubuntu.yml/badge.svg"
+alt="Run tests on Ubuntu latest" /></a></li>
+</ul></li>
+<li>Debian wheezy, jessie, stretch, buster, bullseye, bookworm
+<ul>
+<li><a
+href="https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-check.yml"><img
+src="https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-check.yml/badge.svg"
+alt="Run tests on Debian" /></a></li>
+</ul></li>
+<li>EL 6, 7, 8, 9 derived distributions
+<ul>
+<li><a
+href="https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos-check.yml"><img
+src="https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos-check.yml/badge.svg"
+alt="Run tests on CentOS" /></a></li>
+</ul></li>
+<li>All Fedora
+<ul>
+<li><a
+href="https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-fedora.yml"><img
+src="https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-fedora.yml/badge.svg"
+alt="Run tests on Fedora latest" /></a></li>
+</ul></li>
+<li>Latest Alpine
+<ul>
+<li><a
+href="https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-alpine.yml"><img
+src="https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-alpine.yml/badge.svg"
+alt="Run tests on Alpine" /></a></li>
+</ul></li>
+<li>FreeBSD 10.1</li>
+<li>OpenBSD 6.0</li>
+<li>AIX 7.1, 7.2</li>
+<li>OpenWrt 21.03</li>
+</ul>
+<p>It will likely work on other flavours and more direct support via
+suitable <a href="vars/">vars/</a> files is welcome.</p>
+<h2 id="optional-requirements">Optional requirements</h2>
+<p>If you want to use advanced functionality of this role that can
+configure firewall and selinux for you, which is mostly useful when
+custom port is used, the role requires additional collections which are
+specified in <code>meta/collection-requirements.yml</code>. These are
+not automatically installed. You must install them like this:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ansible-galaxy</span> install <span class="at">-vv</span> <span class="at">-r</span> meta/collection-requirements.yml</span></code></pre></div>
+<p>For more information, see <code>sshd_manage_firewall</code> and
+<code>sshd_manage_selinux</code> options below. These roles are
+supported only on Red Hat based Linux.</p>
+<h1 id="role-variables">Role variables</h1>
+<h2 id="primary-role-variables">Primary role variables</h2>
+<p>Unconfigured, this role will provide a <code>sshd_config</code> that
+matches the OS default, minus the comments and in a different order.</p>
+<h3 id="sshd_enable">sshd_enable</h3>
+<p>If set to <em>false</em>, the role will be completely disabled.
+Defaults to <em>true</em>.</p>
+<h3 id="sshd_skip_defaults">sshd_skip_defaults</h3>
+<p>If set to <em>true</em>, don't apply default values. This means that
+you must have a complete set of configuration defaults via either the
+<code>sshd</code> dict, or <code>sshd_Key</code> variables. Defaults to
+<em>false</em> unless <code>sshd_config_namespace</code> is set or
+<code>sshd_config_file</code> points to a drop-in directory to avoid
+recursive include.</p>
+<h3 id="sshd_manage_service">sshd_manage_service</h3>
+<p>If set to <em>false</em>, the service/daemon won't be
+<strong>managed</strong> at all, i.e. will not try to enable on boot or
+start or reload the service. Defaults to <em>true</em> unless: Running
+inside a docker container (it is assumed ansible is used during build
+phase) or AIX (Ansible <code>service</code> module does not currently
+support <code>enabled</code> for AIX)</p>
+<h3 id="sshd_allow_reload">sshd_allow_reload</h3>
+<p>If set to <em>false</em>, a reload of sshd wont happen on change.
+This can help with troubleshooting. You'll need to manually reload sshd
+if you want to apply the changed configuration. Defaults to the same
+value as <code>sshd_manage_service</code>. (Except on AIX, where
+<code>sshd_manage_service</code> is default <em>false</em>, but
+<code>sshd_allow_reload</code> is default <em>true</em>)</p>
+<h3 id="sshd_install_service">sshd_install_service</h3>
+<p>If set to <em>true</em>, the role will install service files for the
+ssh service. Defaults to <em>false</em>.</p>
+<p>The templates for the service files to be used are pointed to by the
+variables</p>
+<ul>
+<li><code>sshd_service_template_service</code>
+(<strong>default</strong>: <code>templates/sshd.service.j2</code>)</li>
+<li><code>sshd_service_template_at_service</code>
+(<strong>default</strong>: <code>templates/sshd@.service.j2</code>)</li>
+<li><code>sshd_service_template_socket</code> (<strong>default</strong>:
+<code>templates/sshd.socket.j2</code>)</li>
+</ul>
+<p>Using these variables, you can use your own custom templates. With
+the above default templates, the name of the installed ssh service will
+be provided by the <code>sshd_service</code> variable.</p>
+<h3 id="sshd_manage_firewall">sshd_manage_firewall</h3>
+<p>If set to <em>true</em>, the the SSH port(s) will be opened in
+firewall. Note, this works only on Red Hat based OS. The default is
+<em>false</em>.</p>
+<p>NOTE: <code>sshd_manage_firewall</code> is limited to <em>adding</em>
+ports. It cannot be used for <em>removing</em> ports. If you want to
+remove ports, you will need to use the firewall system role
+directly.</p>
+<h3 id="sshd_manage_selinux">sshd_manage_selinux</h3>
+<p>If set to <em>true</em>, the the selinux will be configured to allow
+sshd listening on the given SSH port(s). Note, this works only on Red
+Hat based OS. The default is <em>false</em>.</p>
+<p>NOTE: <code>sshd_manage_selinux</code> is limited to <em>adding</em>
+policy. It cannot be used for <em>removing</em> policy. If you want to
+remove ports, you will need to use the selinux system role directly.</p>
+<h3 id="sshd">sshd</h3>
+<p>A dict containing configuration. e.g.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sshd</span><span class="kw">:</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">Compression</span><span class="kw">:</span><span class="at"> delayed</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">ListenAddress</span><span class="kw">:</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fl">0.0.0.0</span></span></code></pre></div>
+<h3 id="sshd_optionname">sshd_<code>&lt;OptionName&gt;</code></h3>
+<p>Simple variables can be used rather than a dict. Simple values
+override dict values. e.g.:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sshd_Compression</span><span class="kw">:</span><span class="at"> </span><span class="ch">off</span></span></code></pre></div>
+<p>In all cases, booleans are correctly rendered as yes and no in sshd
+configuration. Lists can be used for multiline configuration items.
+e.g.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sshd_ListenAddress</span><span class="kw">:</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fl">0.0.0.0</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">&#39;::&#39;</span></span></code></pre></div>
+<p>Renders as:</p>
+<pre class="text"><code>ListenAddress 0.0.0.0
+ListenAddress ::</code></pre>
+<h3 id="sshd_match-sshd_match_1-through-sshd_match_9">sshd_match,
+sshd_match_1 through sshd_match_9</h3>
+<p>A list of dicts or just a dict for a Match section. Note, that these
+variables do not override match blocks as defined in the
+<code>sshd</code> dict. All of the sources will be reflected in the
+resulting configuration file. The use of <code>sshd_match_*</code>
+variant is deprecated and no longer recommended.</p>
+<h3 id="sshd_backup">sshd_backup</h3>
+<p>When set to <em>false</em>, the original <code>sshd_config</code>
+file is not backed up. Default is <em>true</em>.</p>
+<h3 id="sshd_sysconfig">sshd_sysconfig</h3>
+<p>On RHEL-based systems, sysconfig is used for configuring more details
+of sshd service. If set to <em>true</em>, this role will manage also the
+<code>/etc/sysconfig/sshd</code> configuration file based on the
+following configurations. Default is <em>false</em>.</p>
+<h3
+id="sshd_sysconfig_override_crypto_policy">sshd_sysconfig_override_crypto_policy</h3>
+<p>In RHEL8-based systems, this can be used to override system-wide
+crypto policy by setting to <em>true</em>. Without this option, changes
+to ciphers, MACs, public key algorithms will have no effect on the
+resulting service in RHEL8. Defaults to <em>false</em>.</p>
+<h3
+id="sshd_sysconfig_use_strong_rng">sshd_sysconfig_use_strong_rng</h3>
+<p>In RHEL-based systems (before RHEL9), this can be used to force sshd
+to reseed openssl random number generator with the given amount of bytes
+as an argument. The default is <em>0</em>, which disables this
+functionality. It is not recommended to turn this on if the system does
+not have hardware random number generator.</p>
+<h3 id="sshd_config_file">sshd_config_file</h3>
+<p>The path where the openssh configuration produced by this role should
+be saved. This is useful mostly when generating configuration snippets
+to Include from drop-in directory (default in Fedora and RHEL9).</p>
+<p>When this path points to a drop-in directory (like
+<code>/etc/ssh/sshd_confg.d/00-custom.conf</code>), the main
+configuration file (defined with the variable
+<code>sshd_main_config_file</code>) is checked to contain a proper
+<code>Include</code> directive.</p>
+<h3 id="sshd_config_namespace">sshd_config_namespace</h3>
+<p>By default (<em>null</em>), the role defines whole content of the
+configuration file including system defaults. You can use this variable
+to invoke this role from other roles or from multiple places in a single
+playbook as an alternative to using a drop-in directory. The
+<code>sshd_skip_defaults</code> is ignored and no system defaults are
+used in this case.</p>
+<p>When this variable is set, the role places the configuration that you
+specify to configuration snippets in a existing configuration file under
+the given namespace. You need to select different namespaces when
+invoking the role several times.</p>
+<p>Note that limitations of the openssh configuration file still apply.
+For example, only the first option specified in a configuration file is
+effective for most of the variables.</p>
+<p>Technically, the role places snippets in <code>Match all</code>
+blocks, unless they contain other match blocks, to ensure they are
+applied regardless of the previous match blocks in the existing
+configuration file. This allows configuring any non-conflicting options
+from different roles invocations.</p>
+<h3
+id="sshd_config_owner-sshd_config_group-sshd_config_mode">sshd_config_owner,
+sshd_config_group, sshd_config_mode</h3>
+<p>Use these variables to set the ownership and permissions for the
+openssh config file that this role produces.</p>
+<h3 id="sshd_verify_hostkeys">sshd_verify_hostkeys</h3>
+<p>By default (<em>auto</em>), this list contains all the host keys that
+are present in the produced configuration file. If there are none, the
+OpenSSH default list will be used after excluding non-FIPS approved keys
+in FIPS mode. The paths are checked for presence and new keys are
+generated if they are missing. Additionally, permissions and file owners
+are set to sane defaults. This is useful if the role is used in
+deployment stage to make sure the service is able to start on the first
+attempt.</p>
+<p>To disable this check, set this to empty list.</p>
+<h3
+id="sshd_hostkey_owner-sshd_hostkey_group-sshd_hostkey_mode">sshd_hostkey_owner,
+sshd_hostkey_group, sshd_hostkey_mode</h3>
+<p>Use these variables to set the ownership and permissions for the host
+keys from the above list.</p>
+<h2 id="secondary-role-variables">Secondary role variables</h2>
+<p>These variables are used by the role internals and can be used to
+override the defaults that correspond to each supported platform. They
+are not tested and generally are not needed as the role will determine
+them from the OS type.</p>
+<h3 id="sshd_packages">sshd_packages</h3>
+<p>Use this variable to override the default list of packages to
+install.</p>
+<h3 id="sshd_binary">sshd_binary</h3>
+<p>The path to the openssh executable</p>
+<h3 id="sshd_service">sshd_service</h3>
+<p>The name of the openssh service. By default, this variable contains
+the name of the ssh service that the target platform uses. But it can
+also be used to set the name of the custom ssh service when the
+<code>sshd_install_service</code> variable is used.</p>
+<h3 id="sshd_sftp_server">sshd_sftp_server</h3>
+<p>Default path to the sftp server binary.</p>
+<h2 id="variables-exported-by-the-role">Variables Exported by the
+Role</h2>
+<h3 id="sshd_has_run">sshd_has_run</h3>
+<p>This variable is set to <em>true</em> after the role was successfully
+executed.</p>
+<h1 id="configure-ssh-certificate-authentication">Configure SSH
+certificate authentication</h1>
+<p>To configure SSH certificate authentication on your SSH server, you
+need to provide at least the trusted user CA key, which will be used to
+validate client certificates against. This is done with the
+<code>sshd_trusted_user_ca_keys_list</code> variable.</p>
+<p>If you need to map some of the authorized principals to system users,
+you can do that using the <code>sshd_principals</code> variable.</p>
+<h2 id="additional-variables">Additional variables</h2>
+<h3
+id="sshd_trusted_user_ca_keys_list">sshd_trusted_user_ca_keys_list</h3>
+<p>List of the trusted user CA public keys in OpenSSH (one-line) format
+(mandatory).</p>
+<h3
+id="sshd_trustedusercakeys_directory_owner-shsd_trustedusercakeys_directory_group-sshd_trustedusercakeys_directory_mode">sshd_trustedusercakeys_directory_owner,
+shsd_trustedusercakeys_directory_group,
+sshd_trustedusercakeys_directory_mode</h3>
+<p>Use these variables to set the ownership and permissions for the
+Trusted User CA Keys directory. Defaults are respectively <em>root</em>,
+<em>root</em> and <em>0755</em>.</p>
+<h3
+id="sshd_trustedusercakeys_file_owner-shsd_trustedusercakeys_file_group-sshd_trustedusercakeys_file_mode">sshd_trustedusercakeys_file_owner,
+shsd_trustedusercakeys_file_group, sshd_trustedusercakeys_file_mode</h3>
+<p>Use these variables to set the ownership and permissions for the
+Trusted User CA Keys file. Defaults are respectively <em>root</em>,
+<em>root</em> and <em>0640</em>.</p>
+<h3 id="sshd_principals">sshd_principals</h3>
+<p>A dict containing principals for users in the os (optional). e.g.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sshd_principals</span><span class="kw">:</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">admin</span><span class="kw">:</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> frontend-admin</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> backend-admin</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">somelinuxuser</span><span class="kw">:</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> some-principal-defined-in-certificate</span></span></code></pre></div>
+<h3
+id="sshd_authorizedprincipals_directory_owner-shsd_authorizedprincipals_directory_group-sshd_authorizedprincipals_directory_mode">sshd_authorizedprincipals_directory_owner,
+shsd_authorizedprincipals_directory_group,
+sshd_authorizedprincipals_directory_mode</h3>
+<p>Use these variables to set the ownership and permissions for the
+Authorized Principals directory. Defaults are respectively
+<em>root</em>, <em>root</em> and <em>0755</em>.</p>
+<h3
+id="sshd_authorizedprincipals_file_owner-shsd_authorizedprincipals_file_group-sshd_authorizedprincipals_file_mode">sshd_authorizedprincipals_file_owner,
+shsd_authorizedprincipals_file_group,
+sshd_authorizedprincipals_file_mode</h3>
+<p>Use these variables to set the ownership and permissions for the
+Authorized Principals file. Defaults are respectively <em>root</em>,
+<em>root</em> and <em>0644</em>.</p>
+<h2 id="additional-configuration">Additional configuration</h2>
+<p>The SSH server needs this information stored in files so in addition
+to the above variables, respective configuration options
+<code>TrustedUserCAKeys</code> (mandatory) and
+<code>AuthorizedPrincipalsFile</code> (optional) need to be present the
+<code>sshd</code> dictionary when invoking the role. For example:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sshd</span><span class="kw">:</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">TrustedUserCAKeys</span><span class="kw">:</span><span class="at"> /etc/ssh/path-to-trusted-user-ca-keys/trusted-user-ca-keys.pub</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">AuthorizedPrincipalsFile</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;/etc/ssh/path-to-auth-principals/auth_principals/%u&quot;</span></span></code></pre></div>
+<p>To learn more about SSH Certificates, here is a <a
+href="https://en.wikibooks.org/wiki/OpenSSH/Cookbook/Certificate-based_Authentication">nice
+tutorial to pure SSH certificates, from wikibooks</a>.</p>
+<p>To understand principals and to set up SSH certificates with Vault,
+this is a <a
+href="https://www.hashicorp.com/blog/managing-ssh-access-at-scale-with-hashicorp-vault">well-explained
+tutorial from Hashicorp</a>.</p>
+<h1 id="dependencies">Dependencies</h1>
+<p>None</p>
+<p>For tests, the <code>ansible.posix</code> collection is required for
+the <code>mount</code> role to emulate FIPS mode.</p>
+<h1 id="example-playbook">Example Playbook</h1>
+<p><strong>DANGER!</strong> This example is to show the range of
+configuration this role provides. Running it will likely break your SSH
+access to the server!</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">hosts</span><span class="kw">:</span><span class="at"> all</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">vars</span><span class="kw">:</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">sshd_skip_defaults</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">sshd</span><span class="kw">:</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">Compression</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">ListenAddress</span><span class="kw">:</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;0.0.0.0&quot;</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;::&quot;</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">GSSAPIAuthentication</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">Match</span><span class="kw">:</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">Condition</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Group user&quot;</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">GSSAPIAuthentication</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">sshd_UsePrivilegeSeparation</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">sshd_match</span><span class="kw">:</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">Condition</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Group xusers&quot;</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">X11Forwarding</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">roles</span><span class="kw">:</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">role</span><span class="kw">:</span><span class="at"> willshersystems.sshd</span></span></code></pre></div>
+<p>Results in:</p>
+<pre class="text"><code># Ansible managed: ...
+Compression yes
+GSSAPIAuthentication no
+UsePrivilegeSeparation no
+Match Group user
+  GSSAPIAuthentication yes
+Match Group xusers
+  X11Forwarding yes</code></pre>
+<p>Since Ansible 2.4, the role can be invoked using
+<code>include_role</code> keyword, for example:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">hosts</span><span class="kw">:</span><span class="at"> all</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">become</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">tasks</span><span class="kw">:</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Configure sshd&quot;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">include_role</span><span class="kw">:</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">name</span><span class="kw">:</span><span class="at"> willshersystems.sshd</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">vars</span><span class="kw">:</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">sshd_skip_defaults</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">sshd</span><span class="kw">:</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">Compression</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">ListenAddress</span><span class="kw">:</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;0.0.0.0&quot;</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;::&quot;</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">GSSAPIAuthentication</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">Match</span><span class="kw">:</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">Condition</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Group user&quot;</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">GSSAPIAuthentication</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">sshd_UsePrivilegeSeparation</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">sshd_match</span><span class="kw">:</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">Condition</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Group xusers&quot;</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">X11Forwarding</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span></code></pre></div>
+<p>You can just add a configuration snippet with the
+<code>sshd_config_namespace</code> option:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">hosts</span><span class="kw">:</span><span class="at"> all</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">tasks</span><span class="kw">:</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Configure sshd to accept some useful environment variables</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">include_role</span><span class="kw">:</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">name</span><span class="kw">:</span><span class="at"> ansible-sshd</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">vars</span><span class="kw">:</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">sshd_config_namespace</span><span class="kw">:</span><span class="at"> accept-env</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">sshd</span><span class="kw">:</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">        # there are some handy environment variables to accept</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">AcceptEnv</span><span class="kw">:</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="at">          LANG</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="at">          LS_COLORS</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="at">          EDITOR</span></span></code></pre></div>
+<p>The following snippet will be added to the default configuration file
+(if not yet present):</p>
+<pre class="text"><code># BEGIN sshd system role managed block: namespace accept-env
+Match all
+  AcceptEnv LANG LS_COLORS EDITOR
+# END sshd system role managed block: namespace accept-env</code></pre>
+<p>More example playbooks can be found in <a
+href="examples/"><code>examples/</code></a> directory.</p>
+<h1 id="template-generation">Template Generation</h1>
+<p>The <a
+href="templates/sshd_config.j2"><code>sshd_config.j2</code></a> and <a
+href="templates/sshd_config_snippet.j2"><code>sshd_config_snippet.j2</code></a>
+templates are programatically generated by the scripts in meta. New
+options should be added to the <code>options_body</code> and/or
+<code>options_match</code>.</p>
+<p>To regenerate the templates, from within the <code>meta/</code>
+directory run: <code>./make_option_lists</code></p>
+<h1 id="license">License</h1>
+<p>LGPLv3</p>
+<h1 id="authors">Authors</h1>
+<p>Matt Willsher <a
+href="mailto:matt@willsher.systems">matt@willsher.systems</a></p>
+<p>© 2014,2015 Willsher Systems Ltd.</p>
+<p>Jakub Jelen <a
+href="mailto:jjelen@redhat.com">jjelen@redhat.com</a></p>
+<p>© 2020 - 2022 Red Hat, Inc.</p>
+</article>
+</body>
+</html>

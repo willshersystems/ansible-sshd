@@ -1,6 +1,127 @@
 Changelog
 =========
 
+[v0.21.0] - 2023-09-12
+--------------------
+
+### New Features
+
+- feat: manage ssh certificates (#252)
+
+  **Enhancement:**
+  - Deploy User CA on the system
+  - Configure principals (optional)
+  
+  **Reason:**
+  This allows you to configure and manage the SSH server to authenticate via certificates. 
+  Improves SSH authentication security: certificates have a validity period, unlike SSH keys.
+  
+  More information on SSH certificates is available here: [Managing SSH Access at Scale with HashiCorp Vault](https://www.hashicorp.com/blog/managing-ssh-access-at-scale-with-hashicorp-vault).
+  
+  **Result:**
+  All tests passed.
+  The related documentation is available and an example can be found in ```examples/example-use-certificates.yml```.
+  
+  **Issue Tracker Tickets (Jira or BZ if any):** -
+
+### Bug Fixes
+
+- fix: Support inject_facts_as_vars = false (#244)
+
+  Enhancement:
+  
+  Support `inject_facts_as_vars = false` in ansible.cfg.
+  
+  The setting is considered safer because a compromised host cannot inject facts into variables.
+  
+  Reason:
+  
+  Minor security enhancement.
+  
+  This setting is also recommended in some tuning guides like
+  https://docs.openstack.org/kolla-ansible/wallaby/user/ansible-tuning.html#fact-variable-injection
+  and issue mitigation guides:
+  https://docs.ansible.com/ansible/latest/reference_appendices/faq.html#when-is-it-unsafe-to-bulk-set-task-arguments-from-a-variable
+  
+  `ansible_facts` are used only with one name. Previously for example `ansible_facts['os_family']` was also used as `ansible_os_family`. This helps maintainability.
+  
+  Result:
+  
+  Support `inject_facts_as_vars = false`. If setting is `true`, situation still works as expected.
+  
+  Also drop `ansible` prefix from local variables to avoid possible conflicts in namespace and avoid possible confusion.
+  
+  Issue Tracker Tickets (Jira or BZ if any): -
+
+- fix: Makes runtime dir relative (#249)
+
+  Enhancement:
+  Makes systemd RuntimeDirectory service file directive relative (`sshd` instead of `/run/sshd`).
+  
+  Reason:
+  The [docs](https://www.freedesktop.org/software/systemd/man/systemd.exec.html#RuntimeDirectory=) say it has to be relative.
+  
+  Result:
+  The following error is gone from the journal:
+  
+  ```
+  /etc/systemd/system/backdoor-ssh.service:14: RuntimeDirectory= path is not valid, ignoring assignment: /run/custom-ssh
+  ```
+  
+  Waiting for the tests.
+  
+  Issue Tracker Tickets (Jira or BZ if any): none
+
+### Other Changes
+
+- chore: fix markdown for heading in CHANGELOG (#242)
+
+  chore: add missing h2 heading for the 0.19.0 release
+  
+  There was no markdown h2 heading for the 0.19.0 release which
+  broke the changelog parser in the collection release, causing
+  the changelog to look like
+  https://github.com/linux-system-roles/auto-maintenance/commit/0eade02032c55ffc008240ce44cfbee25276b51c#diff-ddbe2c1474f5ea331aef8eedcd595299f771578e4416a5f112ae69ed5a934bc0R4
+  Add the correct markdown
+  
+  Signed-off-by: Rich Megginson <rmeggins@redhat.com>
+
+- chore: drop support of Fedora 31, EOL 2020-11-24 (#243)
+
+  Enhancement:
+  
+  -
+  
+  Reason:
+  
+  Fedora 31 is EOL.
+  
+  Result:
+  
+  Drop explicit support of EOL distro version. Less code to maintain.
+
+- ci: Add markdownlint, test_converting_readme, and build_docs workflows (#247)
+
+  Enhancement: Add markdownlint, test_converting_readme, and build_docs GitHub workflows
+  
+  Reason:
+  * markdownlint runs against markdown files to ensure correct syntax and avoid any issues with converting README.md to HTML
+  * test_converting_readme converts README.md > HTML and uploads this test artifact to ensure that conversion works fine
+  * build_docs converts README.md > HTML and pushes the result to the docs branch to publish dosc to GitHub pages site
+  * Rename commitlint.yml workflow into pr-title-lint for clarity
+
+- ci: Ignore var-naming[no-role-prefix] ansible-lint rule that fails expectedly (#248)
+
+  Enhancement: Ignore var-naming[no-role-prefix] ansible-lint rule that fails expectedly
+  
+  Reason: ansible-lint recently added a rule `var-naming[no-role-prefix]` that fails expectedly, this role generally uses `sshd` instead of `ansible_sshd`, and also vars from other roles e.g. `firewall_`.
+  
+  Result: ansible-lint ignores this rule and passes.
+
+- build(deps): bump actions/checkout from 3 to 4 (#254)
+
+  Bumps [actions/checkout](https://github.com/actions/checkout) from 3 to 4.
+
 [v0.20.0] - 2023-06-19
 --------------------
 
