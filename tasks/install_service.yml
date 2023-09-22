@@ -6,7 +6,9 @@
     owner: root
     group: root
     mode: "0644"
-  notify: reload_sshd
+  notify:
+  - reload_units
+  - reload_sshd
   when: sshd_install_service | bool
 - name: Install instanced service unit file
   ansible.builtin.template:
@@ -15,7 +17,9 @@
     owner: root
     group: root
     mode: "0644"
-  notify: reload_sshd
+  notify:
+  - reload_units
+  - reload_sshd
   when: sshd_install_service | bool
 - name: Install socket unit file
   ansible.builtin.template:
@@ -24,7 +28,9 @@
     owner: root
     group: root
     mode: "0644"
-  notify: reload_sshd
+  notify:
+  - reload_units
+  - reload_sshd
   when:
     - (sshd_install_service | bool is truthy ) or
       (( __sshd_ports_from_config | from_json != [22] ) and
