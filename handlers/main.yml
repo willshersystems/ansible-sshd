@@ -2,7 +2,7 @@
 
 - name: Reload the SSH service
   ansible.builtin.service:
-    name: "{{ sshd_service }}"
+    name: "{{ sshd_service }}{{ '.socket' if sshd_socket_activation | bool else '' }}"
     state: reloaded
   when:
     - sshd_allow_reload|bool

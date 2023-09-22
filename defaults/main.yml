@@ -13,6 +13,10 @@ sshd_manage_service: true
 # If the below is false, don't reload the ssh daemon on change
 sshd_allow_reload: true
 
+# If set to true, use systemd's socket activation and start a socket unit,
+# instead of the service unit
+sshd_socket_activation: "{{ __sshd_socket_activation | bool }}"
+
 # If the below is true, also install service files from the templates pointed
 # to by the `sshd_service_template_*` variables
 sshd_install_service: false

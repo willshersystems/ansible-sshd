@@ -29,7 +29,7 @@
 
 - name: Service enabled and running
   ansible.builtin.service:
-    name: "{{ sshd_service }}"
+    name: "{{ sshd_service }}{{ '.socket' if sshd_socket_activation | bool else '' }}"
     enabled: true
     state: started
   when:
