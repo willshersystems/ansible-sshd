@@ -5,7 +5,9 @@ Before={{ sshd_service }}.service
 Conflicts={{ sshd_service }}.service
 
 [Socket]
-ListenStream=22
+{% for port in __sshd_ports_from_config | from_json %}
+ListenStream={{ port }}
+{% endfor %}
 Accept=yes
 
 [Install]
