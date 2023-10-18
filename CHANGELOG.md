@@ -1,6 +1,26 @@
 Changelog
 =========
 
+[v0.22.0] - 2023-10-18
+--------------------
+
+### Bug Fixes
+
+- fix: Symlink sub-directories under tests/roles/ansible-sshd to avoid recursive loop (#262)
+
+  Enhancement:
+  Moved symlinking a level down in test/roles to avoid a recursive look via the test directory.
+  
+  Reason:
+  Ansible Core >= 2.15.5 does not allow recursive directory trees. 
+  
+  Result:
+  CI should still run correctly, the problem with the recursive symlinks with Ansible Core 2.15.5 should be fixed.
+  
+  Issue Tracker Tickets (Jira or BZ if any):
+  #259 #260 #261
+
+
 [v0.21.0] - 2023-09-12
 --------------------
 
