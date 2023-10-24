@@ -36,6 +36,7 @@ __sshd_skip_virt_env:
 
 __sshd_binary: /usr/sbin/sshd
 __sshd_service: sshd
+__sshd_socket_activation: false
 __sshd_sftp_server: /usr/lib/openssh/sftp-server
 
 __sshd_defaults: {}

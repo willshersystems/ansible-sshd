@@ -109,6 +109,12 @@ Using these variables, you can use your own custom templates. With the above
 default templates, the name of the installed ssh service will be provided by
 the `sshd_service` variable.
 
+#### sshd_socket_activation
+
+If set to *true*, systemd's socket activation will be used to start service
+instances (`sshd.socket` activates `sshd@.service`) on each incoming connection
+instead running a single permanent service for all connections.
+
 #### sshd_manage_firewall
 
 If set to *true*, the the SSH port(s) will be opened in firewall. Note, this
