@@ -1,15 +1,37 @@
 [Unit]
 Description=OpenBSD Secure Shell server
+After=network.target{{ (__sshd_service_after is none) | ternary('', ' ' ~ __sshd_service_after) }}
+{% if __sshd_service_wants is string %}
+Wants={{ __sshd_service_wants }}
+{% elif __sshd_service_wants is iterable %}
+{%   for file in __sshd_service_wants %}
+Wants={{ file }}
+{%   endfor %}
+{% endif %}
 Documentation=man:sshd(8) man:sshd_config(5)
 
 [Service]
 Type=notify
+{% if __sshd_environment_file is string %}
+EnvironmentFile=-{{ __sshd_environment_file }}
+{% elif __sshd_environment_file is iterable %}
+{%   for file in __sshd_environment_file %}
+EnvironmentFile=-{{ file }}
+{%   endfor %}
+{% endif %}
 ExecStartPre={{ sshd_binary }} -t
-ExecStart={{ sshd_binary }} -D -f {{ sshd_config_file }}
+ExecStart={{ sshd_binary }} -D {{ __sshd_environment_variable }} -f {% if sshd_main_config_file is not none %}
+{{- sshd_main_config_file }}
+{% else %}
+{{- sshd_config_file }}
+{% endif %}
 ExecReload={{ sshd_binary }} -t
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
 Restart=on-failure
+{% if __sshd_service_restart_timeout is not none %}
+RestartSec={{ __sshd_service_restart_timeout }}
+{% endif %}
 RestartPreventExitStatus=255
 {% if __sshd_runtime_directory is not none %}
 RuntimeDirectory={{ __sshd_runtime_directory }}
@@ -18,3 +40,6 @@ RuntimeDirectoryMode={{ __sshd_runtime_directory_mode }}
 
 [Install]
 WantedBy=multi-user.target
+{% if __sshd_service_alias is not none %}
+Alias={{ __sshd_service_alias }}.service
+{% endif %}

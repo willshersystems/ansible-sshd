@@ -64,3 +64,25 @@ __sshd_verify_hostkeys_default: []
 # This switch can control if the validate step is supported by the target OS.
 # This is useful for very old OpenSSH or for tests that generate invalid configurations
 __sshd_supports_validate: true
+
+# The path to an environment file for the SSHD service
+__sshd_environment_file: ~
+
+# The variable name we are passing from the environment file as an argument to the sshd
+__sshd_environment_variable: $OPTIONS
+
+# The systemd targets that need to be up before starting the service.
+# The `network.target` is included by default in the main sshd.service (not the instantiated one)
+__sshd_service_after: ~
+
+# The systemd service name alias
+__sshd_service_alias: ~
+
+# The systemd service wants directive
+__sshd_service_wants: ~
+
+# The systemd service RestartSec directive
+__sshd_service_restart_timeout: ~
+
+# The systemd socket file does not accept the connection
+__sshd_socket_accept: true

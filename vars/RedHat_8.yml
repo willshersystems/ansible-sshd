@@ -33,3 +33,11 @@ __sshd_hostkey_group: ssh_keys
 __sshd_hostkey_mode: "0640"
 __sshd_hostkeys_nofips:
   - /etc/ssh/ssh_host_ed25519_key
+
+__sshd_environment_file:
+  - /etc/crypto-policies/back-ends/opensshserver.config
+  - /etc/sysconfig/sshd
+__sshd_environment_variable: $OPTIONS $CRYPTO_POLICY
+__sshd_service_after: sshd-keygen.target
+__sshd_service_wants: sshd-keygen.target ssh-host-keys-migration.service
+__sshd_service_restart_timeout: 42s

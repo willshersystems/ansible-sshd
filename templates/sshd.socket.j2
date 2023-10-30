@@ -1,12 +1,19 @@
 [Unit]
 Description=OpenBSD Secure Shell server socket
 Documentation=man:sshd(8) man:sshd_config(5)
-Before={{ sshd_service }}.service
+{% if __sshd_socket_accept %}
 Conflicts={{ sshd_service }}.service
+{% else %}
+Before=sockets.target
+{% endif %}
 
 [Socket]
 ListenStream=22
+{% if __sshd_socket_accept %}
 Accept=yes
+{% else %}
+Accept=no
+{% endif %}
 
 [Install]
 WantedBy=sockets.target

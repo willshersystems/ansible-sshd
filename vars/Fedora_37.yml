@@ -20,8 +20,15 @@ __sshd_verify_hostkeys_default:
   - /etc/ssh/ssh_host_ed25519_key
 __sshd_hostkeys_nofips:
   - /etc/ssh/ssh_host_ed25519_key
+
 __sshd_hostkey_group: ssh_keys
 __sshd_hostkey_mode: "0640"
 
 __sshd_drop_in_dir_mode: '0700'
 __sshd_main_config_file: /etc/ssh/sshd_config
+
+__sshd_environment_file: /etc/sysconfig/sshd
+__sshd_environment_variable: $OPTIONS
+__sshd_service_after: sshd-keygen.target
+__sshd_service_wants: sshd-keygen.target
+__sshd_service_restart_timeout: 42s

@@ -45,6 +45,8 @@
         - name: Read the instantiated service file
           ansible.builtin.slurp:
             src: /etc/systemd/system/ssh@.service
+          when:
+            - ansible_facts['distribution_major_version'] | int < 12
           register: service_inst
 
         - name: Read the main socket file
@@ -57,6 +59,12 @@
             that:
               - '"RuntimeDirectory=sshd" in service.content | b64decode'
               - '"RuntimeDirectoryMode=0755" in service.content | b64decode'
+
+        - name: Check the runtime directory is in instantiated service files
+          when:
+            - ansible_facts['distribution_major_version'] | int < 12
+          ansible.builtin.assert:
+            that:
               - '"RuntimeDirectory=sshd" in service_inst.content | b64decode'
               - '"RuntimeDirectoryMode=0755" in service_inst.content | b64decode'
 
