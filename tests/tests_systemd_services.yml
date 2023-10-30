@@ -1,0 +1,159 @@
+---
+- name: Test systemd services and sockets files can be installed
+  hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+      - /etc/systemd/system/sshd.service
+      - /etc/systemd/system/sshd@.service
+      - /etc/systemd/system/sshd.socket
+      - /etc/systemd/system/ssh.service
+      - /etc/systemd/system/ssh@.service
+      - /etc/systemd/system/ssh.socket
+    __sshd_test_service_name: sshd
+    __sshd_service_list: []
+    __sshd_service_inst_list: []
+    __sshd_socket_list: []
+  tasks:
+    - name: Fix the service name on Debian
+      ansible.builtin.set_fact:
+        __sshd_test_service_name: ssh
+      when:
+        - ansible_facts['os_family'] == "Debian"
+
+    - name: Backup configuration files
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+    - name: Configure sshd with default options and install service files
+      ansible.builtin.include_role:
+        name: ansible-sshd
+      vars:
+        sshd_install_service: true
+
+    - name: Read the service files and verify they are reasonable
+      tags: tests::verify
+      when:
+        - ansible_facts['service_mgr'] == 'systemd'
+      block:
+        - name: Read the distribution service file
+          ansible.builtin.slurp:
+            src: "/lib/systemd/system/{{ __sshd_test_service_name }}.service"
+          register: service_old
+
+        - name: Read the distribution socket file
+          ansible.builtin.slurp:
+            src: "/lib/systemd/system/{{ __sshd_test_service_name }}.socket"
+          register: socket_old
+
+        - name: Read the created service file
+          ansible.builtin.slurp:
+            src: "/etc/systemd/system/{{ __sshd_test_service_name }}.service"
+          register: service
+
+        - name: Read the created socket file
+          ansible.builtin.slurp:
+            src: "/etc/systemd/system/{{ __sshd_test_service_name }}.socket"
+          register: socket
+
+        - name: Decode service file
+          ansible.builtin.set_fact:
+            service_old: "{{ service_old.content | b64decode }}"
+
+        # quite basic, but it should do the job
+        #  * I do not think the ConditionPathExists is much useful so skipping on Ubuntu
+        #  * I do not think the Description needs to match verbatim either
+        - name: Construct the options list from old service file
+          ansible.builtin.set_fact:
+            __sshd_service_list: "{{ __sshd_service_list + [item] }}"
+          when:
+            - not item.startswith("#")
+            - not item.startswith("ConditionPathExists=")
+            - not item.startswith("Description=")
+          loop:
+            "{{ service_old.splitlines() }}"
+
+        - name: Test options in sshd.service are kept
+          ansible.builtin.assert:
+            that:
+              - "item in service.content | b64decode"
+          loop:
+            "{{ __sshd_service_list }}"
+
+        - name: Verify the ExecStart line contains the configuration file
+          ansible.builtin.assert:
+            that:
+              - "' -f /etc/ssh/' in service.content | b64decode"
+
+        - name: Decode socket file
+          ansible.builtin.set_fact:
+            socket_old: "{{ socket_old.content | b64decode }}"
+
+        # quite basic, but it should do the job
+        #  * I do not think the ConditionPathExists is much useful so skipping on Ubuntu
+        #  * Before= does not make any sense in combination with Conflicts=
+        #  * I do not think the Description needs to match verbatim either
+        - name: Construct the options list from old socket file
+          ansible.builtin.set_fact:
+            __sshd_socket_list: "{{ __sshd_socket_list + [item] }}"
+          when:
+            - not item.startswith("#")
+            - not item.startswith("ConditionPathExists=")
+            - not item.startswith("Before=")
+            - not item.startswith("Description=")
+          loop:
+            "{{ socket_old.splitlines() }}"
+
+        - name: Test options in sshd.socket are kept
+          ansible.builtin.assert:
+            that:
+              - "item in socket.content | b64decode"
+          loop:
+            "{{ __sshd_socket_list }}"
+
+    - name: Read the instantiated service file and verify they are reasonable
+      tags: tests::verify
+      when:
+        - ansible_facts['service_mgr'] == 'systemd'
+        - ansible_facts['distribution'] != "Debian" or ansible_facts['distribution_major_version'] | int < 12
+      block:
+        - name: Read the distribution instantiated service file
+          ansible.builtin.slurp:
+            src: "/lib/systemd/system/{{ __sshd_test_service_name }}@.service"
+          register: service_inst_old
+
+        - name: Read the created instantiated service file
+          ansible.builtin.slurp:
+            src: "/etc/systemd/system/{{ __sshd_test_service_name }}@.service"
+          register: service_inst
+
+        - name: Decode instantiated service file
+          ansible.builtin.set_fact:
+            service_inst_old: "{{ service_inst_old.content | b64decode }}"
+
+        # quite basic, but it should do the job
+        #  * I do not think the Description needs to match verbatim either
+        - name: Construct the options list from old instantiated service file
+          ansible.builtin.set_fact:
+            __sshd_service_inst_list: "{{ __sshd_service_inst_list + [item] }}"
+          when:
+            - not item.startswith("#")
+            - not item.startswith("Description=")
+          loop:
+            "{{ service_inst_old.splitlines() }}"
+
+        - name: Test options in sshd@.service are kept
+          ansible.builtin.assert:
+            that:
+              - "item in service_inst.content | b64decode"
+          loop:
+            "{{ __sshd_service_inst_list }}"
+
+        - name: Verify the ExecStart line contains the configuration file
+          ansible.builtin.assert:
+            that:
+              - "' -f /etc/ssh/' in service_inst.content | b64decode"
+
+
+    - name: "Restore configuration files"
+      ansible.builtin.include_tasks: tasks/restore.yml
