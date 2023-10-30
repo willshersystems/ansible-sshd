@@ -11,8 +11,10 @@ ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
 Restart=on-failure
 RestartPreventExitStatus=255
+{% if __sshd_runtime_directory is not none %}
 RuntimeDirectory={{ __sshd_runtime_directory }}
 RuntimeDirectoryMode={{ __sshd_runtime_directory_mode }}
+{% endif %}
 
 [Install]
 WantedBy=multi-user.target

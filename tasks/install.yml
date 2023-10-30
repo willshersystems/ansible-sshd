@@ -113,7 +113,7 @@
 
     - name: Make sure sshd runtime directory is present
       ansible.builtin.file:
-        path: "{{ __sshd_runtime_directory }}"
+        path: "/run/{{ __sshd_runtime_directory }}"
         state: directory
         owner: root
         group: root

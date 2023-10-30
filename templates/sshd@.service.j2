@@ -6,5 +6,7 @@ After=auditd.service
 [Service]
 ExecStart=-{{ sshd_binary }} -i -f {{ sshd_config_file }}
 StandardInput=socket
+{% if __sshd_runtime_directory is not none %}
 RuntimeDirectory={{ __sshd_runtime_directory }}
 RuntimeDirectoryMode={{ __sshd_runtime_directory_mode }}
+{% endif %}

@@ -1,0 +1,111 @@
+---
+- name: Test runtime directory
+  hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+      - /etc/systemd/system/sshd.service
+      - /etc/systemd/system/sshd@.service
+      - /etc/systemd/system/sshd.socket
+      - /etc/systemd/system/ssh.service
+      - /etc/systemd/system/ssh@.service
+      - /etc/systemd/system/ssh.socket
+  tasks:
+    - name: Backup configuration files
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+    - name: Configure sshd with default options and install service
+      ansible.builtin.include_role:
+        name: ansible-sshd
+      vars:
+        sshd_install_service: true
+
+    - name: Verify the runtime diretory is created on Debian
+      tags: tests::verify
+      when:
+        - ansible_facts['os_family'] == "Debian"
+      block:
+        - name: Stat the default runtime directory
+          ansible.builtin.stat:
+            path: /run/sshd
+          register: run_stat
+
+        - name: Check the runtime directory is present
+          ansible.builtin.assert:
+            that:
+              - run_stat.stat.isdir
+              - run_stat.stat.mode == "0755"
+
+        - name: Read the main service file
+          ansible.builtin.slurp:
+            src: /etc/systemd/system/ssh.service
+          register: service
+
+        - name: Read the instantiated service file
+          ansible.builtin.slurp:
+            src: /etc/systemd/system/ssh@.service
+          register: service_inst
+
+        - name: Read the main socket file
+          ansible.builtin.slurp:
+            src: /etc/systemd/system/ssh.socket
+          register: socket
+
+        - name: Check the runtime directory is in service files
+          ansible.builtin.assert:
+            that:
+              - '"RuntimeDirectory=sshd" in service.content | b64decode'
+              - '"RuntimeDirectoryMode=0755" in service.content | b64decode'
+              - '"RuntimeDirectory=sshd" in service_inst.content | b64decode'
+              - '"RuntimeDirectoryMode=0755" in service_inst.content | b64decode'
+
+    - name: Verify the RuntimeDirectory is not placed into services when empty
+      tags: tests::verify
+      when:
+        - ansible_facts['os_family'] != "Debian" and ansible_facts['service_mgr'] == 'systemd'
+      block:
+        - name: Read the main service file
+          ansible.builtin.slurp:
+            src: /etc/systemd/system/sshd.service
+          register: service
+
+        - name: Read the instantiated service file
+          ansible.builtin.slurp:
+            src: /etc/systemd/system/sshd@.service
+          register: service_inst
+
+        - name: Read the main socket file
+          ansible.builtin.slurp:
+            src: /etc/systemd/system/sshd.socket
+          register: socket
+
+        - name: Check the runtime directory is in service files
+          ansible.builtin.assert:
+            that:
+              - '"RuntimeDirectory=" not in service.content | b64decode'
+              - '"RuntimeDirectoryMode=" not in service.content | b64decode'
+              - '"RuntimeDirectory=" not in service_inst.content | b64decode'
+              - '"RuntimeDirectoryMode=" not in service_inst.content | b64decode'
+
+    - name: Verify the runtime diretory is not created in wrong places
+      tags: tests::verify
+      block:
+        - name: Stat the home directory for the runtime directory
+          ansible.builtin.stat:
+            path: ~/sshd
+          register: home_stat
+
+        - name: Stat the /run/~ for the runtime directory
+          ansible.builtin.stat:
+            path: /run/~
+          register: run_user_stat
+
+        - name: Check the wrong runtime directory is not present
+          ansible.builtin.assert:
+            that:
+              - not home_stat.stat.exists
+              - not run_user_stat.stat.exists
+
+    - name: "Restore configuration files"
+      ansible.builtin.include_tasks: tasks/restore.yml
