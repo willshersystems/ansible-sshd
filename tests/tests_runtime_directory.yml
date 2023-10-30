@@ -63,7 +63,7 @@
     - name: Verify the RuntimeDirectory is not placed into services when empty
       tags: tests::verify
       when:
-        - ansible_facts['os_family'] != "Debian"
+        - ansible_facts['os_family'] != "Debian" and ansible_facts['service_mgr'] == 'systemd'
       block:
         - name: Read the main service file
           ansible.builtin.slurp:
