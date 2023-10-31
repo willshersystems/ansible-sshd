@@ -17,7 +17,7 @@
         state: absent
       when:
         - (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] | int > 8) or
-          (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version'] | int >= 22)
+          (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version'] | int >= 20)
 
     - name: Create a new configuration in drop-in directory
       ansible.builtin.include_role:
@@ -29,12 +29,12 @@
           Ciphers: aes192-ctr
       when:
         - (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] | int > 8) or
-          (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version'] | int >= 22)
+          (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version'] | int >= 20)
 
     - name: Verify the options are correctly set
       when:
         - (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] | int > 8) or
-          (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version'] | int >= 22)
+          (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version'] | int >= 20)
       tags: tests::verify
       block:
         - name: Flush handlers

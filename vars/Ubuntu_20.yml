@@ -1,15 +1,25 @@
 ---
+__sshd_os_supported: true
+
 __sshd_service: ssh
 __sshd_packages:
   - openssh-server
   - openssh-sftp-server
+# Ubuntu 20.04 backported support for drop-in directory so we touch
+# just the included file with highest priority by default
+__sshd_config_file: /etc/ssh/sshd_config.d/00-ansible_system_role.conf
 __sshd_config_mode: "0644"
+# the defaults here represent the defaults shipped in the main sshd_config
 __sshd_defaults:
+  Include: /etc/ssh/sshd_config.d/*.conf
   ChallengeResponseAuthentication: false
   UsePAM: true
   X11Forwarding: true
   PrintMotd: false
   AcceptEnv: LANG LC_*
   Subsystem: "sftp  /usr/lib/openssh/sftp-server"
-__sshd_os_supported: true
+
 __sshd_runtime_directory: sshd
+
+__sshd_drop_in_dir_mode: '0755'
+__sshd_main_config_file: /etc/ssh/sshd_config

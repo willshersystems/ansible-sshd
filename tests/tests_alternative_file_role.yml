@@ -153,12 +153,19 @@
             - ansible_facts['os_family'] == 'Debian'
             - ansible_facts['distribution_major_version'] | int < 22
 
-        - name: Check Ubuntu 22 defaults are present in the first configuration file
+        - name: Check Ubuntu 20+ defaults are present in the first configuration file
           ansible.builtin.assert:
             that:
               - "'Include /etc/ssh/sshd_config.d/*.conf' in config3.content | b64decode"
-              - "'KbdInteractiveAuthentication no' in config.content | b64decode"
               - "'UsePAM yes' in config.content | b64decode"
+          when:
+            - ansible_facts['distribution'] == 'Ubuntu'
+            - ansible_facts['distribution_major_version'] | int >= 20
+
+        - name: Check Ubuntu 22+ defaults are present in the first configuration file
+          ansible.builtin.assert:
+            that:
+              - "'KbdInteractiveAuthentication no' in config.content | b64decode"
           when:
             - ansible_facts['distribution'] == 'Ubuntu'
             - ansible_facts['distribution_major_version'] | int >= 22
