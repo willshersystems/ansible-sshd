@@ -8,6 +8,8 @@
   ansible.builtin.package:
     name: "{{ sshd_packages }}"
     state: present
+    use: "{{ (__sshd_is_ostree | d(false)) |
+      ternary('ansible.posix.rhel_rpm_ostree', omit) }}"
 
 - name: Sysconfig configuration
   ansible.builtin.template:

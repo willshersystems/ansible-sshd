@@ -51,6 +51,7 @@ If you want to use advanced functionality of this role that can configure
 firewall and selinux for you, which is mostly useful when custom port is used,
 the role requires additional collections which are specified in
 `meta/collection-requirements.yml`. These are not automatically installed.
+If you want to manage `rpm-ostree` systems, additional collections are required.
 You must install them like this:
 
 ```bash
@@ -58,7 +59,8 @@ ansible-galaxy install -vv -r meta/collection-requirements.yml
 ```
 
 For more information, see `sshd_manage_firewall` and `sshd_manage_selinux`
-options below. These roles are supported only on Red Hat based Linux.
+options below, and the `rpm-ostree` section.  This additional functionality is
+supported only on Red Hat based Linux.
 
 ## Role variables
 
@@ -454,6 +456,10 @@ to the `options_body` and/or `options_match`.
 
 To regenerate the templates, from within the `meta/` directory run:
 `./make_option_lists`
+
+## rpm-ostree
+
+See README-ostree.md
 
 ## License
 
