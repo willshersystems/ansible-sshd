@@ -28,11 +28,13 @@
         state: absent
       when:
         - ansible_facts['os_family'] == "RedHat"
+        - ansible_facts['pkg_mgr'] | d() != "ansible.posix.rhel_rpm_ostree"
 
     - name: Reinstall manual pages for openssh-server on RHEL
       ansible.builtin.command: "{{ pkg_mgr | quote }} reinstall -y openssh-server"
       when:
         - ansible_facts['os_family'] == "RedHat"
+        - ansible_facts['pkg_mgr'] | d() != "ansible.posix.rhel_rpm_ostree"
       changed_when: true
 
     - name: Unminimize image on Debian. It looks like there is no simpler way to get manual pages
@@ -52,6 +54,15 @@
       when:
         - ansible_facts['distribution'] == "Alpine"
 
+    - name: Make sure manual pages and bash are installed on RedHat
+      ansible.builtin.package:
+        name:
+          - man-db
+          - bash
+        state: present
+      when:
+        - ansible_facts['os_family'] == "RedHat"
+
     - name: Make sure manual pages and bash are installed elsewhere
       ansible.builtin.package:
         name:
@@ -60,6 +71,7 @@
         state: present
       when:
         - ansible_facts['distribution'] != "Alpine"
+        - ansible_facts['os_family'] != "RedHat"
 
     - name: Get list of options from manual page
       ansible.builtin.shell: >-

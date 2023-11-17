@@ -1,0 +1,38 @@
+#!/bin/bash
+
+set -euo pipefail
+
+for file in vars/*.yml; do
+    if [ "$file" = vars/main.yml ]; then
+        continue
+    fi
+    # get platform and optional version
+    if [[ "$file" =~ vars/([^_]+)_([0-9]+).yml$ ]]; then
+        platform="${BASH_REMATCH[1]}"
+        version="${BASH_REMATCH[2]}"
+        packages_file=".ostree/packages-runtime-${platform}-${version}.txt"
+    elif [[ "$file" =~ vars/([^_.]+).yml$ ]]; then
+        platform="${BASH_REMATCH[1]}"
+        packages_file=".ostree/packages-runtime-${platform}.txt"
+    else
+        echo ERROR: cannot parse "$file"
+        exit 1
+    fi
+    # parse packages from file
+    printit=0
+    while read -r item pkg; do
+        if [[ "$item" =~ ^__sshd_packages: ]]; then
+            printit=1
+        elif [ "$printit" = 1 ]; then
+            if [ "$item" = "-" ] && [ -n "$pkg" ]; then
+                echo "$pkg"
+            else
+                break
+            fi
+        fi
+    done < "$file" | sort > "$packages_file"
+    # remove empty files
+    if [ ! -s "$packages_file" ]; then
+        rm -f "$packages_file"
+    fi
+done

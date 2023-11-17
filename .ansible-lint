@@ -4,3 +4,5 @@ exclude_paths:
   - .markdownlint.yaml
 skip_list:
   - var-naming[no-role-prefix]
+mock_modules:
+  - ansible.utils.update_fact

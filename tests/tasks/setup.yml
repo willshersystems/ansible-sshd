@@ -5,6 +5,35 @@
   when:
     - ansible_facts['distribution'] == 'Debian'
 
+- name: Ensure correct package manager for ostree systems
+  vars:
+    ostree_pkg_mgr: ansible.posix.rhel_rpm_ostree
+    ostree_booted_file: /run/ostree-booted
+  when: ansible_facts.pkg_mgr | d("") != ostree_pkg_mgr
+  block:
+    - name: Check if system is ostree
+      ansible.builtin.stat:
+        path: "{{ ostree_booted_file }}"
+      register: __ostree_booted_stat
+
+    - name: Set package manager to use for ostree
+      ansible.utils.update_fact:
+        updates:
+          - path: ansible_facts.pkg_mgr
+            value: "{{ ostree_pkg_mgr }}"
+      when: __ostree_booted_stat.stat.exists
+
+- name: Ensure test users exist on ostree systems
+  ansible.builtin.shell: |
+    if ! grep -q ^nobody /etc/passwd && grep -q ^nobody /usr/lib/passwd; then
+      grep ^nobody /usr/lib/passwd >> /etc/passwd
+    fi
+    if ! grep -q ^nobody /etc/group && grep -q ^nobody /usr/lib/group; then
+      grep ^nobody /usr/lib/group >> /etc/group
+    fi
+  when: ansible_facts['pkg_mgr'] | d() == "ansible.posix.rhel_rpm_ostree"
+  changed_when: true
+
 - name: Make sure openssh is installed before creating backup
   ansible.builtin.package:
     name: openssh-server
