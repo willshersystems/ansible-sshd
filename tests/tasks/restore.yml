@@ -6,7 +6,7 @@
       set -o pipefail
     fi
     if test -f {{ __sshd_test_backup.path }}/{{ item }}; then
-      cp {{ __sshd_test_backup.path }}/{{ item }} $(dirname {{ item }})
+      cp -a {{ __sshd_test_backup.path }}/{{ item }} $(dirname {{ item }})
     elif test -f {{ item }}; then
       rm {{ item }}
     fi
