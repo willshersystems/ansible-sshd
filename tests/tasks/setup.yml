@@ -5,10 +5,35 @@
   when:
     - ansible_facts['distribution'] == 'Debian'
 
+- name: Determine if system is ostree and set flag
+  when: not __sshd_is_ostree is defined
+  block:
+    - name: Check if system is ostree
+      ansible.builtin.stat:
+        path: /run/ostree-booted
+      register: __ostree_booted_stat
+
+    - name: Set flag to indicate system is ostree
+      ansible.builtin.set_fact:
+        __sshd_is_ostree: "{{ __ostree_booted_stat.stat.exists }}"
+
+- name: Ensure test users exist on ostree systems
+  ansible.builtin.shell: |
+    if ! grep -q ^nobody /etc/passwd && grep -q ^nobody /usr/lib/passwd; then
+      grep ^nobody /usr/lib/passwd >> /etc/passwd
+    fi
+    if ! grep -q ^nobody /etc/group && grep -q ^nobody /usr/lib/group; then
+      grep ^nobody /usr/lib/group >> /etc/group
+    fi
+  when: __sshd_is_ostree | d(false)
+  changed_when: true
+
 - name: Make sure openssh is installed before creating backup
   ansible.builtin.package:
     name: openssh-server
     state: present
+    use: "{{ (__sshd_is_ostree | d(false)) |
+      ternary('ansible.posix.rhel_rpm_ostree', omit) }}"
 
 - name: Make sure openssh has runtime directory on debian
   ansible.builtin.file:

@@ -5,6 +5,18 @@
   when: not ansible_facts.keys() | list |
     intersect(__sshd_required_facts) == __sshd_required_facts
 
+- name: Determine if system is ostree and set flag
+  when: not __sshd_is_ostree is defined
+  block:
+    - name: Check if system is ostree
+      ansible.builtin.stat:
+        path: /run/ostree-booted
+      register: __ostree_booted_stat
+
+    - name: Set flag to indicate system is ostree
+      ansible.builtin.set_fact:
+        __sshd_is_ostree: "{{ __ostree_booted_stat.stat.exists }}"
+
 - name: Set OS dependent variables
   ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:

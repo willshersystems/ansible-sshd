@@ -1,3 +1,4 @@
 ---
 collections:
+  - name: ansible.posix
   - name: fedora.linux_system_roles
