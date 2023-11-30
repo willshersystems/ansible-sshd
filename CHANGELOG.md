@@ -1,6 +1,21 @@
 Changelog
 =========
 
+[v0.23.0] - 2023-11-29
+--------------------
+
+### New Features
+
+- feat: support for ostree systems (#270)
+
+### Bug Fixes
+
+- fix: Avoid creation of runtime directories in home (#265)
+
+### Other Changes
+
+- tests: Ensure backup/restore preserves file attributes (#269)
+
 [v0.22.0] - 2023-10-18
 --------------------
 
