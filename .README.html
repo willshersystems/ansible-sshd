@@ -241,6 +241,7 @@ id="toc-additional-configuration">Additional configuration</a></li>
 Playbook</a></li>
 <li><a href="#template-generation" id="toc-template-generation">Template
 Generation</a></li>
+<li><a href="#rpm-ostree" id="toc-rpm-ostree">rpm-ostree</a></li>
 <li><a href="#license" id="toc-license">License</a></li>
 <li><a href="#authors" id="toc-authors">Authors</a></li>
 </ul>
@@ -317,11 +318,14 @@ suitable <a href="vars/">vars/</a> files is welcome.</p>
 configure firewall and selinux for you, which is mostly useful when
 custom port is used, the role requires additional collections which are
 specified in <code>meta/collection-requirements.yml</code>. These are
-not automatically installed. You must install them like this:</p>
+not automatically installed. If you want to manage
+<code>rpm-ostree</code> systems, additional collections are required.
+You must install them like this:</p>
 <div class="sourceCode" id="cb1"><pre
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ansible-galaxy</span> install <span class="at">-vv</span> <span class="at">-r</span> meta/collection-requirements.yml</span></code></pre></div>
 <p>For more information, see <code>sshd_manage_firewall</code> and
-<code>sshd_manage_selinux</code> options below. These roles are
+<code>sshd_manage_selinux</code> options below, and the
+<code>rpm-ostree</code> section. This additional functionality is
 supported only on Red Hat based Linux.</p>
 <h1 id="role-variables">Role variables</h1>
 <h2 id="primary-role-variables">Primary role variables</h2>
@@ -664,6 +668,8 @@ options should be added to the <code>options_body</code> and/or
 <code>options_match</code>.</p>
 <p>To regenerate the templates, from within the <code>meta/</code>
 directory run: <code>./make_option_lists</code></p>
+<h1 id="rpm-ostree">rpm-ostree</h1>
+<p>See README-ostree.md</p>
 <h1 id="license">License</h1>
 <p>LGPLv3</p>
 <h1 id="authors">Authors</h1>
