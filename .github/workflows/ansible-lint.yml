@@ -1,12 +1,38 @@
 name: Ansible Lint  # feel free to pick your own name
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
+
+env:
+  LSR_ROLE2COLL_NAMESPACE: willshersystems
+  LSR_ROLE2COLL_NAME: sshd
+
+permissions:
+  contents: read
 
 jobs:
   ansible-lint:
     runs-on: ubuntu-latest
     steps:
+      - name: Update pip, git
+        run: |
+          set -euxo pipefail
+          sudo apt update
+          sudo apt install -y git
       - name: checkout PR
         uses: actions/checkout@v4
-      - name: Lint Ansible playbook
-        uses: ansible/ansible-lint-action@main
+      - name: Install tox, tox-lsr
+        run: |
+          set -euxo pipefail
+          pip3 install "git+https://github.com/linux-system-roles/tox-lsr@3.2.1"
+      - name: Convert role to collection format
+        run: |
+          set -euxo pipefail
+          TOXENV=collection lsr_ci_runtox
+          coll_dir=".tox/ansible_collections/$LSR_ROLE2COLL_NAMESPACE/$LSR_ROLE2COLL_NAME"
+          # ansible-lint action requires a .git directory???
+          # https://github.com/ansible/ansible-lint/blob/main/action.yml#L45
+          mkdir -p "$coll_dir/.git"
+      - name: Run ansible-lint
+        uses: ansible/ansible-lint@v6
+        with:
+          working_directory: .tox/ansible_collections/${{ env.LSR_ROLE2COLL_NAMESPACE }}/${{ env.LSR_ROLE2COLL_NAME }}

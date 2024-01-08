@@ -132,10 +132,8 @@
 
     - name: Verify the options are in the file
       ansible.builtin.assert:
-        that:
-          - "'{{ item }} yes' in config.content | b64decode "
-      loop:
-        "{{ sshd_options.stdout_lines }}"
+        that: item ~ " yes" in config.content | b64decode
+      loop: "{{ sshd_options.stdout_lines }}"
       when: not sshd_skip_test
 
     - name: Check generated files for ansible_managed, fingerprint
