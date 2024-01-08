@@ -1,2 +1,3 @@
 .vagrant
 tests/test.retry
+.tox
