@@ -23,7 +23,7 @@
       when:
         - ansible_facts['os_family'] == "RedHat"
         - ansible_facts['distribution'] != 'Fedora'
-        - ansible_facts['distribution_major_version']|int < 9
+        - ansible_facts['distribution_major_version'] | int < 9
       block:
         - name: Flush handlers
           ansible.builtin.meta: flush_handlers
