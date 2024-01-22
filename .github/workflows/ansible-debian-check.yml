@@ -15,6 +15,7 @@ jobs:
           group: local
           hosts: localhost
           targets: "tests/tests_*.yml"
+          requirements: tests/requirements.yml
 
   debian-bullseye:
     runs-on: ubuntu-latest
@@ -28,6 +29,7 @@ jobs:
           group: local
           hosts: localhost
           targets: "tests/tests_*.yml"
+          requirements: tests/requirements.yml
 
   debian-buster:
     runs-on: ubuntu-latest
@@ -41,3 +43,4 @@ jobs:
           group: local
           hosts: localhost
           targets: "tests/tests_*.yml"
+          requirements: tests/requirements.yml
