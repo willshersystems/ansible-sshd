@@ -104,7 +104,7 @@
               - "'AuthorizedKeysFile .ssh/authorized_keys' in config.content | b64decode"
           when:
             - ansible_facts['os_family'] == 'RedHat'
-            - ansible_facts['distribution_major_version']|int > 8
+            - ansible_facts['distribution_major_version'] | int > 8
 
         - name: Check RHEL7 and RHEL8 defaults are present in the first configuration file
           ansible.builtin.assert:
@@ -114,8 +114,8 @@
               - "'UsePAM yes' in config.content | b64decode"
           when:
             - ansible_facts['os_family'] == 'RedHat'
-            - ansible_facts['distribution_major_version']|int > 6
-            - ansible_facts['distribution_major_version']|int < 9
+            - ansible_facts['distribution_major_version'] | int > 6
+            - ansible_facts['distribution_major_version'] | int < 9
 
         - name: Check RHEL6 defaults are present in the first configuration file
           ansible.builtin.assert:
@@ -133,17 +133,24 @@
               - "'UsePAM yes' in config.content | b64decode"
           when:
             - ansible_facts['os_family'] == 'Debian'
-            - ansible_facts['distribution_major_version']|int < 22
+            - ansible_facts['distribution_major_version'] | int < 22
 
-        - name: Check Ubuntu 22 defaults are present in the first configuration file
+        - name: Check Ubuntu 20+ defaults are present in the first configuration file
           ansible.builtin.assert:
             that:
               - "'Include /etc/ssh/sshd_config.d/*.conf' in config3.content | b64decode"
-              - "'KbdInteractiveAuthentication no' in config.content | b64decode"
               - "'UsePAM yes' in config.content | b64decode"
           when:
             - ansible_facts['distribution'] == 'Ubuntu'
-            - ansible_facts['distribution_major_version']|int >= 22
+            - ansible_facts['distribution_major_version'] | int >= 20
+
+        - name: Check Ubuntu 22+ defaults are present in the first configuration file
+          ansible.builtin.assert:
+            that:
+              - "'KbdInteractiveAuthentication no' in config.content | b64decode"
+          when:
+            - ansible_facts['distribution'] == 'Ubuntu'
+            - ansible_facts['distribution_major_version'] | int >= 22
 
         - name: Check content of second configuration file
           ansible.builtin.assert:
@@ -172,7 +179,7 @@
               - "'Subsystem sftp /usr/libexec/openssh/sftp-server' in config3.content | b64decode"
           when:
             - ansible_facts['os_family'] == 'RedHat'
-            - ansible_facts['distribution_major_version']|int > 8
+            - ansible_facts['distribution_major_version'] | int > 8
             - ansible_facts['distribution'] != 'Fedora'
 
         - name: Check the main configuration file contains some default values for Fedora
@@ -183,7 +190,7 @@
               - "'Subsystem sftp /usr/libexec/sftp-server' in config3.content | b64decode"
           when:
             - ansible_facts['os_family'] == 'RedHat'
-            - ansible_facts['distribution_major_version']|int > 8
+            - ansible_facts['distribution_major_version'] | int > 8
             - ansible_facts['distribution'] == 'Fedora'
 
         - name: Check the generated config has requested properties

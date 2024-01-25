@@ -16,6 +16,7 @@ jobs:
           group: local
           hosts: localhost
           targets: "tests/tests_*.yml"
+          requirements: tests/requirements.yml
 
   ubuntu-20:
     runs-on: ubuntu-latest
@@ -30,3 +31,4 @@ jobs:
           group: local
           hosts: localhost
           targets: "tests/tests_*.yml"
+          requirements: tests/requirements.yml

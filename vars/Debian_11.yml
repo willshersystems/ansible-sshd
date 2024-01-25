@@ -14,3 +14,8 @@ __sshd_defaults:
   Subsystem: "sftp {{ __sshd_sftp_server }}"
 __sshd_os_supported: true
 __sshd_runtime_directory: sshd
+
+__sshd_environment_file: /etc/default/ssh
+__sshd_environment_variable: $SSHD_OPTS
+__sshd_service_after: auditd.service
+__sshd_service_alias: sshd

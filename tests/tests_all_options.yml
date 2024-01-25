@@ -90,10 +90,10 @@
       ansible.builtin.shell: >-
         set -o pipefail && man sshd_config \
           | sed 's/\x08.//g' \
-          | grep -o '^     [A-Z][A-Za-z0-9]*\(.\|  \)' \
+          | grep -o '^\(     \|       \)[A-Z][A-Za-z0-9]*\(.\|  \)' \
           | grep -v "[A-Za-z0-9] $" | grep -v "[^A-Za-z0-9 ]$" \
           | awk '{ print $1 }' \
-          | grep -v '^$' | grep -v "^Match$"
+          | grep -v '^$' | grep -v "^\(Match\|OpenSSH\|The\|Arguments\|Theo\)$"
       args:
         executable: /bin/bash
       register: sshd_options
@@ -102,7 +102,7 @@
 
     - name: Print all the possible options
       ansible.builtin.debug:
-        var: ssh_options.stdout_lines
+        var: sshd_options.stdout_lines
 
     - name: Construct the configuration list
       ansible.builtin.set_fact:

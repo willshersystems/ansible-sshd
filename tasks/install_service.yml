@@ -10,6 +10,7 @@
         group: root
         mode: "0644"
       notify: reload_sshd
+
     - name: Install instanced service unit file
       ansible.builtin.template:
         src: "{{ sshd_service_template_at_service }}"
@@ -18,6 +19,9 @@
         group: root
         mode: "0644"
       notify: reload_sshd
+      when:
+        - __sshd_socket_accept | bool
+
     - name: Install socket unit file
       ansible.builtin.template:
         src: "{{ sshd_service_template_socket }}"
@@ -34,7 +38,7 @@
     state: started
   when:
     - sshd_manage_service|bool
-    - ansible_facts['virtualization_type']|default(None) not in __sshd_skip_virt_env
+    - ansible_facts['virtualization_type'] | default(None) not in __sshd_skip_virt_env
     - ansible_connection != 'chroot'
 
 # Due to ansible bug 21026, cannot use service module on RHEL 7
@@ -43,5 +47,5 @@
   when:
     - ansible_connection == 'chroot'
     - ansible_facts['os_family'] == 'RedHat'
-    - ansible_facts['distribution_major_version']|int >= 7
+    - ansible_facts['distribution_major_version'] | int >= 7
   changed_when: true

@@ -57,5 +57,5 @@
     main_sshd_config_name: 00-ansible_system_role.conf
     main_sshd_config_path: /etc/ssh/sshd_config.d/
   when:
-    - (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version']|int > 8) or
-      (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int >= 22)
+    - (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] | int > 8) or
+      (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version'] | int >= 20)

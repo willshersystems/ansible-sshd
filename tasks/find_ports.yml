@@ -23,4 +23,4 @@
   when:
     - sshd_manage_firewall | bool or sshd_manage_selinux | bool
     - ansible_facts['os_family'] == 'RedHat'
-    - ansible_facts['virtualization_type']|default(None) not in __sshd_skip_virt_env
+    - ansible_facts['virtualization_type'] | default(None) not in __sshd_skip_virt_env

@@ -38,6 +38,6 @@
   changed_when: false
   when:
     - __sshd_test_backup is defined
-    - ansible_facts['virtualization_type']|default(None) not in __sshd_skip_virt_env
+    - ansible_facts['virtualization_type'] | default(None) not in __sshd_skip_virt_env
     - ansible_connection != 'chroot'
     - ansible_facts['os_family'] != 'AIX'
