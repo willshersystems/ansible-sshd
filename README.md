@@ -233,8 +233,8 @@ non-conflicting options from different roles invocations.
 
 #### sshd_config_owner, sshd_config_group, sshd_config_mode
 
-Use these variables to set the ownership and permissions for the openssh config
-file that this role produces.
+Use these variables to set the ownership and permissions for the openssh
+configuration file that this role produces.
 
 #### sshd_verify_hostkeys
 
