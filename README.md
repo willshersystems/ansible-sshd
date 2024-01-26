@@ -424,7 +424,7 @@ option:
   tasks:
   - name: Configure sshd to accept some useful environment variables
     include_role:
-      name: ansible-sshd
+      name: willshersystems.sshd
     vars:
       sshd_config_namespace: accept-env
       sshd:
