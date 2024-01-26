@@ -1,6 +1,17 @@
 Changelog
 =========
 
+[v0.23.1] - 2024-01-25
+--------------------
+
+### Bug Fixes
+
+- fix: Review and update service units and socket unit to include distribution defaults
+
+### Other Changes
+
+- ci: fix ansible-lint 2.16 issues; use ansible-lint 2.16
+
 [v0.23.0] - 2023-11-29
 --------------------
 
