@@ -21,7 +21,7 @@
       vars:
         sshd_install_service: true
 
-    - name: Verify the runtime diretory is created on Debian
+    - name: Verify the runtime directory is created on Debian
       tags: tests::verify
       when:
         - ansible_facts['os_family'] == "Debian"
@@ -96,7 +96,7 @@
               - '"RuntimeDirectory=" not in service_inst.content | b64decode'
               - '"RuntimeDirectoryMode=" not in service_inst.content | b64decode'
 
-    - name: Verify the runtime diretory is not created in wrong places
+    - name: Verify the runtime directory is not created in wrong places
       tags: tests::verify
       block:
         - name: Stat the home directory for the runtime directory
