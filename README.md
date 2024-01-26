@@ -113,7 +113,7 @@ the `sshd_service` variable.
 
 #### sshd_manage_firewall
 
-If set to *true*, the the SSH port(s) will be opened in firewall. Note, this
+If set to *true*, the SSH port(s) will be opened in firewall. Note, this
 works only on Red Hat based OS. The default is *false*.
 
 NOTE: `sshd_manage_firewall` is limited to *adding* ports. It cannot be used
@@ -122,7 +122,7 @@ firewall system role directly.
 
 #### sshd_manage_selinux
 
-If set to *true*, the the selinux will be configured to allow sshd listening
+If set to *true*, the selinux will be configured to allow sshd listening
 on the given SSH port(s). Note, this works only on Red Hat based OS.
 The default is *false*.
 
