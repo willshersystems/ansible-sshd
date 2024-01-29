@@ -47,7 +47,7 @@ You must use automation to create releases consistently. The process of creating
     This script creates updates CHANGELOG.md with a summary of pull requests added since the previous release and with automatically identified new version based on the PR types.
     It also optionally updates .README.html with changes to README.md made since the previous release.
 
-    To learn more about available script options, see [role-make-version-changelog.sh documantation](https://github.com/linux-system-roles/auto-maintenance#role-make-version-changelogsh).
+    To learn more about available script options, see [role-make-version-changelog.sh documentation](https://github.com/linux-system-roles/auto-maintenance#role-make-version-changelogsh).
 
 4. Verify that the script added a commit for new release by running `git log`.
 
