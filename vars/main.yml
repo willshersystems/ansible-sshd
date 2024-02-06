@@ -67,6 +67,7 @@ __sshd_supports_validate: true
 
 # The path to an environment file for the SSHD service
 __sshd_environment_file: ~
+__sshd_environment_file_mandatory: false
 
 # The variable name we are passing from the environment file as an argument to the sshd
 __sshd_environment_variable: $OPTIONS
