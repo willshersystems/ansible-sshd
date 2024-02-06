@@ -13,7 +13,7 @@ Documentation=man:sshd(8) man:sshd_config(5)
 [Service]
 Type=notify
 {% if __sshd_environment_file is string %}
-EnvironmentFile=-{{ __sshd_environment_file }}
+EnvironmentFile={{ __sshd_environment_file_mandatory | ternary('', '-')}}{{ __sshd_environment_file }}
 {% elif __sshd_environment_file is iterable %}
 {%   for file in __sshd_environment_file %}
 EnvironmentFile=-{{ file }}

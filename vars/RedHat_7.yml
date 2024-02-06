@@ -33,6 +33,7 @@ __sshd_hostkeys_nofips:
   - /etc/ssh/ssh_host_ed25519_key
 
 __sshd_environment_file: /etc/sysconfig/sshd
+__sshd_environment_file_mandatory: true
 __sshd_environment_variable: $OPTIONS
 __sshd_service_after: sshd-keygen.service
 __sshd_service_wants: sshd-keygen.service
