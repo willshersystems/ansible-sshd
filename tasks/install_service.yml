@@ -1,6 +1,9 @@
 ---
 - name: Install systemd service files
-  when: sshd_install_service | bool and ansible_facts['service_mgr'] == 'systemd'
+  when:
+    - sshd_install_service | bool
+    - ansible_facts['service_mgr'] == 'systemd' or
+      (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '7')
   block:
     - name: Install service unit file
       ansible.builtin.template:
