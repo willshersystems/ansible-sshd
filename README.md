@@ -205,7 +205,7 @@ This is useful mostly when generating configuration snippets to Include from
 drop-in directory (default in Fedora and RHEL9).
 
 When this path points to a drop-in directory (like
-`/etc/ssh/sshd_confg.d/00-custom.conf`), the main configuration file (defined
+`/etc/ssh/sshd_config.d/00-custom.conf`), the main configuration file (defined
 with the variable `sshd_main_config_file`) is checked to contain a proper
 `Include` directive.
 
