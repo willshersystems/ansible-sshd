@@ -1,6 +1,19 @@
 Changelog
 =========
 
+[v0.23.2] - 2024-02-19
+--------------------
+
+### Bug Fixes
+
+- fix: Fix service files generated on EL7 and workaround the tests for containers (#276)
+
+### Other Changes
+
+- docs: Fix spelling issues + fix reported issues (#274)
+- build(deps): bump actions/checkout from 3 to 4 (#275)
+- README.md typo in config word (#277)
+
 [v0.23.1] - 2024-01-25
 --------------------
 

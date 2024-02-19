@@ -349,7 +349,7 @@ inside a docker container (it is assumed ansible is used during build
 phase) or AIX (Ansible <code>service</code> module does not currently
 support <code>enabled</code> for AIX)</p>
 <h3 id="sshd_allow_reload">sshd_allow_reload</h3>
-<p>If set to <em>false</em>, a reload of sshd wont happen on change.
+<p>If set to <em>false</em>, a reload of sshd won't happen on change.
 This can help with troubleshooting. You'll need to manually reload sshd
 if you want to apply the changed configuration. Defaults to the same
 value as <code>sshd_manage_service</code>. (Except on AIX, where
@@ -372,17 +372,17 @@ variables</p>
 the above default templates, the name of the installed ssh service will
 be provided by the <code>sshd_service</code> variable.</p>
 <h3 id="sshd_manage_firewall">sshd_manage_firewall</h3>
-<p>If set to <em>true</em>, the the SSH port(s) will be opened in
-firewall. Note, this works only on Red Hat based OS. The default is
+<p>If set to <em>true</em>, the SSH port(s) will be opened in firewall.
+Note, this works only on Red Hat based OS. The default is
 <em>false</em>.</p>
 <p>NOTE: <code>sshd_manage_firewall</code> is limited to <em>adding</em>
 ports. It cannot be used for <em>removing</em> ports. If you want to
 remove ports, you will need to use the firewall system role
 directly.</p>
 <h3 id="sshd_manage_selinux">sshd_manage_selinux</h3>
-<p>If set to <em>true</em>, the the selinux will be configured to allow
-sshd listening on the given SSH port(s). Note, this works only on Red
-Hat based OS. The default is <em>false</em>.</p>
+<p>If set to <em>true</em>, the selinux will be configured to allow sshd
+listening on the given SSH port(s). Note, this works only on Red Hat
+based OS. The default is <em>false</em>.</p>
 <p>NOTE: <code>sshd_manage_selinux</code> is limited to <em>adding</em>
 policy. It cannot be used for <em>removing</em> policy. If you want to
 remove ports, you will need to use the selinux system role directly.</p>
@@ -441,7 +441,7 @@ not have hardware random number generator.</p>
 be saved. This is useful mostly when generating configuration snippets
 to Include from drop-in directory (default in Fedora and RHEL9).</p>
 <p>When this path points to a drop-in directory (like
-<code>/etc/ssh/sshd_confg.d/00-custom.conf</code>), the main
+<code>/etc/ssh/sshd_config.d/00-custom.conf</code>), the main
 configuration file (defined with the variable
 <code>sshd_main_config_file</code>) is checked to contain a proper
 <code>Include</code> directive.</p>
@@ -468,7 +468,7 @@ from different roles invocations.</p>
 id="sshd_config_owner-sshd_config_group-sshd_config_mode">sshd_config_owner,
 sshd_config_group, sshd_config_mode</h3>
 <p>Use these variables to set the ownership and permissions for the
-openssh config file that this role produces.</p>
+openssh configuration file that this role produces.</p>
 <h3 id="sshd_verify_hostkeys">sshd_verify_hostkeys</h3>
 <p>By default (<em>auto</em>), this list contains all the host keys that
 are present in the produced configuration file. If there are none, the
@@ -642,7 +642,7 @@ class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb11-1"><a href=
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">tasks</span><span class="kw">:</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Configure sshd to accept some useful environment variables</span></span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">include_role</span><span class="kw">:</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">name</span><span class="kw">:</span><span class="at"> ansible-sshd</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">name</span><span class="kw">:</span><span class="at"> willshersystems.sshd</span></span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">vars</span><span class="kw">:</span></span>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">sshd_config_namespace</span><span class="kw">:</span><span class="at"> accept-env</span></span>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">sshd</span><span class="kw">:</span></span>
@@ -663,7 +663,7 @@ href="examples/"><code>examples/</code></a> directory.</p>
 <p>The <a
 href="templates/sshd_config.j2"><code>sshd_config.j2</code></a> and <a
 href="templates/sshd_config_snippet.j2"><code>sshd_config_snippet.j2</code></a>
-templates are programatically generated by the scripts in meta. New
+templates are programmatically generated by the scripts in meta. New
 options should be added to the <code>options_body</code> and/or
 <code>options_match</code>.</p>
 <p>To regenerate the templates, from within the <code>meta/</code>
