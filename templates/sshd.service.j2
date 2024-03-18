@@ -20,7 +20,8 @@ EnvironmentFile=-{{ file }}
 {%   endfor %}
 {% endif %}
 ExecStartPre={{ sshd_binary }} -t
-ExecStart={{ sshd_binary }} -D {{ __sshd_environment_variable }} -f {% if sshd_main_config_file is not none %}
+ExecStart={{ sshd_binary }} -D {{ __sshd_environment_variable }} -f
+{%- if sshd_main_config_file is not none and sshd_config_file | dirname == sshd_main_config_file ~ '.d' %}
 {{- sshd_main_config_file }}
 {% else %}
 {{- sshd_config_file }}

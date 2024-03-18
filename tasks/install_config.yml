@@ -6,7 +6,7 @@
     mode: "{{ sshd_drop_in_dir_mode }}"
   when:
     - sshd_main_config_file is not none
-    - sshd_config_file | dirname != sshd_main_config_file | dirname
+    - sshd_config_file | dirname == sshd_main_config_file ~ '.d'
 
 - name: Create the complete configuration file
   ansible.builtin.template:
@@ -46,4 +46,4 @@
   notify: reload_sshd
   when:
     - sshd_main_config_file is not none
-    - sshd_config_file | dirname != sshd_main_config_file | dirname
+    - sshd_config_file | dirname == sshd_main_config_file ~ '.d'
