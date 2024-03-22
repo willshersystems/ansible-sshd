@@ -209,6 +209,19 @@ When this path points to a drop-in directory (like
 with the variable `sshd_main_config_file`) is checked to contain a proper
 `Include` directive.
 
+#### sshd_main_config_file
+
+When the system is using drop-in directory, this option can be used to set
+a path to the main configuration file and let you configure only the drop-in
+configuration file using `sshd_config_file`. This is useful in cases when
+you need to configure second independent sshd service with different
+configuration file. This is also the file used in the service file.
+
+On systems without drop-in directory, it defaults to `None`. Otherwise it
+defaults to `/etc/ssh/sshd_config`. When the `sshd_config_file` is set
+outside of the drop in directory (its parent directory is not
+`sshd_main_config_file` ~ '.d'), this variable is ignored.
+
 #### sshd_config_namespace
 
 By default (*null*), the role defines whole content of the configuration file

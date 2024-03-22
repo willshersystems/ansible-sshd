@@ -1,0 +1,122 @@
+---
+- name: Test second sshd service with drop-in directory
+  hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+      - /etc/ssh2/sshd_config
+      - /etc/sshd/sshd_config.d/04-ansible.conf
+      - /etc/systemd/system/sshd2.service
+      - /etc/systemd/system/sshd2@.service
+      - /etc/systemd/system/sshd2.socket
+  tasks:
+    - name: "Backup configuration files"
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+    - name: Run the test
+      when:
+        - (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] | int > 8) or
+          (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version'] | int >= 20)
+      block:
+        - name: Create ssh2 directory
+          ansible.builtin.file:
+            path: /etc/ssh2
+            state: directory
+            mode: '0755'
+
+        - name: Create sshd_config file
+          ansible.builtin.file:
+            path: /etc/ssh2/sshd_config
+            state: touch
+            mode: '0600'
+
+        - name: Configure alternative sshd_config file
+          ansible.builtin.include_role:
+            name: ansible-sshd
+          vars:
+            sshd_service: sshd2
+            sshd_main_config_file: /etc/ssh2/sshd_config
+            sshd_config_file: /etc/ssh2/sshd_config.d/04-ansible.conf
+            sshd_install_service: true
+            sshd_manage_selinux: true
+            sshd:
+              Port: 2222
+              ForceCommand: echo "CONNECTED2"
+
+        - name: Verify the config options are correctly set
+          tags: tests::verify
+          block:
+            - name: Flush handlers
+              ansible.builtin.meta: flush_handlers
+
+            - name: Stat the parent directory
+              ansible.builtin.stat:
+                path: /etc/ssh2
+              register: parent_stat
+
+            - name: Print the main configuration file
+              ansible.builtin.slurp:
+                src: /etc/ssh2/sshd_config
+              register: config
+
+            - name: Print the drop-in configuration file
+              ansible.builtin.slurp:
+                src: /etc/ssh2/sshd_config.d/04-ansible.conf
+              register: config_drop_in
+
+            - name: Check content of the created configuration file
+              ansible.builtin.assert:
+                that:
+                  - "'Port 2222' in config_drop_in.content | b64decode"
+                  - "'ForceCommand echo' in config_drop_in.content | b64decode"
+
+            - name: Check Include is present in the main configuration file
+              ansible.builtin.assert:
+                that:
+                  - "'Include' in config.content | b64decode"
+
+            - name: Check the parent directory has not changed to drop-in directory permissions
+              ansible.builtin.assert:
+                that:
+                  - parent_stat.stat.exists
+                  - parent_stat.stat.mode == '0755'
+
+        - name: Verify the service files are correct
+          tags: tests::verify
+          block:
+            - name: Read the created service file
+              ansible.builtin.slurp:
+                src: "/etc/systemd/system/sshd2.service"
+              register: service
+
+            - name: Read the created socket file
+              ansible.builtin.slurp:
+                src: "/etc/systemd/system/sshd2.socket"
+              register: socket
+
+            - name: Check content of the created service file
+              ansible.builtin.assert:
+                that:
+                  - "' -f/etc/ssh/sshd_config' not in service.content | b64decode"
+                  - "' -f/etc/ssh2/sshd_config' in service.content | b64decode"
+
+        - name: Verify the instantiated service file is correct
+          tags: tests::verify
+          when:
+            - ansible_facts['service_mgr'] == 'systemd'
+            - ansible_facts['distribution'] != "Debian" or ansible_facts['distribution_major_version'] | int < 12
+          block:
+            - name: Read the created instantiated service file
+              ansible.builtin.slurp:
+                src: "/etc/systemd/system/sshd2@.service"
+              register: service_inst
+
+            - name: Check content of the created service file
+              ansible.builtin.assert:
+                that:
+                  - "' -f/etc/ssh/sshd_config' not in service_inst.content | b64decode"
+                  - "' -f/etc/ssh2/sshd_config' in service_inst.content | b64decode"
+
+    - name: "Restore configuration files"
+      ansible.builtin.include_tasks: tasks/restore.yml

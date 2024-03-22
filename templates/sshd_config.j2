@@ -26,7 +26,7 @@
 {%   elif sshd[key] is defined %}
 {%     set value = sshd[key] %}
 {%   elif sshd_main_config_file is not none
-       and sshd_config_file | dirname != sshd_main_config_file | dirname %}
+        and sshd_config_file | dirname == sshd_main_config_file ~ '.d' %}
 {#     Do not use the defaults from main file to avoid recursion #}
 {%   elif __sshd_defaults[key] is defined and not sshd_skip_defaults %}
 {%     if key == 'HostKey' and __sshd_fips_mode %}
