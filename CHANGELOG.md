@@ -1,6 +1,13 @@
 Changelog
 =========
 
+[v0.23.3] - 2024-04-03
+--------------------
+
+### Other Changes
+
+- build(deps): bump ansible/ansible-lint from 6 to 24 (#279)
+
 [v0.23.2] - 2024-02-19
 --------------------
 
