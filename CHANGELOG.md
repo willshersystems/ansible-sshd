@@ -1,6 +1,13 @@
 Changelog
 =========
 
+[v0.23.4] - 2024-04-05
+--------------------
+
+### Bug Fixes
+
+- fix: Document and streamline the sshd_main_config_file (#281)
+
 [v0.23.3] - 2024-04-03
 --------------------
 
@@ -65,7 +72,6 @@ Changelog
   
   Issue Tracker Tickets (Jira or BZ if any):
   #259 #260 #261
-
 
 [v0.21.0] - 2023-09-12
 --------------------
@@ -221,7 +227,6 @@ Changelog
 - chore: moved debian 7 (wheezy) config to explicit file (#239)
 
   This removes the `defaults/Debian.yml` file and moves it to the `defaults/Debian_7.yml` file. This prohibits rolling out ancient config on new Debian-Systems which aren't supported by this role.
-
 
 [v0.19.0] - 2023-04-27
 --------------------
