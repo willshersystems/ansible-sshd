@@ -173,6 +173,8 @@ id="toc-sshd_sysconfig_override_crypto_policy">sshd_sysconfig_override_crypto_po
 id="toc-sshd_sysconfig_use_strong_rng">sshd_sysconfig_use_strong_rng</a></li>
 <li><a href="#sshd_config_file"
 id="toc-sshd_config_file">sshd_config_file</a></li>
+<li><a href="#sshd_main_config_file"
+id="toc-sshd_main_config_file">sshd_main_config_file</a></li>
 <li><a href="#sshd_config_namespace"
 id="toc-sshd_config_namespace">sshd_config_namespace</a></li>
 <li><a href="#sshd_config_owner-sshd_config_group-sshd_config_mode"
@@ -445,6 +447,19 @@ to Include from drop-in directory (default in Fedora and RHEL9).</p>
 configuration file (defined with the variable
 <code>sshd_main_config_file</code>) is checked to contain a proper
 <code>Include</code> directive.</p>
+<h3 id="sshd_main_config_file">sshd_main_config_file</h3>
+<p>When the system is using drop-in directory, this option can be used
+to set a path to the main configuration file and let you configure only
+the drop-in configuration file using <code>sshd_config_file</code>. This
+is useful in cases when you need to configure second independent sshd
+service with different configuration file. This is also the file used in
+the service file.</p>
+<p>On systems without drop-in directory, it defaults to
+<code>None</code>. Otherwise it defaults to
+<code>/etc/ssh/sshd_config</code>. When the
+<code>sshd_config_file</code> is set outside of the drop in directory
+(its parent directory is not <code>sshd_main_config_file</code> ~ '.d'),
+this variable is ignored.</p>
 <h3 id="sshd_config_namespace">sshd_config_namespace</h3>
 <p>By default (<em>null</em>), the role defines whole content of the
 configuration file including system defaults. You can use this variable
