@@ -5,8 +5,8 @@
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
       - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
-      - /etc/ssh2/sshd_config
-      - /etc/sshd/sshd_config.d/04-ansible.conf
+    __sshd_test_remove_files:
+      - /etc/ssh2
       - /etc/systemd/system/sshd2.service
       - /etc/systemd/system/sshd2@.service
       - /etc/systemd/system/sshd2.socket
@@ -117,6 +117,26 @@
                 that:
                   - "' -f/etc/ssh/sshd_config' not in service_inst.content | b64decode"
                   - "' -f/etc/ssh2/sshd_config' in service_inst.content | b64decode"
+      always:
+        - name: Stop second service
+          ansible.builtin.service:
+            name: sshd2
+            state: stopped
+            enabled: false
+          ignore_errors: true  # noqa ignore-errors
 
-    - name: "Restore configuration files"
-      ansible.builtin.include_tasks: tasks/restore.yml
+        - name: Remove second service
+          ansible.builtin.file:
+            path: "{{ item }}"
+            state: absent
+          loop: "{{ __sshd_test_remove_files }}"
+
+        - name: Refresh systemd
+          # noqa command-instead-of-module
+          ansible.builtin.shell: systemctl reset-failed; systemctl daemon-reload
+          when: ansible_facts["service_mgr"] == "systemd"
+          changed_when: true
+          ignore_errors: true  # noqa ignore-errors
+
+        - name: "Restore configuration files"
+          ansible.builtin.include_tasks: tasks/restore.yml
