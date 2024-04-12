@@ -1,6 +1,13 @@
 Changelog
 =========
 
+[v0.23.5] - 2024-04-09
+--------------------
+
+### Other Changes
+
+- test: ensure that sshd2 is completely stopped and removed
+
 [v0.23.4] - 2024-04-05
 --------------------
 
