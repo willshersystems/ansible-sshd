@@ -24,7 +24,7 @@
         {{ sshd_binary }} -t -f %s
       {% endif %}
     backup: "{{ sshd_backup }}"
-  notify: reload_sshd
+  notify: Reload_sshd
 
 - name: Make sure the include path is present in the main sshd_config
   ansible.builtin.lineinfile:
@@ -43,7 +43,7 @@
         {{ sshd_binary }} -t -f %s
       {% endif %}
     backup: "{{ sshd_backup }}"
-  notify: reload_sshd
+  notify: Reload_sshd
   when:
     - sshd_main_config_file is not none
     - sshd_config_file | dirname == sshd_main_config_file ~ '.d'
