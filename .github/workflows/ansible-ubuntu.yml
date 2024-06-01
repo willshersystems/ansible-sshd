@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: ansible check with ubuntu:latest
-        uses: roles-ansible/check-ansible-ubuntu-latest-action@master
+        uses: mattwillsher/check-ansible-ubuntu-latest-action@master
         with:
           group: local
           hosts: localhost
