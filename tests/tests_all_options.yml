@@ -93,7 +93,7 @@
           | grep -o '^\(     \|       \)[A-Z][A-Za-z0-9]*\(.\|  \)' \
           | grep -v "[A-Za-z0-9] $" | grep -v "[^A-Za-z0-9 ]$" \
           | awk '{ print $1 }' \
-          | grep -v '^$' | grep -v "^\(Match\|OpenSSH\|The\|Arguments\|Theo\)$"
+          | grep -v '^$' | grep -v "^\(Match\|OpenSSH\|The\|Arguments\|Theo\|Tatu\)$"
       args:
         executable: /bin/bash
       register: sshd_options
