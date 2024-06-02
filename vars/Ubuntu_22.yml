@@ -14,6 +14,7 @@ __sshd_defaults:
   Include: /etc/ssh/sshd_config.d/*.conf
   KbdInteractiveAuthentication: false
   UsePAM: true
+  PrintMotd: false
   AcceptEnv: LANG LC_*
   Subsystem: "sftp  /usr/lib/openssh/sftp-server"
 
