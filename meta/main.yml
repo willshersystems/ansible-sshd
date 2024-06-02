@@ -24,7 +24,7 @@ galaxy_info:
         - bionic
         - focal
         - jammy
-        - nobel
+        - noble
     - name: FreeBSD
       version:
         - "10.1"
