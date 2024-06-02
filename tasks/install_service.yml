@@ -12,7 +12,7 @@
         owner: root
         group: root
         mode: "0644"
-      notify: reload_sshd
+      notify: Reload_sshd
 
     - name: Install instanced service unit file
       ansible.builtin.template:
@@ -21,7 +21,7 @@
         owner: root
         group: root
         mode: "0644"
-      notify: reload_sshd
+      notify: Reload_sshd
       when:
         - __sshd_socket_accept | bool
 
@@ -32,7 +32,7 @@
         owner: root
         group: root
         mode: "0644"
-      notify: reload_sshd
+      notify: Reload_sshd
 
 - name: Service enabled and running
   ansible.builtin.service:
