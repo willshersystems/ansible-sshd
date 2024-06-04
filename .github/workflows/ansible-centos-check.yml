@@ -3,35 +3,6 @@ name: Run Ansible Check on CentOS
 on: [push, pull_request]
 
 jobs:
-  centos-6:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-
-    # Workaround missing support for end_host in old ansible
-    - run: "sed -i -e 's/meta: end_host/assert:\\n    that: __sshd_os_supported|bool/' tasks/install.yml"
-    - run: >-
-        printf '%s\n%s\n%s\n%s'
-        '- name: Convert variables to facts for testing with old Ansible version (pre 2.7)'
-        '  ansible.builtin.set_fact:'
-        '    __sshd_skip_virt_env: "{{ __sshd_skip_virt_env }}"'
-        '    __sshd_config_file: "{{ __sshd_config_file }}"'
-        >> tasks/variables.yml
-    - run: >-
-        sed -i -e '/public: true/d'
-        tests/tasks/restore.yml
-        tests/tests_duplicate_role.yml
-        tests/tests_os_defaults.yml
-        tests/tests_firewall_selinux.yml
-    - run: "sed -i -e 's/ansible.builtin.//g' -e 's/ansible.posix.//g' */*.yml */*/*.yml"
-
-    - name: ansible check with centos 6
-      uses: roles-ansible/check-ansible-centos-centos6-action@master
-      with:
-        group: local
-        hosts: localhost
-        targets: "tests/tests_*.yml"
-
   centos-7:
     runs-on: ubuntu-latest
     steps:
@@ -46,20 +17,6 @@ jobs:
           group: local
           hosts: localhost
           targets: "tests/tests_*.yml"
-
-  centos-8:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout PR
-        uses: actions/checkout@v4
-
-      - name: ansible check with centos 8
-        uses: roles-ansible/check-ansible-centos-centos8-action@master
-        with:
-          group: local
-          hosts: localhost
-          targets: "tests/tests_*.yml"
-          requirements: tests/requirements.yml
 
   centos-9:
     runs-on: ubuntu-latest
