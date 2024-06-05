@@ -1,14 +1,14 @@
 ---
 repos:
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.27.1
+    rev: 81e9f98ffd059efe8aa9c1b1a42e5cce61b640c6  # frozen: v1.35.1
     hooks:
       - id: yamllint
         files: \.(yaml|yml)$
         types: [file, yaml]
         entry: yamllint --strict
   - repo: https://github.com/ansible/ansible-lint.git
-    rev: v6.5.2
+    rev: 2d9f1ed1e6d08e1f6a18e50f789ab1580220c7db  # frozen: v24.6.0
     hooks:
       - id: ansible-lint
         files: \.(yaml|yml)$
