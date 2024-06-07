@@ -14,6 +14,12 @@ Accept=yes
 {% else %}
 Accept=no
 {% endif %}
+{% if ansible_facts["distribution"]=="Ubuntu" and ansible_facts["distribution_version"] is version('24.04', '>=') %}
+FreeBind=yes
+{% endif %}
 
 [Install]
 WantedBy=sockets.target
+{% if ansible_facts["distribution"]=="Ubuntu" and ansible_facts["distribution_version"] is version('24.04', '>=') %}
+RequiredBy=ssh.service
+{% endif %}
