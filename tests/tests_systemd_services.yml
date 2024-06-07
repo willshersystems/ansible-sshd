@@ -12,6 +12,7 @@
       - /etc/systemd/system/ssh@.service
       - /etc/systemd/system/ssh.socket
     __sshd_test_service_name: sshd
+    __sshd_test_service_name_at: '@'
     __sshd_service_list: []
     __sshd_service_inst_list: []
     __sshd_socket_list: []
@@ -21,6 +22,12 @@
         __sshd_test_service_name: ssh
       when:
         - ansible_facts['os_family'] == "Debian"
+
+    - name: No at in the service on Ubuntu 24.04
+      ansible.builtin.set_fact:
+        __sshd_test_service_name_at: ''
+      when:
+        - ansible_facts['distribution']=='Ubuntu' and ansible_facts['distribution_version'] is version('24.04', '>=')
 
     - name: Backup configuration files
       ansible.builtin.include_tasks: tasks/backup.yml
@@ -123,7 +130,7 @@
       block:
         - name: Read the distribution instantiated service file
           ansible.builtin.slurp:
-            src: "/lib/systemd/system/{{ __sshd_test_service_name }}@.service"
+            src: "/lib/systemd/system/{{ __sshd_test_service_name }}{{ __sshd_test_service_name_at }}.service"
           register: service_inst_old
 
         - name: Read the created instantiated service file
