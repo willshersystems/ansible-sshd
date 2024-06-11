@@ -27,7 +27,7 @@ via simple password. If you need this functionality, be sure to set
 
 Tested on:
 
-* Ubuntu precise, trusty, xenial, bionic, focal, jammy, nobel
+* Ubuntu precise, trusty, xenial, bionic, focal, jammy, noble
   * [![Run tests on Ubuntu latest](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-ubuntu.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-ubuntu.yml)
 * Debian wheezy, jessie, stretch, buster, bullseye, bookworm
   * [![Run tests on Debian](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-check.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-check.yml)
