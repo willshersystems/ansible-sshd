@@ -124,7 +124,7 @@
       block:
         - name: Read the distribution instantiated service file
           ansible.builtin.slurp:
-            src: "/lib/systemd/system/{{ __sshd_test_service_name }}.service"
+            src: "/lib/systemd/system/{{ __sshd_test_service_name }}@.service"
           register: service_inst_old
 
         - name: Read the created instantiated service file
