@@ -94,7 +94,6 @@
         #  * I do not think the ConditionPathExists is much useful so skipping on Ubuntu
         #  * Before= does not make any sense in combination with Conflicts=
         #  * I do not think the Description needs to match verbatim either
-        #  * Accept varies in the default file between Ubuntu versions and is explicit anyway
         - name: Construct the options list from old socket file
           ansible.builtin.set_fact:
             __sshd_socket_list: "{{ __sshd_socket_list + [item] }}"
@@ -103,7 +102,6 @@
             - not item.startswith("ConditionPathExists=")
             - not item.startswith("Before=")
             - not item.startswith("Description=")
-            - not item.startswith("Accept=")
           loop:
             "{{ socket_old.splitlines() }}"
 
@@ -120,7 +118,7 @@
         - ansible_facts['service_mgr'] == 'systemd' or
           (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '7')
         - ansible_facts['distribution'] != "Debian" or ansible_facts['distribution_major_version'] | int < 12
-        - not (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_version'] is version('24.04', '>=')) # 24.04 has no sshd@.socket in the package
+        - not (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_version'] is version('24.04', '>=')) # 24.04 has no sshd@.service in the package
       block:
         - name: Read the distribution instantiated service file
           ansible.builtin.slurp:

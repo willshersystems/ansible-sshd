@@ -18,13 +18,13 @@ galaxy_info:
         - bookworm
     - name: Ubuntu
       versions:
+        - precise
+        - trusty
+        - xenial
         - bionic
         - focal
         - jammy
         - noble
-        - precise
-        - trusty
-        - xenial
     - name: FreeBSD
       versions:
         - "10.1"

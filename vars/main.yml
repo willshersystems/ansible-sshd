@@ -87,3 +87,9 @@ __sshd_service_restart_timeout: ~
 
 # The systemd socket file does not accept the connection
 __sshd_socket_accept: true
+
+# Boolean to control if the systemd socket can be bound to non-local IP addresses
+__sshd_socket_freebind: ~
+
+# Space separated list of service names that this socket is required by
+__sshd_socket_required_by: ~
