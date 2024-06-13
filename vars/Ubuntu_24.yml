@@ -28,5 +28,5 @@ __sshd_environment_variable: $SSHD_OPTS
 __sshd_service_after: auditd.service
 __sshd_service_alias: sshd
 
-__sshd_socket_freebind: "yes"
+__sshd_socket_freebind: 'yes'
 __sshd_socket_required_by: ssh.service
