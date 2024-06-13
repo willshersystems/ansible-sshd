@@ -15,11 +15,11 @@ Accept=yes
 Accept=no
 {% endif %}
 {% if __sshd_socket_freebind is not none %}
-FreeBind={{ __sshd_socket_freebind }}
+FreeBind={{ 'yes' if __sshd_socket_freebind else 'no' }}
 {% endif %}
 
 [Install]
 WantedBy=sockets.target
 {% if __ssh_socket_required_by is not none %}
-RequiredBy=ssh.service
+RequiredBy={{ __ssh_socket_required_by }}
 {% endif %}
