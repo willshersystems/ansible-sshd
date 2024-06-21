@@ -1,6 +1,21 @@
 Changelog
 =========
 
+[v0.24.0] - 2024-06-21
+--------------------
+
+### New Features
+
+- feat:  Ubuntu Noble support (#290)
+
+### Bug Fixes
+
+- fix: Ubuntu 22.04 PrintMotd set default to false (#290)
+
+### Other Changes
+
+- build(deps): bump mathieudutour/github-tag-action from 6.1 to 6.2 (#283)
+
 [v0.23.5] - 2024-04-09
 --------------------
 
