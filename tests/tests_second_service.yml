@@ -99,7 +99,8 @@
             src: "/etc/systemd/system/sshd2@.service"
           register: service_inst
           when:
-            - __sshd_socket_accept | bool
+            - ansible_facts['distribution'] != "Debian" or ansible_facts['distribution_major_version'] | int < 12
+            - not (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_version'] is version('24.04', '>='))
 
         - name: Check content of the created service file
           ansible.builtin.assert:
