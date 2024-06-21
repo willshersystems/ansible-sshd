@@ -4,6 +4,12 @@ ignore: |
   /.tox/
   /.github/
   /tests/roles/
-# skip checking line length
 rules:
+  comments-indentation: false
+  document-start: disable
   line-length: disable
+  braces:
+    max-spaces-inside: 1
+  octal-values:
+    forbid-implicit-octal: true
+    forbid-explicit-octal: true

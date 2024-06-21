@@ -14,6 +14,12 @@ Accept=yes
 {% else %}
 Accept=no
 {% endif %}
+{% if __sshd_socket_freebind is not none %}
+FreeBind={{ 'yes' if __sshd_socket_freebind else 'no' }}
+{% endif %}
 
 [Install]
 WantedBy=sockets.target
+{% if __sshd_socket_required_by is not none %}
+RequiredBy={{ __sshd_socket_required_by }}
+{% endif %}

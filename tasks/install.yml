@@ -22,7 +22,7 @@
   when:
     - sshd_sysconfig | bool
     - __sshd_sysconfig_supports_use_strong_rng or __sshd_sysconfig_supports_crypto_policy
-  notify: reload_sshd
+  notify: Reload_sshd
 
 - name: Check FIPS mode
   ansible.builtin.include_tasks: check_fips.yml
