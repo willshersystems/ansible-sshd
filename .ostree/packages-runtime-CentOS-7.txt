@@ -1,2 +1,1 @@
-openssh
-openssh-server
+packages-runtime-RedHat-7.txt

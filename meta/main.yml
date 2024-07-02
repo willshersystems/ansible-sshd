@@ -58,7 +58,13 @@ galaxy_info:
     - debian
     - centos
     - redhat
+    - fedora
     - freebsd
     - openbsd
     - aix
+    - el6
+    - el7
+    - el8
+    - el9
+    - el10
 dependencies: []
