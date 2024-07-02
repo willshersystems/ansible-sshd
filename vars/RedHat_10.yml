@@ -1,0 +1,33 @@
+---
+__sshd_os_supported: true
+
+__sshd_packages:
+  - openssh
+  - openssh-server
+__sshd_sftp_server: /usr/libexec/openssh/sftp-server
+# RHEL 10 ships with drop-in directory support so we touch
+# just included file with highest priority by default
+__sshd_config_file: /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+# the defaults here represent the defaults shipped in the main sshd_config
+__sshd_defaults:
+  Include: /etc/ssh/sshd_config.d/*.conf
+  AuthorizedKeysFile: .ssh/authorized_keys
+  Subsystem: "sftp {{ __sshd_sftp_server }}"
+
+__sshd_verify_hostkeys_default:
+  - /etc/ssh/ssh_host_rsa_key
+  - /etc/ssh/ssh_host_ecdsa_key
+  - /etc/ssh/ssh_host_ed25519_key
+__sshd_hostkeys_nofips:
+  - /etc/ssh/ssh_host_ed25519_key
+
+__sshd_drop_in_dir_mode: '0700'
+__sshd_main_config_file: /etc/ssh/sshd_config
+
+__sshd_environment_file: /etc/sysconfig/sshd
+__sshd_environment_variable: $OPTIONS
+__sshd_service_after: sshd-keygen.target
+__sshd_service_wants:
+  - sshd-keygen.target
+  - ssh-host-keys-migration.service
+__sshd_service_restart_timeout: 42s
