@@ -31,7 +31,7 @@ Tested on:
   * [![Run tests on Ubuntu latest](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-ubuntu.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-ubuntu.yml)
 * Debian wheezy, jessie, stretch, buster, bullseye, bookworm
   * [![Run tests on Debian](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-check.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-check.yml)
-* EL 6, 7, 8, 9 derived distributions
+* EL 6, 7, 8, 9, 10 derived distributions
   * [![Run tests on CentOS](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos-check.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos-check.yml)
 * All Fedora
   * [![Run tests on Fedora latest](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-fedora.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-fedora.yml)
