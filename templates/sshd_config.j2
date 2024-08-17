@@ -82,6 +82,7 @@ Match {{ match["Condition"] }}
 {{       render_option("LogLevel",match["LogLevel"],true) -}}
 {{       render_option("MaxAuthTries",match["MaxAuthTries"],true) -}}
 {{       render_option("MaxSessions",match["MaxSessions"],true) -}}
+{{       render_option("PAMServiceName",match["PAMServiceName"],true) -}}
 {{       render_option("PasswordAuthentication",match["PasswordAuthentication"],true) -}}
 {{       render_option("PermitEmptyPasswords",match["PermitEmptyPasswords"],true) -}}
 {{       render_option("PermitListen",match["PermitListen"],true) -}}
@@ -197,6 +198,7 @@ Match {{ match["Condition"] }}
 {{ body_option("MaxStartups",sshd_MaxStartups) -}}
 {{ body_option("ModuliFile",sshd_ModuliFile) -}}
 {{ body_option("NoneEnabled",sshd_NoneEnabled) -}}
+{{ body_option("PAMServiceName",sshd_PAMServiceName) -}}
 {{ body_option("PasswordAuthentication",sshd_PasswordAuthentication) -}}
 {{ body_option("PermitEmptyPasswords",sshd_PermitEmptyPasswords) -}}
 {{ body_option("PermitListen",sshd_PermitListen) -}}
@@ -206,6 +208,8 @@ Match {{ match["Condition"] }}
 {{ body_option("PermitTunnel",sshd_PermitTunnel) -}}
 {{ body_option("PermitUserEnvironment",sshd_PermitUserEnvironment) -}}
 {{ body_option("PermitUserRC",sshd_PermitUserRC) -}}
+{{ body_option("PerSourcePenalties",sshd_PerSourcePenalties) -}}
+{{ body_option("PerSourcePenaltyExemptList",sshd_PerSourcePenaltyExemptList) -}}
 {{ body_option("PerSourceMaxStartups",sshd_PerSourceMaxStartups) -}}
 {{ body_option("PerSourceNetBlockSize",sshd_PerSourceNetBlockSize) -}}
 {{ body_option("PidFile",sshd_PidFile) -}}
@@ -226,6 +230,7 @@ Match {{ match["Condition"] }}
 {{ body_option("SetEnv",sshd_SetEnv) -}}
 {{ body_option("ServerKeyBits",sshd_ServerKeyBits) -}}
 {{ body_option("ShowPatchLevel",sshd_ShowPatchLevel) -}}
+{{ body_option("SshdSessionPath",sshd_SshdSessionPath) -}}
 {{ body_option("StreamLocalBindMask",sshd_StreamLocalBindMask) -}}
 {{ body_option("StreamLocalBindUnlink",sshd_StreamLocalBindUnlink) -}}
 {{ body_option("StrictModes",sshd_StrictModes) -}}

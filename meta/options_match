@@ -36,6 +36,7 @@ KerberosAuthentication
 LogLevel
 MaxAuthTries
 MaxSessions
+PAMServiceName
 PasswordAuthentication
 PermitEmptyPasswords
 PermitListen
