@@ -1,6 +1,13 @@
 Changelog
 =========
 
+[v0.25.0] - 2024-08-19
+--------------------
+
+### New Features
+
+- feat: Add new configuration options from OpenSSH 9.8
+
 [v0.24.1] - 2024-07-03
 --------------------
 
