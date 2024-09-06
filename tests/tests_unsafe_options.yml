@@ -1,0 +1,93 @@
+---
+- name: Test quote with unsafe input
+  hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+
+  tasks:
+    - name: "Backup configuration files"
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+    - name: Configure sshd with bad sysconfig configuration
+      block:
+        - name: Include the role
+          ansible.builtin.include_role:
+            name: ansible-sshd
+          vars:
+            sshd_skip_defaults: true
+            sshd_verify_hostkeys: []
+            sshd_sysconfig_use_strong_rng: "maybe yes"
+          register: role_result
+
+        - name: Unreachable task -- the role should have failed!
+          ansible.builtin.fail:
+            msg: UNREACH
+
+      rescue:
+        - name: Check that we failed in the role
+          ansible.builtin.assert:
+            that:
+              - ansible_failed_result.msg != 'UNREACH'
+              - not role_result.changed
+            msg: "Role has not failed when it should have with invalid inputs"
+
+    - name: Configure sshd with bad path to sshd binary
+      block:
+        - name: Include the role
+          ansible.builtin.include_role:
+            name: ansible-sshd
+          vars:
+            sshd_skip_defaults: true
+            sshd_verify_hostkeys: []
+            sshd_binary: "/usr/sbin/sshd binary"
+          register: role_result
+
+        - name: Unreachable task -- the role should have failed!
+          ansible.builtin.fail:
+            msg: UNREACH
+
+      rescue:
+        - name: Check that we failed in the role
+          ansible.builtin.assert:
+            that:
+              - ansible_failed_result.msg != 'UNREACH'
+              - not role_result.changed
+            msg: "Role has not failed when it should have with invalid inputs"
+
+    - name: Configure sshd with bad path sshd config
+      block:
+        - name: Include the role
+          ansible.builtin.include_role:
+            name: ansible-sshd
+          vars:
+            sshd_skip_defaults: true
+            sshd_verify_hostkeys: []
+            sshd_config_file: /etc/ssh/sshd.config.d/my fancy config
+          register: role_result
+
+        - name: Unreachable task -- the role should have failed!
+          ansible.builtin.fail:
+            msg: UNREACH
+
+      rescue:
+        - name: Check that we failed in the role
+          ansible.builtin.assert:
+            that:
+              - ansible_failed_result.msg != 'UNREACH'
+              - not role_result.changed
+            msg: "Role has not failed when it should have with invalid inputs"
+
+    - name: Make sure service is still running
+      ansible.builtin.service:
+        name: sshd
+        state: started
+      register: result
+      failed_when: result.changed
+      tags: tests::verify
+      when:
+        - not (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6')
+
+    - name: "Restore configuration files"
+      ansible.builtin.include_tasks: tasks/restore.yml
