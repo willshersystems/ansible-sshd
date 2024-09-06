@@ -4,22 +4,8 @@
   when:
     - not __sshd_os_supported | bool
 
-- name: Ensure variables used in templates in shell or systemd unit contexts are okay
-  ansible.builtin.assert:
-    that:
-      - (sshd_sysconfig_use_strong_rng | string) == (sshd_sysconfig_use_strong_rng | quote)
-      - sshd_binary == (sshd_binary | quote)
-      - sshd_config_file == (sshd_config_file | quote)
-      - (__sshd_runtime_directory is none) or (__sshd_runtime_directory == (__sshd_runtime_directory | quote))
-      - __sshd_runtime_directory_mode == (__sshd_runtime_directory_mode | quote)
-    msg: |
-      sshd_sysconfig_use_strong_rng: {{ sshd_sysconfig_use_strong_rng }} == {{ sshd_sysconfig_use_strong_rng | quote }}
-      sshd_binary: {{ sshd_binary }} == {{ sshd_binary | quote }}
-      sshd_config_file: {{ sshd_config_file }} == {{ sshd_config_file | quote }}
-      {%- if __sshd_runtime_directory is not none %}
-      __sshd_runtime_directory: {{ __sshd_runtime_directory }} == {{ __sshd_runtime_directory | quote }}
-      {% endif %}
-      __sshd_runtime_directory_mode: {{ __sshd_runtime_directory_mode }} == {{ __sshd_runtime_directory_mode | quote }}
+- name: Check variables are safe for use for shell expansions and word splitting
+  ansible.builtin.include_tasks: check_vars.yml
 
 - name: Install ssh packages
   ansible.builtin.package:

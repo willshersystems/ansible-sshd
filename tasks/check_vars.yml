@@ -1,0 +1,24 @@
+---
+- name: Ensure sshd_sysconfig_use_strong_rng is safe to use in shell/command
+  ansible.builtin.assert:
+    that:
+      - (sshd_sysconfig_use_strong_rng | string) == (sshd_sysconfig_use_strong_rng | quote)
+    msg: |
+      The variable `sshd_sysconfig_use_strong_rng` is not safe for shell/command/template expansions:
+      sshd_sysconfig_use_strong_rng: {{ sshd_sysconfig_use_strong_rng }} == {{ sshd_sysconfig_use_strong_rng | quote }}
+
+- name: Ensure sshd_binary is safe to use in shell/command
+  ansible.builtin.assert:
+    that:
+      - sshd_binary == (sshd_binary | quote)
+    msg: |
+      The variable `sshd_binary` is not safe for shell/command/template expansions:
+      sshd_binary: {{ sshd_binary }} == {{ sshd_binary | quote }}
+
+- name: Ensure sshd_config_file is safe to use in shell/command
+  ansible.builtin.assert:
+    that:
+      - sshd_config_file == (sshd_config_file | quote)
+    msg: |
+      The variable `sshd_sysconfig_use_strong_rng` is not safe for shell/command/template expansions:
+      sshd_config_file: {{ sshd_config_file }} == {{ sshd_config_file | quote }}
