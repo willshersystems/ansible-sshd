@@ -42,6 +42,8 @@
       vars:
         sshd_skip_defaults: true
         sshd_verify_hostkeys: []
+      when:
+        - ansible_facts['os_family'] != 'RedHat' or ansible_facts['distribution_major_version'] | int != 8
 
     - name: Verify the options are correctly set
       tags: tests::verify
