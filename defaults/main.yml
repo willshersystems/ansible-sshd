@@ -1,3 +1,4 @@
+---
 ### USER OPTIONS
 # Set to false to disable this role completely
 sshd_enable: true
