@@ -1,4 +1,3 @@
----
 ### USER OPTIONS
 # Set to false to disable this role completely
 sshd_enable: true
@@ -38,7 +37,7 @@ sshd_sysconfig_override_crypto_policy: false
 sshd_sysconfig_use_strong_rng: 0
 
 # Empty dicts to avoid errors
-sshd: {}
+sshd_config: {}
 
 # The path to sshd_config file. This is useful when creating an included
 # configuration file snippet or configuring second sshd service

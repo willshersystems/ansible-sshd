@@ -6,7 +6,7 @@
       {% if sshd_TrustedUserCAKeys is defined %}
         {{ sshd_TrustedUserCAKeys | to_json }}
       {% else %}
-        {{ sshd['TrustedUserCAKeys'] | to_json }}
+        {{ sshd_config['TrustedUserCAKeys'] | to_json }}
       {% endif %}
   block:
     - name: Create Trusted user CA Keys directory
@@ -32,7 +32,7 @@
       {% if sshd_AuthorizedPrincipalsFile is defined %}
         {{ sshd_AuthorizedPrincipalsFile | to_json }}
       {% else %}
-        {{ sshd['AuthorizedPrincipalsFile'] | to_json }}
+        {{ sshd_config['AuthorizedPrincipalsFile'] | to_json }}
       {% endif %}
   when: sshd_principals != {}
   block:
