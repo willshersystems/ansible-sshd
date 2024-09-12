@@ -33,8 +33,7 @@
     - __sshd_hostkeys_nofips | d([])
 
 - name: Make sure hostkeys are available and have expected permissions
-  vars:
-    &share_vars # 'MAo=' evaluates to '0\n' in base 64 encoding, which is default
+  vars: &share_vars # 'MAo=' evaluates to '0\n' in base 64 encoding, which is default
     __sshd_fips_mode: >-
       {{ __sshd_hostkeys_nofips | d([]) and
          (__sshd_kernel_fips_mode.content | d('MAo=') | b64decode | trim == '1' or
