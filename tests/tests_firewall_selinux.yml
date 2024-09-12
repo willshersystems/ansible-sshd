@@ -124,7 +124,7 @@
       ansible.builtin.include_role:
         name: fedora.linux_system_roles.firewall
       vars:
-        firewall:
+        firewall: # noqa: var-naming[no-role-prefix]
           - port: "222/tcp"
             state: disabled
       when: __sshd_test_firewall
@@ -133,7 +133,7 @@
       ansible.builtin.include_role:
         name: fedora.linux_system_roles.selinux
       vars:
-        selinux:
+        selinux: # noqa: var-naming[no-role-prefix]
           port: 222
           proto: tcp
           setype: ssh_port_t

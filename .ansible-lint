@@ -4,7 +4,6 @@ exclude_paths:
   - .tox/
   - .markdownlint.yaml
 skip_list:
-  - var-naming[no-role-prefix]
   - meta-runtime[unsupported-version]
   - experimental
 mock_roles:
