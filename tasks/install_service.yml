@@ -46,7 +46,7 @@
 
 # Due to ansible bug 21026, cannot use service module on RHEL 7
 - name: Enable service in chroot
-  ansible.builtin.command: systemctl enable {{ sshd_service }}  # noqa command-instead-of-module
+  ansible.builtin.command: systemctl enable {{ sshd_service | quote }}  # noqa command-instead-of-module
   when:
     - ansible_connection == 'chroot'
     - ansible_facts['os_family'] == 'RedHat'

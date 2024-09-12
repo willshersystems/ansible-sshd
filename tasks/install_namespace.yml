@@ -16,9 +16,9 @@
       {% if not __sshd_supports_validate %}
         true %s
       {% elif sshd_test_hostkey is defined and sshd_test_hostkey.path is defined %}
-        {{ sshd_binary }} -t -f %s -h {{ sshd_test_hostkey.path }}/rsa_key
+        {{ sshd_binary | quote }} -t -f %s -h {{ sshd_test_hostkey.path | quote }}/rsa_key
       {% else %}
-        {{ sshd_binary }} -t -f %s
+        {{ sshd_binary | quote }} -t -f %s
       {% endif %}
     backup: "{{ sshd_backup }}"
   notify: Reload_sshd

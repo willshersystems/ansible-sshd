@@ -1,0 +1,70 @@
+---
+- name: Test quote with unsafe input
+  hosts: all
+  environment:
+    TMPDIR: "{{ __tmpdir }}"
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+    __badflag_file: /tmp/BADFLAG
+    # Avoid / in TMPDIR file name
+    __badflag: >-
+      $(touch -- "$(echo {{ __badflag_file | b64encode }} | base64 -d)")
+    # Iterate w/o quote, w/ ' and w/ "
+    __tmpdir: >-
+      /tmp/a {{ __badflag }} ' {{ __badflag }} '" {{ __badflag }} "b
+
+  tasks:
+    - name: Ensure BADFLAG does not exist
+      ansible.builtin.file:
+        path: /tmp/BADFLAG
+        state: absent
+
+    - name: Assert TMPDIR is correctly set
+      ansible.builtin.assert:
+        that:
+          - __tmpdir != ''
+          - ansible_facts.env.TMPDIR == __tmpdir
+
+    - name: "Backup configuration files"
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+    - name: Create BAD TMPDIR
+      ansible.builtin.file:
+        state: directory
+        path: "{{ ansible_facts.env.TMPDIR }}"
+        mode: '0755'
+
+    - name: Configure sshd with BAD config
+      ansible.builtin.include_role:
+        name: ansible-sshd
+      vars:
+        sshd_skip_defaults: true
+        sshd_verify_hostkeys: []
+      when:
+        - ansible_facts['os_family'] != 'RedHat' or ansible_facts['distribution_major_version'] | int != 8
+
+    - name: Verify the options are correctly set
+      tags: tests::verify
+      block:
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
+
+        - name: Get status BADFLAG
+          ansible.builtin.stat:
+            path: "{{ __badflag_file }}"
+          register: badflag
+
+        - name: Ensure BADFLAG does not exist
+          ansible.builtin.assert:
+            that:
+              - not badflag.stat.exists
+
+    - name: Remove BAD TMPDIR
+      ansible.builtin.file:
+        state: absent
+        path: "{{ ansible_facts.env.TMPDIR }}"
+
+    - name: "Restore configuration files"
+      ansible.builtin.include_tasks: tasks/restore.yml
