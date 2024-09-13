@@ -21,8 +21,8 @@
 {%   set value = undefined %}
 {%   if override is defined %}
 {%     set value = override %}
-{%   elif sshd_config[key] is defined %}
-{%     set value = sshd_config[key] %}
+{%   elif __sshd_config[key] is defined %}
+{%     set value = __sshd_config[key] %}
 {%   elif sshd_main_config_file is not none
         and sshd_config_file | dirname == sshd_main_config_file ~ '.d' %}
 {#     Do not use the defaults from main file to avoid recursion #}
