@@ -25,7 +25,7 @@
       ansible.builtin.include_role:
         name: ansible-sshd
       vars:
-        sshd:
+        sshd_config:
           PasswordAuthentication: false
           TrustedUserCAKeys: /etc/ssh/ca-keys/trusted-user-ca-keys.pub
           AuthorizedPrincipalsFile: "/etc/ssh/auth_principals/%u"

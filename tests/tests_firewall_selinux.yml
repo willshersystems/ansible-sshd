@@ -36,7 +36,7 @@
       vars:
         sshd_manage_selinux: "{{ __sshd_test_selinux }}"
         sshd_manage_firewall: "{{ __sshd_test_firewall }}"
-        sshd:
+        sshd_config:
           Port: 22
 
     - name: Verify the options are correctly set
@@ -65,7 +65,7 @@
       vars:
         sshd_manage_firewall: "{{ __sshd_test_firewall }}"
         sshd_manage_selinux: "{{ __sshd_test_selinux }}"
-        sshd:
+        sshd_config:
           Port: 222
 
     - name: Verify the options are correctly set
@@ -93,7 +93,7 @@
       vars:
         sshd_manage_firewall: "{{ __sshd_test_firewall }}"
         sshd_manage_selinux: "{{ __sshd_test_selinux }}"
-        sshd:
+        sshd_config:
           Port:
             - 22
             - 222
