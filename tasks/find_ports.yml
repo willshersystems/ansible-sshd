@@ -6,8 +6,8 @@
     __sshd_ports_from_config_tmp: >-
       {% if sshd_Port is defined %}
         {{ sshd_Port | to_json }}
-      {% elif sshd_config['Port'] is defined %}
-        {{ sshd_config['Port'] | to_json }}
+      {% elif __sshd_config['Port'] is defined %}
+        {{ __sshd_config['Port'] | to_json }}
       {% elif __sshd_defaults['Port'] is defined and not sshd_skip_defaults %}
         {{ __sshd_defaults['Port'] | to_json }}
       {% else %}
