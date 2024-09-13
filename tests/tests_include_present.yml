@@ -24,7 +24,7 @@
         name: ansible-sshd
       vars:
         sshd_config_file: /etc/ssh/sshd_config.d/00-ansible_system_role.conf
-        sshd:
+        sshd_config:
           Banner: /etc/include-issue
           Ciphers: aes192-ctr
       when:
@@ -114,7 +114,7 @@
         sshd_config_file: /etc/ssh/custom_sshd_config.d/custom-drop-in
         sshd_main_config_file: /etc/ssh/custom_sshd_config
         sshd_drop_in_dir_mode: '0770'
-        sshd:
+        sshd_config:
           Banner: /etc/include-issue
           Ciphers: aes192-ctr
 

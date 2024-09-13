@@ -120,7 +120,7 @@
         # The hostkeys are not valid either so do not validate them
         sshd_verify_hostkeys: []
         sshd_config_file: /tmp/sshd_config
-        sshd:
+        sshd_config:
           "{{ sshd_c }}"
       when: not sshd_skip_test
 
