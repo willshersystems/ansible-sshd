@@ -1,8 +1,6 @@
 ---
 - name: Test quote with unsafe input
   hosts: all
-  environment:
-    TMPDIR: "{{ __tmpdir }}"
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
@@ -21,29 +19,27 @@
         path: /tmp/BADFLAG
         state: absent
 
-    - name: Assert TMPDIR is correctly set
-      ansible.builtin.assert:
-        that:
-          - __tmpdir != ''
-          - ansible_facts.env.TMPDIR == __tmpdir
-
     - name: "Backup configuration files"
       ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Create BAD TMPDIR
       ansible.builtin.file:
         state: directory
-        path: "{{ ansible_facts.env.TMPDIR }}"
+        path: "{{ __tmpdir }}"
         mode: '0755'
 
-    - name: Configure sshd with BAD config
-      ansible.builtin.include_role:
-        name: ansible-sshd
-      vars:
-        sshd_skip_defaults: true
-        sshd_verify_hostkeys: []
-      when:
-        - ansible_facts['os_family'] != 'RedHat' or ansible_facts['distribution_major_version'] | int != 8
+    - name: Wrap this in a block to set environment
+      environment:
+        TMPDIR: "{{ __tmpdir }}"
+      block:
+        - name: Configure sshd with BAD config
+          ansible.builtin.include_role:
+            name: ansible-sshd
+          vars:
+            sshd_skip_defaults: true
+            sshd_verify_hostkeys: []
+          when:
+            - ansible_facts['os_family'] != 'RedHat' or ansible_facts['distribution_major_version'] | int != 8
 
     - name: Verify the options are correctly set
       tags: tests::verify
@@ -64,7 +60,7 @@
     - name: Remove BAD TMPDIR
       ansible.builtin.file:
         state: absent
-        path: "{{ ansible_facts.env.TMPDIR }}"
+        path: "{{ __tmpdir }}"
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml
