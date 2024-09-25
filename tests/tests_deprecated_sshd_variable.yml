@@ -1,0 +1,113 @@
+- name: Test deprecated sshd variable via include_role using some common options
+  hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+  tasks:
+    - name: "Backup configuration files"
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+    - name: Configure sshd
+      ansible.builtin.include_role:
+        name: ansible-sshd
+      vars:
+        sshd:
+          AcceptEnv: LANG
+          Banner: /etc/issue
+          Ciphers: aes256-ctr
+          Subsystem: "sftp internal-sftp"
+        sshd_config_file: /etc/ssh/sshd_config
+
+    - name: Verify the options are correctly set
+      tags: tests::verify
+      block:
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
+
+        - name: List effective configuration using sshd -T
+          ansible.builtin.command: sshd -T
+          register: runtime
+          changed_when: false
+
+        - name: Print current configuration file
+          ansible.builtin.slurp:
+            src: /etc/ssh/sshd_config
+          register: config
+
+        - name: Check the options are effective
+          # note, the options are in lower-case here
+          ansible.builtin.assert:
+            that:
+              - "'acceptenv LANG' in runtime.stdout"
+              - "'banner /etc/issue' in runtime.stdout"
+              - "'ciphers aes256-ctr' in runtime.stdout"
+              - "'subsystem sftp internal-sftp' in runtime.stdout"
+
+        - name: Check the options are in configuration file
+          ansible.builtin.assert:
+            that:
+              - "'AcceptEnv LANG' in config.content | b64decode"
+              - "'Banner /etc/issue' in config.content | b64decode"
+              - "'Ciphers aes256-ctr' in config.content | b64decode"
+              - "'Subsystem sftp internal-sftp' in config.content | b64decode"
+
+    - name: "Restore configuration files"
+      ansible.builtin.include_tasks: tasks/restore.yml
+
+- name: Test deprecated sshd variable via role using some common options
+  hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+  pre_tasks:
+    - name: "Backup configuration files"
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+  roles:
+    - role: ansible-sshd
+      vars:
+        sshd:
+          AcceptEnv: LANG
+          Banner: /etc/issue
+          Ciphers: aes256-ctr
+          Subsystem: "sftp internal-sftp"
+        sshd_config_file: /etc/ssh/sshd_config
+
+  tasks:
+    - name: Verify the options are correctly set
+      tags: tests::verify
+      block:
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
+
+        - name: List effective configuration using sshd -T
+          ansible.builtin.command: sshd -T
+          register: runtime
+          changed_when: false
+
+        - name: Print current configuration file
+          ansible.builtin.slurp:
+            src: /etc/ssh/sshd_config
+          register: config
+
+    - name: Check the options are effective
+      # note, the options are in lower-case here
+      ansible.builtin.assert:
+        that:
+          - "'acceptenv LANG' in runtime.stdout"
+          - "'banner /etc/issue' in runtime.stdout"
+          - "'ciphers aes256-ctr' in runtime.stdout"
+          - "'subsystem sftp internal-sftp' in runtime.stdout"
+
+    - name: Check the options are in configuration file
+      ansible.builtin.assert:
+        that:
+          - "'AcceptEnv LANG' in config.content | b64decode"
+          - "'Banner /etc/issue' in config.content | b64decode"
+          - "'Ciphers aes256-ctr' in config.content | b64decode"
+          - "'Subsystem sftp internal-sftp' in config.content | b64decode"
+
+    - name: "Restore configuration files"
+      ansible.builtin.include_tasks: tasks/restore.yml
