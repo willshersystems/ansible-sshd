@@ -16,7 +16,7 @@
         name: ansible-sshd
       vars:
         sshd_enable: false
-        sshd:
+        sshd_config:
           AcceptEnv: XDG_*
           Banner: /etc/issue
           Ciphers: aes256-ctr,aes128-ctr

@@ -16,7 +16,7 @@
       vars:
         sshd_config_file: /etc/ssh/sshd_config
         sshd_config_namespace: nm1
-        sshd:
+        sshd_config:
           PasswordAuthentication: true
           PermitRootLogin: true
           Match:
@@ -29,7 +29,7 @@
       vars:
         sshd_config_file: /etc/ssh/sshd_config
         sshd_config_namespace: nm2
-        sshd:
+        sshd_config:
           PasswordAuthentication: false
           PermitRootLogin: false
           Match:

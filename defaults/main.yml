@@ -37,9 +37,6 @@ sshd_sysconfig_override_crypto_policy: false
 # generator
 sshd_sysconfig_use_strong_rng: 0
 
-# Empty dicts to avoid errors
-sshd: {}
-
 # The path to sshd_config file. This is useful when creating an included
 # configuration file snippet or configuring second sshd service
 sshd_config_file: "{{ __sshd_config_file }}"

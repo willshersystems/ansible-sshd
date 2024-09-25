@@ -21,8 +21,8 @@
 {%   set value = undefined %}
 {%   if override is defined %}
 {%     set value = override %}
-{%   elif sshd[key] is defined %}
-{%     set value = sshd[key] %}
+{%   elif __sshd_config[key] is defined %}
+{%     set value = __sshd_config[key] %}
 {%   elif sshd_main_config_file is not none
         and sshd_config_file | dirname == sshd_main_config_file ~ '.d' %}
 {#     Do not use the defaults from main file to avoid recursion #}
@@ -248,8 +248,8 @@ Match {{ match["Condition"] }}
 {{ body_option("X11Forwarding",sshd_X11Forwarding) -}}
 {{ body_option("X11UseLocalhost",sshd_X11UseLocalhost) -}}
 {{ body_option("XAuthLocation",sshd_XAuthLocation) -}}
-{% if sshd['Match'] is defined %}
-{{   match_iterate_block(sshd['Match']) -}}
+{% if __sshd_config['Match'] is defined %}
+{{   match_iterate_block(__sshd_config['Match']) -}}
 {% endif %}
 {% if sshd_match is defined %}
 {{   match_iterate_block(sshd_match) -}}

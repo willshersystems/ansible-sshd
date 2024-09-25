@@ -40,7 +40,7 @@
             sshd_config_file: /etc/ssh2/sshd_config.d/04-ansible.conf
             sshd_install_service: true
             sshd_manage_selinux: true
-            sshd:
+            sshd_config:
               Port: 2222
               ForceCommand: echo "CONNECTED2"
 

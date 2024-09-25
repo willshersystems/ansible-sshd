@@ -130,16 +130,19 @@ NOTE: `sshd_manage_selinux` is limited to *adding* policy. It cannot be used
 for *removing* policy. If you want to remove ports, you will need to use the
 selinux system role directly.
 
-#### sshd
+#### sshd_config
 
 A dict containing configuration.  e.g.
 
 ```yaml
-sshd:
+sshd_config:
   Compression: delayed
   ListenAddress:
     - 0.0.0.0
 ```
+
+*Note*: This variable was previous called `sshd`. `sshd` is can still be used
+but is deprecated and will be removed in a future release.
 
 #### sshd_`<OptionName>`
 
@@ -344,7 +347,7 @@ Use these variables to set the ownership and permissions for the Authorized Prin
 The SSH server needs this information stored in files so in addition to the above variables, respective configuration options `TrustedUserCAKeys` (mandatory) and `AuthorizedPrincipalsFile` (optional) need to be present the `sshd` dictionary when invoking the role. For example:
 
 ```yaml
-sshd:
+sshd_config:
   TrustedUserCAKeys: /etc/ssh/path-to-trusted-user-ca-keys/trusted-user-ca-keys.pub
   AuthorizedPrincipalsFile: "/etc/ssh/path-to-auth-principals/auth_principals/%u"
 ```
@@ -370,7 +373,7 @@ provides. Running it will likely break your SSH access to the server!
 - hosts: all
   vars:
     sshd_skip_defaults: true
-    sshd:
+    sshd_config:
       Compression: true
       ListenAddress:
         - "0.0.0.0"
@@ -413,7 +416,7 @@ for example:
       name: willshersystems.sshd
     vars:
       sshd_skip_defaults: true
-      sshd:
+      sshd_config:
         Compression: true
         ListenAddress:
           - "0.0.0.0"
@@ -440,7 +443,7 @@ option:
       name: willshersystems.sshd
     vars:
       sshd_config_namespace: accept-env
-      sshd:
+      sshd_config:
         # there are some handy environment variables to accept
         AcceptEnv:
           LANG
