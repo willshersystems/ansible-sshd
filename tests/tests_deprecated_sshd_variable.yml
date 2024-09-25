@@ -1,3 +1,4 @@
+---
 - name: Test deprecated sshd variable via include_role using some common options
   hosts: all
   vars:
