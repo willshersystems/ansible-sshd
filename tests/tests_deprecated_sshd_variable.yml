@@ -27,7 +27,15 @@
           ansible.builtin.meta: flush_handlers
 
         - name: List effective configuration using sshd -T
-          ansible.builtin.command: sshd -T
+          ansible.builtin.shell: |
+            set -eu
+            if set -o | grep pipefail 2>&1 /dev/null ; then
+              set -o pipefail
+            fi
+            if test ! -f /etc/ssh/ssh_host_rsa_key; then
+              ssh-keygen -q -t rsa -f /etc/ssh/ssh_host_rsa_key -C '' -N ''
+            fi
+            sshd -T
           register: runtime
           changed_when: false
 
