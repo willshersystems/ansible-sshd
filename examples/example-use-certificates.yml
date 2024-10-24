@@ -6,7 +6,7 @@
       ansible.builtin.include_role:
         name: ansible-sshd
       vars:
-        sshd:
+        sshd_config:
           # Disable password authentication, use SSH Certificates and configure authorized principals
           PasswordAuthentication: false
           TrustedUserCAKeys: /etc/ssh/trusted-user-ca-keys.pub

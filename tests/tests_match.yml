@@ -16,7 +16,7 @@
         # For Fedora containers, we need to make sure we have keys for sshd -T below
         sshd_verify_hostkeys:
           - /etc/ssh/ssh_host_rsa_key
-        sshd:
+        sshd_config:
           Match:
             Condition: "User xusers"
             X11Forwarding: true

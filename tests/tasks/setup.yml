@@ -5,6 +5,13 @@
   when:
     - ansible_facts['distribution'] == 'Debian'
 
+- name: Ensure unminimize package is installed
+  ansible.builtin.apt:
+    pkg:
+      - unminimize
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version'] | int >= 24
+
 - name: Determine if system is ostree and set flag
   when: not __sshd_is_ostree is defined
   block:

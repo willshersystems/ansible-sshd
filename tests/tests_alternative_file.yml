@@ -33,7 +33,7 @@
         sshd_config_owner: "nobody"
         sshd_config_group: "nobody"
         sshd_config_mode: "660"
-        sshd:
+        sshd_config:
           AcceptEnv: LANG
           Banner: /etc/issue
           Ciphers: aes256-ctr
@@ -46,7 +46,7 @@
         # just anything -- will not get processed by sshd
         sshd_config_file: /etc/ssh/sshd_config_custom_second
         sshd_skip_defaults: true
-        sshd:
+        sshd_config:
           Banner: /etc/issue2
           Ciphers: aes128-ctr
         sshd_MaxStartups: 100  # noqa var-naming
@@ -56,7 +56,7 @@
         name: ansible-sshd
       vars:
         sshd_config_file: /etc/ssh/sshd_config
-        sshd:
+        sshd_config:
           Banner: /etc/issue
           Ciphers: aes192-ctr
           HostKey:

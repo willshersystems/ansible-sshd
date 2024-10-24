@@ -19,7 +19,7 @@
       ansible.builtin.include_role:
         name: ansible-sshd
       vars:
-        sshd:
+        sshd_config:
           Banner: /etc/issue
           Ciphers: aes256-ctr
           HostKey: /etc/ssh/ssh_host_rsa_key

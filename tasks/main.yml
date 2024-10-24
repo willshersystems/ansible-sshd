@@ -1,4 +1,11 @@
 ---
+- name: Print that the sshd variable is deprecated
+  when: sshd is defined
+  ansible.builtin.debug:
+    msg: >-
+      The sshd variable is deprecated and will be removed
+      in a future version. Edit your playbook to use
+      the sshd_config variable instead.
 
 - name: Invoke the role, if enabled
   ansible.builtin.include_tasks: sshd.yml

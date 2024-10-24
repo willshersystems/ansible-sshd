@@ -7,7 +7,7 @@
         name: ansible-sshd
       vars:
         sshd_config_namespace: accept-env
-        sshd:
+        sshd_config:
           # there are some handy environment variables to accept
           AcceptEnv:
             LANG

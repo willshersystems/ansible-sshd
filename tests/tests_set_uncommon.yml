@@ -17,7 +17,7 @@
           ansible.builtin.include_role:
             name: ansible-sshd
           vars:
-            sshd:
+            sshd_config:
               # Unsupported in new versions, but ignored ?
               Protocol: 1
               UsePrivilegeSeparation: false
