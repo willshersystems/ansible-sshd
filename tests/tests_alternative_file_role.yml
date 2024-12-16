@@ -39,7 +39,7 @@
       AcceptEnv: LANG
       Banner: /etc/issue
       Ciphers: aes256-ctr
-    sshd_Compression: false  # noqa var-naming
+    sshd_LogLevel: DEBUG1  # noqa var-naming
 
 # Configure second alternative sshd_config file
 - name: Test first alternative role file
@@ -113,7 +113,7 @@
               - "'AcceptEnv LANG' in config.content | b64decode"
               - "'Banner /etc/issue' in config.content | b64decode"
               - "'Ciphers aes256-ctr' in config.content | b64decode"
-              - "'Compression no' in config.content | b64decode"
+              - "'LogLevel DEBUG1' in config.content | b64decode"
 
         - name: Check Fedora/RHEL9+ defaults are present in the first configuration file
           ansible.builtin.assert:
@@ -177,7 +177,7 @@
               - "'Ciphers aes128-ctr' in config2.content | b64decode"
               - "'HostKey' not in config2.content | b64decode"
               - "'MaxStartups 100' in config2.content | b64decode"
-              - "'Compression no' not in config2.content | b64decode"
+              - "'LogLevel DEBUG1' not in config2.content | b64decode"
 
         - name: Check content of the main configuration file
           ansible.builtin.assert:
@@ -187,7 +187,7 @@
               - "'HostKey /tmp/ssh_host_ecdsa_key' in config3.content | b64decode"
               - "'PasswordAuthentication no' in config3.content | b64decode"
               - "'MaxStartups 100' not in config3.content | b64decode"
-              - "'Compression no' not in config3.content | b64decode"
+              - "'LogLevel DEBUG1' not in config3.content | b64decode"
 
         - name: Check the main configuration file contains some default values for RHEL 9
           ansible.builtin.assert:
