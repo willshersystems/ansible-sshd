@@ -50,6 +50,7 @@ PubkeyAcceptedAlgorithms
 PubkeyAuthentication
 PubkeyAuthOptions
 RDomain
+RefuseConnection
 RekeyLimit
 RevokedKeys
 RequiredRSASize

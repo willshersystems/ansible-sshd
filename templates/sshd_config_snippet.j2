@@ -94,6 +94,7 @@ Match {{ match["Condition"] }}
 {{       render_option("PubkeyAuthentication",match["PubkeyAuthentication"],true) -}}
 {{       render_option("PubkeyAuthOptions",match["PubkeyAuthOptions"],true) -}}
 {{       render_option("RDomain",match["RDomain"],true) -}}
+{{       render_option("RefuseConnection",match["RefuseConnection"],true) -}}
 {{       render_option("RekeyLimit",match["RekeyLimit"],true) -}}
 {{       render_option("RevokedKeys",match["RevokedKeys"],true) -}}
 {{       render_option("RequiredRSASize",match["RequiredRSASize"],true) -}}
@@ -219,6 +220,7 @@ Match {{ match["Condition"] }}
 {{ body_option("PubkeyAuthentication",sshd_PubkeyAuthentication) -}}
 {{ body_option("RSAAuthentication",sshd_RSAAuthentication) -}}
 {{ body_option("RSAMinSize",sshd_RSAMinSize) -}}
+{{ body_option("RefuseConnection",sshd_RefuseConnection) -}}
 {{ body_option("RekeyLimit",sshd_RekeyLimit) -}}
 {{ body_option("RequiredRSASize",sshd_RequiredRSASize) -}}
 {{ body_option("RevokedKeys",sshd_RevokedKeys) -}}
