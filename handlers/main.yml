@@ -10,7 +10,7 @@
     - ansible_connection != 'chroot'
     - ansible_facts['os_family'] != 'AIX'
     - ansible_facts['os_family'] != 'OpenWrt'
-  listen: Reload_sshd
+  listen: sshd_reload
 
 - name: Restart the SSH service
   ansible.builtin.service:
@@ -22,7 +22,7 @@
     - ansible_connection != 'chroot'
     - ansible_facts['os_family'] != 'AIX'
     - ansible_facts['os_family'] != 'OpenWrt'
-  listen: Restart_sshd
+  listen: sshd_restart
 
 # sshd on AIX cannot be 'reloaded', it must be Stopped+Started.
 # It's dangerous to do this in two tasks.. you're stopping SSH and then trying to SSH back in to start it.
@@ -37,7 +37,7 @@
     stopsrc -s sshd
     until $(lssrc -s sshd | grep -q inoperative); do sleep 1; done
     startsrc -s sshd
-  listen: Reload_sshd
+  listen: sshd_reload
   changed_when: false
   when:
     - sshd_allow_reload|bool
@@ -51,4 +51,4 @@
   when:
     - sshd_allow_reload|bool
     - ansible_facts['os_family'] == 'OpenWrt'
-  listen: Reload_sshd
+  listen: sshd_reload
