@@ -96,6 +96,14 @@ changed configuration. Defaults to the same value as `sshd_manage_service`.
 (Except on AIX, where `sshd_manage_service` is default *false*, but
 `sshd_allow_reload` is default *true*)
 
+#### sshd_allow_restart
+
+Some changes, for example of the sysconfig and environment files require the full
+restart of the service. If set to *false*, a restart of sshd won't happen on these
+changes. This can help with troubleshooting. You'll need to manually restart sshd
+if you want to apply the changed configuration. Defaults to the same value as
+`sshd_manage_service`.
+
 #### sshd_install_service
 
 If set to *true*, the role will install service files for the ssh service.
