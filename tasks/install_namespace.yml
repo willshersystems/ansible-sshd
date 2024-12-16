@@ -21,4 +21,4 @@
         {{ sshd_binary | quote }} -t -f %s
       {% endif %}
     backup: "{{ sshd_backup }}"
-  notify: Reload_sshd
+  notify: sshd_reload
