@@ -74,3 +74,17 @@ jobs:
           hosts: localhost
           targets: "tests/tests_*.yml"
           requirements: tests/requirements.yml
+
+  centos-10:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout PR
+        uses: actions/checkout@v4
+
+      - name: ansible check with centos 10
+        uses: roles-ansible/check-ansible-centos-centos10-action@main
+        with:
+          group: local
+          hosts: localhost
+          targets: "tests/tests_*.yml"
+          requirements: tests/requirements.yml
