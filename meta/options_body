@@ -96,6 +96,7 @@ PubkeyAuthOptions
 PubkeyAuthentication
 RSAAuthentication
 RSAMinSize
+RefuseConnection
 RekeyLimit
 RequiredRSASize
 RevokedKeys
