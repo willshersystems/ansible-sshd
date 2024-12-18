@@ -92,17 +92,16 @@ for AIX)
 
 If set to *false*, a reload of sshd won't happen on change. This can help with
 troubleshooting. You'll need to manually reload sshd if you want to apply the
-changed configuration. Defaults to the same value as `sshd_manage_service`.
-(Except on AIX, where `sshd_manage_service` is default *false*, but
-`sshd_allow_reload` is default *true*)
+changed configuration. Defaults to *true*.
 
 #### sshd_allow_restart
 
 Some changes, for example of the sysconfig and environment files require the full
 restart of the service. If set to *false*, a restart of sshd won't happen on these
 changes. This can help with troubleshooting. You'll need to manually restart sshd
-if you want to apply the changed configuration. Defaults to the same value as
-`sshd_manage_service`.
+if you want to apply the changed configuration. Defaults to *true* (except on AIX
+where the reload is handled by specific restart command and this option does not
+have any effect).
 
 #### sshd_install_service
 
