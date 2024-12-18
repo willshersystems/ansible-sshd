@@ -23,6 +23,12 @@ Ubuntu. This is not the default assigned by this module - it will set
 via simple password. If you need this functionality, be sure to set
 `sshd_PermitRootLogin yes` for those hosts.
 
+**NOTE** The sshd service is reloaded/restarted automatically, only if the role is
+invoked using `roles` keyword. Using `include_role` won't trigger handlers
+as described in
+[official documentation](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_handlers.html#controlling-when-handlers-run).
+If you need to invoke the handlers in this case, use `meta: flush_handlers`.
+
 ## Requirements
 
 Tested on:
