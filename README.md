@@ -25,8 +25,8 @@ via simple password. If you need this functionality, be sure to set
 
 **NOTE** The sshd service is reloaded/restarted automatically, only if the role is
 invoked using `roles` keyword. Using `include_role` won't trigger handlers
-as described in
-[official documentation](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_handlers.html#controlling-when-handlers-run).
+as described in the Ansible ['taskify includes' proposal](https://github.com/ansible/proposals/issues/136). To work around this, call `meta: flush_handlers` as detailed in the
+[official Ansible documentation](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_handlers.html#controlling-when-handlers-run).
 If you need to invoke the handlers in this case, use `meta: flush_handlers`.
 
 ## Requirements
