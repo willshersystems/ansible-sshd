@@ -1,6 +1,22 @@
 Changelog
 =========
 
+[v0.26.0] - 2024-12-17
+--------------------
+
+### New Features
+
+- feat: New options in OpenSSH + fixes for bugx in OpenSSH 9.9p1 (#304)
+
+### Bug Fixes
+
+- fix: use quote with command, shell and validate with variable (#298)
+- fix: rename var sshd -> sshd_config and debug output (#299)
+
+### Other Changes
+
+- test: set TMPDIR in block of role invocation (#300)
+
 [v0.25.0] - 2024-08-19
 --------------------
 
