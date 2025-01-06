@@ -1,6 +1,23 @@
 Changelog
 =========
 
+[v0.26.0] - 2025-01-06
+--------------------
+
+### New Features
+
+- feat: New options in OpenSSH + fixes for bugx in OpenSSH 9.9p1 (#304)
+- feat: Use sshd_config instead of sshd which has been deprecated (#299)
+
+### Bug Fixes
+
+- fix: use quote with command, shell and validate with variable (#298)
+- fix: Reload the service when needed (#303)
+
+### Other Changes
+
+- test: set TMPDIR in block of role invocation (#300)
+
 [v0.25.0] - 2024-08-19
 --------------------
 
