@@ -33,6 +33,6 @@ jobs:
           # https://github.com/ansible/ansible-lint/blob/main/action.yml#L45
           mkdir -p "$coll_dir/.git"
       - name: Run ansible-lint
-        uses: ansible/ansible-lint@v24
+        uses: ansible/ansible-lint@v25
         with:
           working_directory: ${{ github.workspace }}/.tox/ansible_collections/${{ env.LSR_ROLE2COLL_NAMESPACE }}/${{ env.LSR_ROLE2COLL_NAME }}
