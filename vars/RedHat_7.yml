@@ -34,7 +34,8 @@ __sshd_hostkeys_nofips:
 
 __sshd_environment_file: /etc/sysconfig/sshd
 __sshd_environment_file_mandatory: true
-__sshd_environment_variable: $OPTIONS
+__sshd_environment_variable:
+  - OPTIONS
 __sshd_service_after: sshd-keygen.service
 __sshd_service_wants: sshd-keygen.service
 __sshd_service_restart_timeout: 42s

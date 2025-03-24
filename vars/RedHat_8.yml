@@ -37,7 +37,9 @@ __sshd_hostkeys_nofips:
 __sshd_environment_file:
   - /etc/crypto-policies/back-ends/opensshserver.config
   - /etc/sysconfig/sshd
-__sshd_environment_variable: $OPTIONS $CRYPTO_POLICY
+__sshd_environment_variable:
+  - OPTIONS
+  - CRYPTO_POLICY
 __sshd_service_after: sshd-keygen.target
 __sshd_service_wants: sshd-keygen.target ssh-host-keys-migration.service
 __sshd_service_restart_timeout: 42s
