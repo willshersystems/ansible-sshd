@@ -12,6 +12,9 @@ Documentation=man:sshd(8) man:sshd_config(5)
 
 [Service]
 Type=notify
+{% for var in __sshd_environment_variable %}
+Environment={{ var }}=
+{% endfor %}
 {% if __sshd_environment_file is string %}
 EnvironmentFile={{ __sshd_environment_file_mandatory | ternary('', '-')}}{{ __sshd_environment_file }}
 {% elif __sshd_environment_file is iterable %}
@@ -20,7 +23,8 @@ EnvironmentFile=-{{ file }}
 {%   endfor %}
 {% endif %}
 ExecStartPre={{ sshd_binary }} -t
-ExecStart={{ sshd_binary }} -D {{ __sshd_environment_variable }} -f
+ExecStart={{ sshd_binary }} -D
+{%- for var in __sshd_environment_variable %} ${{ var }}{% endfor %} -f
 {%- if sshd_main_config_file is not none and sshd_config_file | dirname == sshd_main_config_file ~ '.d' %}
 {{- sshd_main_config_file }}
 {% else %}

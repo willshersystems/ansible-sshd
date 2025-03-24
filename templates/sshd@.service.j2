@@ -13,6 +13,9 @@ Wants={{ file }}
 {% endif %}
 
 [Service]
+{% for var in __sshd_environment_variable %}
+Environment={{ var }}=
+{% endfor %}
 {% if __sshd_environment_file is string %}
 EnvironmentFile=-{{ __sshd_environment_file }}
 {% elif __sshd_environment_file is iterable %}
@@ -20,7 +23,8 @@ EnvironmentFile=-{{ __sshd_environment_file }}
 EnvironmentFile=-{{ file }}
 {%   endfor %}
 {% endif %}
-ExecStart=-{{ sshd_binary }} -i {{ __sshd_environment_variable }} -f
+ExecStart=-{{ sshd_binary }} -i
+{%- for var in __sshd_environment_variable %} ${{ var }}{% endfor %} -f
 {%- if sshd_main_config_file is not none and sshd_config_file | dirname == sshd_main_config_file ~ '.d' %}
 {{- sshd_main_config_file }}
 {% else %}
