@@ -72,7 +72,7 @@ __sshd_environment_file_mandatory: false
 
 # The variable name we are passing from the environment file as an argument to the sshd
 __sshd_environment_variable:
- - OPTIONS
+  - OPTIONS
 
 # The systemd targets that need to be up before starting the service.
 # The `network.target` is included by default in the main sshd.service (not the instantiated one)

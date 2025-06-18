@@ -68,7 +68,7 @@
         sshd_config:
           Port: 222
 
-    - name: Verify the options are correctly set
+    - name: Verify the options are correctly set with non-standard port
       tags: tests::verify
       block:
         - name: Flush handlers
@@ -98,7 +98,7 @@
             - 22
             - 222
 
-    - name: Verify the options are correctly set
+    - name: Verify the options are correctly set with multiple ports
       tags: tests::verify
       block:
         - name: Flush handlers

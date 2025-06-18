@@ -68,16 +68,16 @@
         - name: Check content of configuration file (blocks)
           ansible.builtin.assert:
             that:
-              - "config.content | b64decode | regex_search('Match all\\s*PasswordAuthentication yes')"
-              - "config.content | b64decode | regex_search('Match all\\s*PasswordAuthentication no')"
+              - config.content | b64decode | regex_search('Match all\\s*PasswordAuthentication yes') | length > 0
+              - config.content | b64decode | regex_search('Match all\\s*PasswordAuthentication no') | length > 0
           when:
             - ansible_facts['os_family'] != 'RedHat' or ansible_facts['distribution_major_version'] != '6'
 
         - name: Check content of configuration file (blocks for RHEL 6)
           ansible.builtin.assert:
             that:
-              - "config.content | b64decode | regex_search('Match address \\*\\s*PasswordAuthentication yes')"
-              - "config.content | b64decode | regex_search('Match address \\*\\s*PasswordAuthentication no')"
+              - config.content | b64decode | regex_search('Match address \\*\\s*PasswordAuthentication yes') | length > 0
+              - config.content | b64decode | regex_search('Match address \\*\\s*PasswordAuthentication no') | length > 0
           when:
             - ansible_facts['os_family'] == 'RedHat'
             - ansible_facts['distribution_major_version'] == '6'
@@ -89,12 +89,12 @@
               - "'PasswordAuthentication yes' in config.content | b64decode"
               - "'Match user root' in config.content | b64decode"
               - "'AllowAgentForwarding no' in config.content | b64decode"
-              - "config.content | b64decode | regex_search('Match user root\\s*AllowAgentForwarding no')"
+              - config.content | b64decode | regex_search('Match user root\\s*AllowAgentForwarding no') | length > 0
               - "'PermitRootLogin no' in config.content | b64decode"
               - "'PasswordAuthentication no' in config.content | b64decode"
               - "'Match Address 127.0.0.1' in config.content | b64decode"
               - "'Banner /etc/issue' in config.content | b64decode"
-              - "config.content | b64decode | regex_search('Match Address 127.0.0.1\\s*Banner /etc/issue')"
+              - config.content | b64decode | regex_search('Match Address 127.0.0.1\\s*Banner /etc/issue') | length > 0
 
         - name: Check the configuration values are effective
           # note, the options are in lower-case here
