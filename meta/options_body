@@ -106,6 +106,7 @@ SecurityKeyProvider
 SetEnv
 ServerKeyBits
 ShowPatchLevel
+SshdAuthPath
 SshdSessionPath
 StreamLocalBindMask
 StreamLocalBindUnlink
