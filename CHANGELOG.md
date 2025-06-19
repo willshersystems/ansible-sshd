@@ -1,6 +1,22 @@
 Changelog
 =========
 
+[v0.27.0] - 2025-06-19
+--------------------
+
+### New Features
+
+- feat: Add new options from OpenSSH 10.0 (#312)
+
+### Bug Fixes
+
+- fix: service: Add default Environment option (#308)
+
+### Other Changes
+
+- ci: use ansible-lint v25 - have to use requirements file for ansible-lint now (#309)
+- refactor: Ansible 2.19 support (#311)
+
 [v0.26.0] - 2025-01-06
 --------------------
 
