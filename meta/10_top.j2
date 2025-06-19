@@ -1,39 +1,46 @@
 {% macro render_option(key,value,indent=false) %}
-{%   if value is defined %}
+{%   if value is defined and value is not none %}
 {%     if value is sameas true %}
-{%     if indent %}  {% endif %}
+{%       if indent %}  {% endif %}
 {{ key }} yes
 {%     elif value is sameas false %}
-{%     if indent %}  {% endif %}
+{%       if indent %}  {% endif %}
 {{ key }} no
 {%     elif value is string or value is number %}
-{%     if indent %}  {% endif %}
+{%       if indent %}  {% endif %}
 {{ key }} {{ value | string }}
 {%     else %}
 {%       for i in value %}
-{%     if indent %}  {% endif %}
+{%         if i is none %}
+{{- '' -}}
+{%         else %}
+{%           if indent %}  {% endif %}
 {{ key }} {{ i | string }}
+{%         endif %}
 {%       endfor %}
 {%     endif %}
+{%   else %}
+{{- '' -}}
 {%   endif %}
 {% endmacro %}
 {% macro body_option(key,override) %}
-{%   set value = undefined %}
 {%   if override is defined %}
-{%     set value = override %}
+{{     render_option(key, override) -}}
 {%   elif __sshd_config[key] is defined %}
-{%     set value = __sshd_config[key] %}
+{{     render_option(key, __sshd_config[key]) -}}
 {%   elif sshd_main_config_file is not none
         and sshd_config_file | dirname == sshd_main_config_file ~ '.d' %}
 {#     Do not use the defaults from main file to avoid recursion #}
+{{- '' -}}
 {%   elif __sshd_defaults[key] is defined and not sshd_skip_defaults %}
 {%     if key == 'HostKey' and __sshd_fips_mode %}
-{%       set value = __sshd_defaults[key] | difference(__sshd_hostkeys_nofips) %}
+{{       render_option(key, __sshd_defaults[key] | difference(__sshd_hostkeys_nofips)) -}}
 {%     else %}
-{%       set value = __sshd_defaults[key] %}
+{{       render_option(key, __sshd_defaults[key]) -}}
 {%     endif %}
+{%   else %}
+{{- '' -}}
 {%   endif %}
-{{ render_option(key,value) -}}
 {% endmacro %}
 {% macro match_block(match_list) %}
 {%   if match_list["Condition"] is defined %}

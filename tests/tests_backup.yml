@@ -40,7 +40,7 @@
         sshd_Banner: /tmp/banner  # noqa var-naming
       register: second_run
 
-    - name: Find new backups files
+    - name: Find new backups files after reconfiguration
       ansible.builtin.find:
         paths: "{{ main_sshd_config_path }}"
         patterns: "{{ main_sshd_config_name }}.*@*~"

@@ -83,7 +83,7 @@
         - ansible_facts['os_family'] != "RedHat" or
           ansible_facts['distribution_major_version'] | int == 6
 
-    - name: Get list of options from manual page
+    - name: Show list of options from manual page
       ansible.builtin.shell: >-
         set -eu; set -o | grep -q pipefail && set -o pipefail; man sshd_config | cat
       changed_when: false

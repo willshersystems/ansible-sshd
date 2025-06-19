@@ -98,7 +98,7 @@
       ansible.builtin.include_role:
         name: ansible-sshd
 
-    - name: Verify the options are correctly set
+    - name: Verify the options are correctly set after reconfiguration
       when:
         - ansible_facts['os_family'] == 'RedHat'
         - ansible_facts['distribution_major_version'] | int > 6
