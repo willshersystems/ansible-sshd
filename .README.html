@@ -58,8 +58,9 @@ SOFTWARE.
   </style>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -70,7 +71,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -152,13 +153,15 @@ id="toc-sshd_skip_defaults">sshd_skip_defaults</a></li>
 id="toc-sshd_manage_service">sshd_manage_service</a></li>
 <li><a href="#sshd_allow_reload"
 id="toc-sshd_allow_reload">sshd_allow_reload</a></li>
+<li><a href="#sshd_allow_restart"
+id="toc-sshd_allow_restart">sshd_allow_restart</a></li>
 <li><a href="#sshd_install_service"
 id="toc-sshd_install_service">sshd_install_service</a></li>
 <li><a href="#sshd_manage_firewall"
 id="toc-sshd_manage_firewall">sshd_manage_firewall</a></li>
 <li><a href="#sshd_manage_selinux"
 id="toc-sshd_manage_selinux">sshd_manage_selinux</a></li>
-<li><a href="#sshd" id="toc-sshd">sshd</a></li>
+<li><a href="#sshd_config" id="toc-sshd_config">sshd_config</a></li>
 <li><a href="#sshd_optionname"
 id="toc-sshd_optionname">sshd_<code>&lt;OptionName&gt;</code></a></li>
 <li><a href="#sshd_match-sshd_match_1-through-sshd_match_9"
@@ -270,6 +273,16 @@ module - it will set <code>PermitRootLogin without-password</code> which
 will allow access via SSH key but not via simple password. If you need
 this functionality, be sure to set <code>sshd_PermitRootLogin yes</code>
 for those hosts.</p>
+<p><strong>NOTE</strong> The sshd service is reloaded/restarted
+automatically, only if the role is invoked using <code>roles</code>
+keyword. Using <code>include_role</code> won't trigger handlers as
+described in the Ansible <a
+href="https://github.com/ansible/proposals/issues/136">'taskify
+includes' proposal</a>. To work around this, call
+<code>meta: flush_handlers</code> as detailed in the <a
+href="https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_handlers.html#controlling-when-handlers-run">official
+Ansible documentation</a>. If you need to invoke the handlers in this
+case, use <code>meta: flush_handlers</code>.</p>
 <h1 id="requirements">Requirements</h1>
 <p>Tested on:</p>
 <ul>
@@ -353,10 +366,16 @@ support <code>enabled</code> for AIX)</p>
 <h3 id="sshd_allow_reload">sshd_allow_reload</h3>
 <p>If set to <em>false</em>, a reload of sshd won't happen on change.
 This can help with troubleshooting. You'll need to manually reload sshd
-if you want to apply the changed configuration. Defaults to the same
-value as <code>sshd_manage_service</code>. (Except on AIX, where
-<code>sshd_manage_service</code> is default <em>false</em>, but
-<code>sshd_allow_reload</code> is default <em>true</em>)</p>
+if you want to apply the changed configuration. Defaults to
+<em>true</em>.</p>
+<h3 id="sshd_allow_restart">sshd_allow_restart</h3>
+<p>Some changes, for example of the sysconfig and environment files
+require the full restart of the service. If set to <em>false</em>, a
+restart of sshd won't happen on these changes. This can help with
+troubleshooting. You'll need to manually restart sshd if you want to
+apply the changed configuration. Defaults to <em>true</em> (except on
+AIX where the reload is handled by specific restart command and this
+option does not have any effect).</p>
 <h3 id="sshd_install_service">sshd_install_service</h3>
 <p>If set to <em>true</em>, the role will install service files for the
 ssh service. Defaults to <em>false</em>.</p>
@@ -388,13 +407,16 @@ based OS. The default is <em>false</em>.</p>
 <p>NOTE: <code>sshd_manage_selinux</code> is limited to <em>adding</em>
 policy. It cannot be used for <em>removing</em> policy. If you want to
 remove ports, you will need to use the selinux system role directly.</p>
-<h3 id="sshd">sshd</h3>
+<h3 id="sshd_config">sshd_config</h3>
 <p>A dict containing configuration. e.g.</p>
 <div class="sourceCode" id="cb2"><pre
-class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sshd</span><span class="kw">:</span></span>
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sshd_config</span><span class="kw">:</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">Compression</span><span class="kw">:</span><span class="at"> delayed</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">ListenAddress</span><span class="kw">:</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fl">0.0.0.0</span></span></code></pre></div>
+<p><em>Note</em>: This variable was previous called <code>sshd</code>.
+<code>sshd</code> is can still be used but is deprecated and will be
+removed in a future release.</p>
 <h3 id="sshd_optionname">sshd_<code>&lt;OptionName&gt;</code></h3>
 <p>Simple variables can be used rather than a dict. Simple values
 override dict values. e.g.:</p>
@@ -577,7 +599,7 @@ to the above variables, respective configuration options
 <code>AuthorizedPrincipalsFile</code> (optional) need to be present the
 <code>sshd</code> dictionary when invoking the role. For example:</p>
 <div class="sourceCode" id="cb7"><pre
-class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sshd</span><span class="kw">:</span></span>
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sshd_config</span><span class="kw">:</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">TrustedUserCAKeys</span><span class="kw">:</span><span class="at"> /etc/ssh/path-to-trusted-user-ca-keys/trusted-user-ca-keys.pub</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">AuthorizedPrincipalsFile</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;/etc/ssh/path-to-auth-principals/auth_principals/%u&quot;</span></span></code></pre></div>
 <p>To learn more about SSH Certificates, here is a <a
@@ -600,7 +622,7 @@ class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb8-1"><a href="
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">hosts</span><span class="kw">:</span><span class="at"> all</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">vars</span><span class="kw">:</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">sshd_skip_defaults</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">sshd</span><span class="kw">:</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">sshd_config</span><span class="kw">:</span></span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">Compression</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">ListenAddress</span><span class="kw">:</span></span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;0.0.0.0&quot;</span></span>
@@ -636,7 +658,7 @@ class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb10-1"><a href=
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">name</span><span class="kw">:</span><span class="at"> willshersystems.sshd</span></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">vars</span><span class="kw">:</span></span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">sshd_skip_defaults</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">sshd</span><span class="kw">:</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">sshd_config</span><span class="kw">:</span></span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">Compression</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">ListenAddress</span><span class="kw">:</span></span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;0.0.0.0&quot;</span></span>
@@ -660,7 +682,7 @@ class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb11-1"><a href=
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">name</span><span class="kw">:</span><span class="at"> willshersystems.sshd</span></span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">vars</span><span class="kw">:</span></span>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">sshd_config_namespace</span><span class="kw">:</span><span class="at"> accept-env</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">sshd</span><span class="kw">:</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">sshd_config</span><span class="kw">:</span></span>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">        # there are some handy environment variables to accept</span></span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">AcceptEnv</span><span class="kw">:</span></span>
 <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="at">          LANG</span></span>
@@ -693,7 +715,7 @@ href="mailto:matt@willsher.systems">matt@willsher.systems</a></p>
 <p>© 2014,2015 Willsher Systems Ltd.</p>
 <p>Jakub Jelen <a
 href="mailto:jjelen@redhat.com">jjelen@redhat.com</a></p>
-<p>© 2020 - 2022 Red Hat, Inc.</p>
+<p>© 2020 - 2024 Red Hat, Inc.</p>
 </article>
 </body>
 </html>
