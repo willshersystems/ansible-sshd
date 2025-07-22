@@ -35,7 +35,7 @@ Tested on:
 
 * Ubuntu precise, trusty, xenial, bionic, focal, jammy, noble
   * [![Run tests on Ubuntu latest](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-ubuntu.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-ubuntu.yml)
-* Debian wheezy, jessie, stretch, buster, bullseye, bookworm
+* Debian 11 (Bullseye), 12 (Bookworm), 13 (Trixie)
   * [![Run tests on Debian](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-check.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-check.yml)
 * EL 6, 7, 8, 9, 10 derived distributions
   * [![Run tests on CentOS](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos-check.yml/badge.svg)](https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-centos-check.yml)
