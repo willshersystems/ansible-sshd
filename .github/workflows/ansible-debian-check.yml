@@ -3,6 +3,20 @@ name: Run tests on Debian
 on: [push, pull_request]
 
 jobs:
+  debian-trixie:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout PR
+        uses: actions/checkout@v4
+
+      - name: ansible check with debian trixie (13)
+        uses: roles-ansible/check-ansible-debian-latest-action@v1.4
+        with:
+          group: local
+          hosts: localhost
+          targets: "tests/tests_*.yml"
+          requirements: tests/requirements.yml
+
   debian-bookworm:
     runs-on: ubuntu-latest
     steps:
