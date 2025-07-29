@@ -8,7 +8,9 @@ Before=sockets.target
 {% endif %}
 
 [Socket]
-ListenStream=22
+{% for port in __sshd_ports_from_config %}
+ListenStream={{ port }}
+{% endfor %}
 {% if __sshd_socket_accept %}
 Accept=yes
 {% else %}
