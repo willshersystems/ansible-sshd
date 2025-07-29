@@ -8,9 +8,18 @@ Before=sockets.target
 {% endif %}
 
 [Socket]
-{% for port in __sshd_ports_from_config %}
+{% for port in __sshd_ports_from_config | from_json %}
+{%  if __sshd_listen_addresses_from_config != '["0.0.0.0", "[::]"]' or __sshd_socket_expanded_listen %}
+{%   for addr in __sshd_listen_addresses_from_config | from_json %}
+ListenStream={{ addr }}:{{ port }}
+{%   endfor %}
+{%  else %}
 ListenStream={{ port }}
+{%  endif %}
 {% endfor %}
+{% if __sshd_socket_bind_ipv6only %}
+BindIPv6Only=ipv6-only
+{% endif %}
 {% if __sshd_socket_accept %}
 Accept=yes
 {% else %}
