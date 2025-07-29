@@ -129,6 +129,9 @@
     - name: Find SSHD ports
       ansible.builtin.include_tasks: find_ports.yml
 
+    - name: Find SSHD bind addresses
+      ansible.builtin.include_tasks: find_bind_addresses.yml
+
     - name: Configure firewall
       ansible.builtin.include_tasks: firewall.yml
       when:
