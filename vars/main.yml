@@ -95,3 +95,9 @@ __sshd_socket_freebind: ~
 
 # Space separated list of service names that this socket is required by
 __sshd_socket_required_by: ~
+
+# Expand the list of bind addresses even if the default is used
+__sshd_socket_expanded_listen: false
+
+# Bind SSHD socket only to IPv6
+__sshd_socket_bind_ipv6only: false

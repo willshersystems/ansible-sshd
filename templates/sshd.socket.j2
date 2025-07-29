@@ -8,9 +8,20 @@ Before=sockets.target
 {% endif %}
 
 [Socket]
-{% for port in __sshd_ports_from_config %}
+{% set ports = __sshd_ports_from_config if __sshd_ports_from_config | type_debug == "list" else __sshd_ports_from_config | from_json %}
+{% set addrs = __sshd_listen_addresses_from_config if __sshd_listen_addresses_from_config | type_debug == "list" else __sshd_listen_addresses_from_config | from_json %}
+{% for port in ports %}
+{%  if addrs != ["0.0.0.0", "[::]"] or __sshd_socket_expanded_listen %}
+{%   for addr in addrs %}
+ListenStream={{ addr }}:{{ port }}
+{%   endfor %}
+{%  else %}
 ListenStream={{ port }}
+{%  endif %}
 {% endfor %}
+{% if __sshd_socket_bind_ipv6only %}
+BindIPv6Only=ipv6-only
+{% endif %}
 {% if __sshd_socket_accept %}
 Accept=yes
 {% else %}
