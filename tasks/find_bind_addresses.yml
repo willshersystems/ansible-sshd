@@ -1,0 +1,24 @@
+---
+- name: Find the bind addresses the ssh service is going to use
+  vars:
+    # This mimics the macro body_option() in sshd_config.j2
+    # The explicit to_json filter is needed for Python 2 compatibility
+    __sshd_listen_from_config_tmp: >-
+      {%- if sshd_ListenAddress is defined -%}
+      {{-   sshd_ListenAddress | to_json -}}
+      {%- elif __sshd_config['ListenAddress'] is defined -%}
+      {{-   __sshd_config['ListenAddress'] | to_json -}}
+      {%- elif __sshd_defaults['ListenAddress'] is defined and not sshd_skip_defaults -%}
+      {{-   __sshd_defaults['ListenAddress'] | to_json -}}
+      {%- else -%}
+      {{-   ["0.0.0.0", "[::]"] | to_json -}}
+      {%- endif -%}
+  ansible.builtin.set_fact:
+    __sshd_listen_addresses_from_config: >-
+      {%- if __sshd_listen_from_config_tmp | type_debug == "list" -%}
+      {{-    __sshd_listen_from_config_tmp | to_json -}}
+      {%- elif __sshd_listen_from_config_tmp | from_json is string or __sshd_listen_from_config_tmp | from_json is number -%}
+      {{-   [__sshd_listen_from_config_tmp | from_json] | to_json -}}
+      {%- else -%}
+      {{-   __sshd_listen_from_config_tmp -}}
+      {%- endif -%}
