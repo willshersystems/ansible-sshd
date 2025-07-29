@@ -1,11 +1,23 @@
 ---
 
+- name: Systemd daemon is reloaded when needed
+  ansible.builtin.command: systemctl daemon-reload  # noqa command-instead-of-module
+  # # Can not use systemd_service as it fails on the old Ansible even if not executed
+  # ansible.builtin.systemd_service:
+  #   daemon_reload: true
+  when:
+    - sshd_manage_service | bool
+    - ansible_facts['virtualization_type'] | default(None) not in __sshd_skip_virt_env
+    - ansible_connection != 'chroot'
+  listen: sshd_daemon_reload
+  changed_when: true
+
 - name: Reload the SSH service
   ansible.builtin.service:
     name: "{{ sshd_service }}"
     state: reloaded
   when:
-    - sshd_allow_reload|bool
+    - sshd_allow_reload | bool
     - ansible_facts['virtualization_type'] | default(None) not in __sshd_skip_virt_env
     - ansible_connection != 'chroot'
     - ansible_facts['os_family'] != 'AIX'
@@ -17,7 +29,7 @@
     name: "{{ sshd_service }}"
     state: restarted
   when:
-    - sshd_allow_restart|bool
+    - sshd_allow_restart | bool
     - ansible_facts['virtualization_type'] | default(None) not in __sshd_skip_virt_env
     - ansible_connection != 'chroot'
     - ansible_facts['os_family'] != 'AIX'
@@ -40,7 +52,7 @@
   listen: sshd_reload
   changed_when: false
   when:
-    - sshd_allow_reload|bool
+    - sshd_allow_reload | bool
     - ansible_facts['os_family'] == 'AIX'
 
 # sshd on OpenWrt does not support reloading a service, it has to be restarted instead
@@ -49,6 +61,6 @@
     name: "{{ sshd_service }}"
     state: restarted
   when:
-    - sshd_allow_reload|bool
+    - sshd_allow_reload | bool
     - ansible_facts['os_family'] == 'OpenWrt'
   listen: sshd_reload
