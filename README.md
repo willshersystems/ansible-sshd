@@ -109,6 +109,19 @@ if you want to apply the changed configuration. Defaults to *true* (except on AI
 where the reload is handled by specific restart command and this option does not
 have any effect).
 
+#### sshd_allow_daemon_reload
+
+The `systemd` daemon needs to be reloaded in the following cases:
+
+* When the `systemd` is used to manage the service and/or socket
+* When the ports or listen addresses are changed to non-default values and they
+  are automatically picked up by the `sshd-socket-generator`
+  (such as in Ubuntu 24.04).
+
+If set to *false*, a the `systemd` daemon won't be reloaded on these changes.
+This can help with troubleshooting. You'll need to manually reload the `systemd`
+daemon if you want to apply the changed configuration. Defaults to *true*.
+
 #### sshd_install_service
 
 If set to *true*, the role will install service files for the ssh service.

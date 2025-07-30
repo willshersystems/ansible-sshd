@@ -10,6 +10,9 @@ sshd_skip_defaults: false
 # daemon at all
 sshd_manage_service: true
 
+# If the below is false, don't reload the systemd daemon on change of the service or socket
+sshd_allow_daemon_reload: true
+
 # If the below is false, don't reload the ssh daemon on change
 sshd_allow_reload: true
 
