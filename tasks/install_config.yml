@@ -25,6 +25,18 @@
       {% endif %}
     backup: "{{ sshd_backup }}"
   notify: sshd_reload
+  register: __sshd_config_result
+
+- name: Notify systemd to reload daemon and restart the service
+  ansible.builtin.assert: { that: true, quiet: true }
+  changed_when: true
+  when:
+    - __sshd_config_result is changed
+    - not __sshd_socket_accept
+    - __sshd_listen_addresses_from_config != '["0.0.0.0", "[::]"]' or __sshd_ports_from_config != "[22]"
+  notify:
+    - sshd_daemon_reload
+    - sshd_restart
 
 - name: Make sure the include path is present in the main sshd_config
   ansible.builtin.lineinfile:
