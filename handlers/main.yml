@@ -6,7 +6,6 @@
   # ansible.builtin.systemd_service:
   #   daemon_reload: true
   when:
-    - sshd_manage_service | bool
     - ansible_facts['virtualization_type'] | default(None) not in __sshd_skip_virt_env
     - ansible_connection != 'chroot'
   listen: sshd_daemon_reload
