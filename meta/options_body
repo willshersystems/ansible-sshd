@@ -37,6 +37,7 @@ GatewayPorts
 GSSAPIAuthentication
 GSSAPICleanupCredentials
 GSSAPIEnablek5users
+GSSAPIIndicators
 GSSAPIKeyExchange
 GSSAPIKexAlgorithms
 GSSAPIStoreCredentialsOnRekey
