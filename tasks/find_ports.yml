@@ -4,22 +4,24 @@
     # This mimics the macro body_option() in sshd_config.j2
     # The explicit to_json filter is needed for Python 2 compatibility
     __sshd_ports_from_config_tmp: >-
-      {% if sshd_Port is defined %}
-        {{ sshd_Port | to_json }}
-      {% elif __sshd_config['Port'] is defined %}
-        {{ __sshd_config['Port'] | to_json }}
-      {% elif __sshd_defaults['Port'] is defined and not sshd_skip_defaults %}
-        {{ __sshd_defaults['Port'] | to_json }}
-      {% else %}
-        {{ [22] | to_json }}
-      {% endif %}
+      {%- if sshd_Port is defined -%}
+      {{-   sshd_Port | to_json -}}
+      {%- elif __sshd_config['Port'] is defined -%}
+      {{-   __sshd_config['Port'] | to_json -}}
+      {%- elif __sshd_defaults['Port'] is defined and not sshd_skip_defaults -%}
+      {{-   __sshd_defaults['Port'] | to_json -}}
+      {%- else -%}
+      {{-   [22] | to_json -}}
+      {%- endif -%}
   ansible.builtin.set_fact:
     __sshd_ports_from_config: >-
-      {% if __sshd_ports_from_config_tmp | from_json is string or __sshd_ports_from_config_tmp | from_json is number %}
-        {{ [__sshd_ports_from_config_tmp | from_json] | to_json }}
-      {% else %}
-        {{ __sshd_ports_from_config_tmp }}
-      {% endif %}
+      {%- if __sshd_ports_from_config_tmp | type_debug == "list" -%}
+      {{-   __sshd_ports_from_config_tmp | to_json -}}
+      {%- elif __sshd_ports_from_config_tmp | from_json is string or __sshd_ports_from_config_tmp | from_json is number -%}
+      {{-   [__sshd_ports_from_config_tmp | from_json] | to_json -}}
+      {%- else -%}
+      {{-   __sshd_ports_from_config_tmp -}}
+      {%- endif -%}
   when:
     - sshd_manage_firewall | bool or sshd_manage_selinux | bool
     - ansible_facts['os_family'] == 'RedHat'
