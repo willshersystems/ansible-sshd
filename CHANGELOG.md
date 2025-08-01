@@ -1,6 +1,13 @@
 Changelog
 =========
 
+[v0.27.1] - 2025-08-01
+--------------------
+
+### Bug Fixes
+
+- fix: New configuration option in CentOS 10 (#319)
+
 [v0.27.0] - 2025-06-19
 --------------------
 
