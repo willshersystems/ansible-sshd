@@ -24,8 +24,9 @@
         group: root
         mode: "0644"
       notify:
-        - sshd_reload
         - sshd_daemon_reload
+        - sshd_reload
+        - sshd_socket_restart
       when:
         - __sshd_socket_accept | bool
 
@@ -37,8 +38,9 @@
         group: root
         mode: "0644"
       notify:
-        - sshd_reload
         - sshd_daemon_reload
+        - sshd_reload
+        - sshd_socket_restart
 
 - name: Service enabled and running
   ansible.builtin.service:

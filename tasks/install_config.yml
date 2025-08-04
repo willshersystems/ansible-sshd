@@ -37,6 +37,7 @@
   notify:
     - sshd_daemon_reload
     - sshd_restart
+    - sshd_socket_restart
 
 - name: Make sure the include path is present in the main sshd_config
   ansible.builtin.lineinfile:
