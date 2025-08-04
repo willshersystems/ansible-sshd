@@ -101,3 +101,6 @@ __sshd_socket_expanded_listen: false
 
 # Bind SSHD socket only to IPv6
 __sshd_socket_bind_ipv6only: false
+
+# Most of the distribution use sshd daemon directly as a service
+__sshd_systemd_unit: "service"

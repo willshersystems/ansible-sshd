@@ -94,6 +94,14 @@ unless: Running inside a docker container (it is assumed ansible is used during
 build phase) or AIX (Ansible `service` module does not currently support `enabled`
 for AIX)
 
+#### sshd_systemd_unit
+
+Selection among `service` and `socket`, which is used in systemd to handle
+the sshd connection. Only one can be active at a time, otherwise both
+sshd and systemd will try to bind the same port and one of them will fail.
+Default depends on OS. Most of them use `service`, but recent Ubuntu switched
+to using `socket` by default.
+
 #### sshd_allow_reload
 
 If set to *false*, a reload of sshd service won't happen on change. This can

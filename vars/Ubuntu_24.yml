@@ -34,3 +34,4 @@ __sshd_socket_freebind: true
 __sshd_socket_required_by: ssh.service
 __sshd_socket_expanded_listen: true
 __sshd_socket_bind_ipv6only: true
+__sshd_systemd_unit: "socket"
