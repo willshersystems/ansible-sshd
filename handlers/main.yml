@@ -18,6 +18,7 @@
     state: reloaded
   when:
     - sshd_allow_reload | bool
+    - sshd_systemd_unit == 'service'
     - ansible_facts['virtualization_type'] | default(None) not in __sshd_skip_virt_env
     - ansible_connection != 'chroot'
     - ansible_facts['os_family'] != 'AIX'
@@ -30,6 +31,7 @@
     state: restarted
   when:
     - sshd_allow_restart | bool
+    - sshd_systemd_unit == 'service'
     - ansible_facts['virtualization_type'] | default(None) not in __sshd_skip_virt_env
     - ansible_connection != 'chroot'
     - ansible_facts['os_family'] != 'AIX'
@@ -42,6 +44,7 @@
     state: restarted
   when:
     - sshd_allow_restart | bool
+    - sshd_systemd_unit == 'socket'
     - ansible_facts['virtualization_type'] | default(None) not in __sshd_skip_virt_env
     - ansible_connection != 'chroot'
   listen: sshd_socket_restart

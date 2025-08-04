@@ -13,11 +13,14 @@ sshd_manage_service: true
 # If the below is false, don't reload the systemd daemon on change of the service or socket
 sshd_allow_daemon_reload: true
 
-# If the below is false, don't reload the ssh daemon on change
+# If the below is false, don't reload the ssh service on change
 sshd_allow_reload: true
 
-# If the below is false, don't restart the ssh daemon on change that requires restart
+# If the below is false, don't restart the ssh service on change that requires restart
 sshd_allow_restart: true
+
+# If the below is false, don't restart the ssh socket on change that requires restart
+sshd_socket_allow_restart: true
 
 # If the below is true, also install service files from the templates pointed
 # to by the `sshd_service_template_*` variables
@@ -104,3 +107,9 @@ sshd_manage_firewall: false
 # If this option is enabled, the role will configure selinux to allow sshd to
 # bind the ports defined in the configuration. This works only on Red Hat based systems.
 sshd_manage_selinux: false
+
+# Selection among `service` and `socket`, which is used in systemd to handle
+# the sshd connection. Only one can be active at a time, otherwise both
+# sshd and systemd will try to bind the same port and one of them will fail.
+# Default depends on OS.
+sshd_systemd_unit: "{{ __sshd_systemd_unit }}"
