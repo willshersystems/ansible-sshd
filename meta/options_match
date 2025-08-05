@@ -1,3 +1,4 @@
+Include
 AcceptEnv
 AllowAgentForwarding
 AllowGroups
@@ -29,7 +30,6 @@ HostbasedAcceptedAlgorithms
 HostbasedAuthentication
 HostbasedUsesNameFromPacketOnly
 IgnoreRhosts
-Include
 IPQoS
 KbdInteractiveAuthentication
 KerberosAuthentication
