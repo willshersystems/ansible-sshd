@@ -10,7 +10,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: ansible check with debian trixie (13)
-        uses: roles-ansible/check-ansible-debian-latest-action@v1.4
+        uses: domrim/check-ansible-debian-trixie-action@v1
         with:
           group: local
           hosts: localhost
