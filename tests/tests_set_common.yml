@@ -16,8 +16,8 @@
         sshd_config:
           AcceptEnv: LANG
           Banner: /etc/issue
-          Ciphers: aes256-ctr
           Subsystem: "sftp internal-sftp"
+          UseDNS: true
         sshd_config_file: /etc/ssh/sshd_config
 
     - name: Verify the options are correctly set
@@ -42,16 +42,16 @@
             that:
               - "'acceptenv LANG' in runtime.stdout"
               - "'banner /etc/issue' in runtime.stdout"
-              - "'ciphers aes256-ctr' in runtime.stdout"
               - "'subsystem sftp internal-sftp' in runtime.stdout"
+              - "'usedns yes' in runtime.stdout"
 
         - name: Check the options are in configuration file
           ansible.builtin.assert:
             that:
               - "'AcceptEnv LANG' in config.content | b64decode"
               - "'Banner /etc/issue' in config.content | b64decode"
-              - "'Ciphers aes256-ctr' in config.content | b64decode"
               - "'Subsystem sftp internal-sftp' in config.content | b64decode"
+              - "'UseDNS yes' in config.content | b64decode"
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml

@@ -1,3 +1,4 @@
+Include
 Port
 AddressFamily
 ListenAddress
@@ -51,7 +52,6 @@ HostbasedAcceptedKeyTypes
 HostbasedAcceptedAlgorithms
 HostbasedAuthentication
 HostbasedUsesNameFromPacketOnly
-Include
 IPQoS
 IgnoreRhosts
 IgnoreUserKnownHosts

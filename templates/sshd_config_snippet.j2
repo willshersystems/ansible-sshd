@@ -49,6 +49,7 @@
 {%   if match_list is iterable %}
 {%     for match in match_list %}
 Match {{ match["Condition"] }}
+{{       render_option("Include",match["Include"],true) -}}
 {{       render_option("AcceptEnv",match["AcceptEnv"],true) -}}
 {{       render_option("AllowAgentForwarding",match["AllowAgentForwarding"],true) -}}
 {{       render_option("AllowGroups",match["AllowGroups"],true) -}}
@@ -80,7 +81,6 @@ Match {{ match["Condition"] }}
 {{       render_option("HostbasedAuthentication",match["HostbasedAuthentication"],true) -}}
 {{       render_option("HostbasedUsesNameFromPacketOnly",match["HostbasedUsesNameFromPacketOnly"],true) -}}
 {{       render_option("IgnoreRhosts",match["IgnoreRhosts"],true) -}}
-{{       render_option("Include",match["Include"],true) -}}
 {{       render_option("IPQoS",match["IPQoS"],true) -}}
 {{       render_option("KbdInteractiveAuthentication",match["KbdInteractiveAuthentication"],true) -}}
 {{       render_option("KerberosAuthentication",match["KerberosAuthentication"],true) -}}
@@ -129,6 +129,7 @@ Match {{ match["Condition"] }}
 {{     match_block(match_list) -}}
 {%   endif %}
 {% endmacro %}
+{{ body_option("Include",sshd_Include) -}}
 {{ body_option("Port",sshd_Port) -}}
 {{ body_option("AddressFamily",sshd_AddressFamily) -}}
 {{ body_option("ListenAddress",sshd_ListenAddress) -}}
@@ -182,7 +183,6 @@ Match {{ match["Condition"] }}
 {{ body_option("HostbasedAcceptedAlgorithms",sshd_HostbasedAcceptedAlgorithms) -}}
 {{ body_option("HostbasedAuthentication",sshd_HostbasedAuthentication) -}}
 {{ body_option("HostbasedUsesNameFromPacketOnly",sshd_HostbasedUsesNameFromPacketOnly) -}}
-{{ body_option("Include",sshd_Include) -}}
 {{ body_option("IPQoS",sshd_IPQoS) -}}
 {{ body_option("IgnoreRhosts",sshd_IgnoreRhosts) -}}
 {{ body_option("IgnoreUserKnownHosts",sshd_IgnoreUserKnownHosts) -}}
