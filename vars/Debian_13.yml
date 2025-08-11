@@ -18,6 +18,6 @@ __sshd_runtime_directory: sshd
 __sshd_environment_file: /etc/default/ssh
 __sshd_environment_variable:
   - SSHD_OPTS
-__sshd_service_after: auditd.service
+__sshd_service_after: nss-user-lookup.target auditd.service
 __sshd_service_alias: sshd
 __sshd_socket_accept: false
