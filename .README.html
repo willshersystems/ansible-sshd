@@ -151,10 +151,16 @@ id="toc-primary-role-variables">Primary role variables</a>
 id="toc-sshd_skip_defaults">sshd_skip_defaults</a></li>
 <li><a href="#sshd_manage_service"
 id="toc-sshd_manage_service">sshd_manage_service</a></li>
+<li><a href="#sshd_systemd_unit"
+id="toc-sshd_systemd_unit">sshd_systemd_unit</a></li>
 <li><a href="#sshd_allow_reload"
 id="toc-sshd_allow_reload">sshd_allow_reload</a></li>
 <li><a href="#sshd_allow_restart"
 id="toc-sshd_allow_restart">sshd_allow_restart</a></li>
+<li><a href="#sshd_socket_allow_restart"
+id="toc-sshd_socket_allow_restart">sshd_socket_allow_restart</a></li>
+<li><a href="#sshd_allow_daemon_reload"
+id="toc-sshd_allow_daemon_reload">sshd_allow_daemon_reload</a></li>
 <li><a href="#sshd_install_service"
 id="toc-sshd_install_service">sshd_install_service</a></li>
 <li><a href="#sshd_manage_firewall"
@@ -293,7 +299,7 @@ href="https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-
 src="https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-ubuntu.yml/badge.svg"
 alt="Run tests on Ubuntu latest" /></a></li>
 </ul></li>
-<li>Debian wheezy, jessie, stretch, buster, bullseye, bookworm
+<li>Debian 11 (Bullseye), 12 (Bookworm), 13 (Trixie)
 <ul>
 <li><a
 href="https://github.com/willshersystems/ansible-sshd/actions/workflows/ansible-debian-check.yml"><img
@@ -363,19 +369,49 @@ start or reload the service. Defaults to <em>true</em> unless: Running
 inside a docker container (it is assumed ansible is used during build
 phase) or AIX (Ansible <code>service</code> module does not currently
 support <code>enabled</code> for AIX)</p>
+<h3 id="sshd_systemd_unit">sshd_systemd_unit</h3>
+<p>Selection among <code>service</code> and <code>socket</code>, which
+is used in systemd to handle the sshd connection. Only one can be active
+at a time, otherwise both sshd and systemd will try to bind the same
+port and one of them will fail. Default depends on OS. Most of them use
+<code>service</code>, but recent Ubuntu switched to using
+<code>socket</code> by default.</p>
 <h3 id="sshd_allow_reload">sshd_allow_reload</h3>
-<p>If set to <em>false</em>, a reload of sshd won't happen on change.
-This can help with troubleshooting. You'll need to manually reload sshd
-if you want to apply the changed configuration. Defaults to
+<p>If set to <em>false</em>, a reload of sshd service won't happen on
+change. This can help with troubleshooting. You'll need to manually
+reload sshd if you want to apply the changed configuration. Defaults to
 <em>true</em>.</p>
 <h3 id="sshd_allow_restart">sshd_allow_restart</h3>
 <p>Some changes, for example of the sysconfig and environment files
 require the full restart of the service. If set to <em>false</em>, a
-restart of sshd won't happen on these changes. This can help with
-troubleshooting. You'll need to manually restart sshd if you want to
-apply the changed configuration. Defaults to <em>true</em> (except on
-AIX where the reload is handled by specific restart command and this
-option does not have any effect).</p>
+restart of sshd service won't happen on these changes. This can help
+with troubleshooting. You'll need to manually restart sshd service if
+you want to apply the changed configuration. Defaults to <em>true</em>
+(except on AIX where the reload is handled by specific restart command
+and this option does not have any effect).</p>
+<h3 id="sshd_socket_allow_restart">sshd_socket_allow_restart</h3>
+<p>The systemd can run sshd either as a service or a socket, handling
+part of the network communication (default depends on the OS). After
+making changes to the socket unit or to the configuration defining the
+ports and addresses the systemd listens to, the socket unit needs to be
+restarted. If set to <em>false</em>, a restart of sshd socket won't
+happen on these changes. This can help with troubleshooting. You'll need
+to manually restart sshd socket if you want to apply the changed
+configuration. Defaults to <em>true</em>.</p>
+<h3 id="sshd_allow_daemon_reload">sshd_allow_daemon_reload</h3>
+<p>The <code>systemd</code> daemon needs to be reloaded in the following
+cases:</p>
+<ul>
+<li>When the <code>systemd</code> is used to manage the service and/or
+socket</li>
+<li>When the ports or listen addresses are changed to non-default values
+and they are automatically picked up by the
+<code>sshd-socket-generator</code> (such as in Ubuntu 24.04).</li>
+</ul>
+<p>If set to <em>false</em>, a the <code>systemd</code> daemon won't be
+reloaded on these changes. This can help with troubleshooting. You'll
+need to manually reload the <code>systemd</code> daemon if you want to
+apply the changed configuration. Defaults to <em>true</em>.</p>
 <h3 id="sshd_install_service">sshd_install_service</h3>
 <p>If set to <em>true</em>, the role will install service files for the
 ssh service. Defaults to <em>false</em>.</p>
