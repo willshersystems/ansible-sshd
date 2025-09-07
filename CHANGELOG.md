@@ -1,6 +1,18 @@
 Changelog
 =========
 
+[v0.28.0] - 2025-09-07
+--------------------
+
+### New Features
+
+- feat: add Debian 13 support (#315)
+- feat: Support for daemon reload, socket restart and systemd socket file to match Ubuntu 24.04 (#318)
+
+### Bug Fixes
+
+- fix: include external config files first so they can override all options (#316)
+
 [v0.27.1] - 2025-08-01
 --------------------
 
