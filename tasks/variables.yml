@@ -18,7 +18,7 @@
         __sshd_is_ostree: "{{ __ostree_booted_stat.stat.exists }}"
 
 - name: Set OS dependent variables
-  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
+  ansible.builtin.include_vars: "{{ item }}"
   vars:
     _distribution_lts_offset: >-
       {{
@@ -33,13 +33,13 @@
         if ansible_facts['distribution'] == "Ubuntu"
         else ansible_facts['distribution_version']
       }}
-    params:
-      files:
+  with_first_found:
+    - files:
         - "{{ ansible_facts['distribution'] }}_{{ _distribution_lts_version }}.yml"
         - "{{ ansible_facts['os_family'] }}_{{ ansible_facts['distribution_major_version'] }}.yml"
         - "{{ ansible_facts['distribution'] }}.yml"
         - "{{ ansible_facts['os_family'] }}.yml"
-        - main.yml  # fallback, vars/main.yml is always loaded by Ansible
       paths:
         - "{{ role_path }}/vars"
         - "{{ playbook_dir }}/vars"
+      skip: true
