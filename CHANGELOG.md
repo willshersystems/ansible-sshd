@@ -1,6 +1,13 @@
 Changelog
 =========
 
+[v0.28.1] - 2025-11-08
+--------------------
+
+### Bug Fixes
+
+- fix: Allow specifying OS vars from playbook_dir (#330)
+
 [v0.28.0] - 2025-09-07
 --------------------
 
