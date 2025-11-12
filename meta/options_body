@@ -18,6 +18,7 @@ AuthorizedPrincipalsCommand
 AuthorizedPrincipalsCommandUser
 AuthorizedPrincipalsFile
 Banner
+CanonicalMatchUser
 CASignatureAlgorithms
 ChallengeResponseAuthentication
 ChannelTimeout
