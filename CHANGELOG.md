@@ -1,6 +1,17 @@
 Changelog
 =========
 
+[v0.29.0] - 2025-11-13
+--------------------
+
+### New Features
+
+- feat: Add new configuration option CanonicalMatchUser on RHEL/CentOS (#332)
+
+### Bug Fixes
+
+- fix: Allow specifying OS vars from playbook_dir (#330)
+
 [v0.28.0] - 2025-09-07
 --------------------
 
