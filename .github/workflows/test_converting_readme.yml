@@ -1,7 +1,7 @@
 ---
 # yamllint disable rule:line-length
 name: Test converting README.md to README.html
-on:  # yamllint disable-line rule:truthy
+on: # yamllint disable-line rule:truthy
   pull_request:
   merge_group:
     branches:
@@ -26,7 +26,7 @@ jobs:
           sudo apt install -y git
 
       - name: Check out code
-        uses: actions/checkout@v5
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
       - name: Remove badges from README.md prior to converting to HTML
         run: sed -i '1,8 {/^\[\!\[.*/d}' README.md
@@ -40,7 +40,7 @@ jobs:
             --output README.html README.md
 
       - name: Upload README.html as an artifact
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: README.html
           path: README.html
