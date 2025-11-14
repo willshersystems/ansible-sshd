@@ -1,7 +1,7 @@
 ---
 # yamllint disable rule:line-length
 name: Test converting README.md to README.html
-on:  # yamllint disable-line rule:truthy
+on: # yamllint disable-line rule:truthy
   pull_request:
   merge_group:
     branches:
@@ -40,7 +40,7 @@ jobs:
             --output README.html README.md
 
       - name: Upload README.html as an artifact
-        uses: actions/upload-artifact@0c366cb4fc8897159c94880f94b55bc716ad6a66 # master
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: README.html
           path: README.html
