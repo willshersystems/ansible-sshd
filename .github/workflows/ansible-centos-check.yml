@@ -6,7 +6,7 @@ jobs:
   centos-6:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
     # Workaround missing support for end_host in old ansible
     - run: "sed -i -e 's/meta: end_host/assert:\\n    that: __sshd_os_supported|bool/' tasks/install.yml"
@@ -26,7 +26,7 @@ jobs:
     - run: "sed -i -e 's/ansible.builtin.//g' -e 's/ansible.posix.//g' */*.yml */*/*.yml"
 
     - name: ansible check with centos 6
-      uses: roles-ansible/check-ansible-centos-centos6-action@master
+      uses: roles-ansible/check-ansible-centos-centos6-action@18183a0518de448dc65894c48b86daaa2a65075e # master
       with:
         group: local
         hosts: localhost
@@ -36,12 +36,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout PR
-        uses: actions/checkout@v5
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
       - run: "sed -i -e 's/ansible.posix.//g' */*.yml */*/*.yml"
 
       - name: ansible check with centos 7
-        uses: roles-ansible/check-ansible-centos-centos7-action@master
+        uses: roles-ansible/check-ansible-centos-centos7-action@75cf1147815b05279b53dbafc682cb4c7e9e38ff # master
         with:
           group: local
           hosts: localhost
@@ -51,10 +51,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout PR
-        uses: actions/checkout@v5
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
       - name: ansible check with centos 8
-        uses: roles-ansible/check-ansible-centos-centos8-action@master
+        uses: roles-ansible/check-ansible-centos-centos8-action@8c2c4b5f78b0f240e3b47cfeae961c49959731e7 # master
         with:
           group: local
           hosts: localhost
@@ -65,10 +65,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout PR
-        uses: actions/checkout@v5
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
       - name: ansible check with centos 9
-        uses: roles-ansible/check-ansible-centos-centos9-action@main
+        uses: roles-ansible/check-ansible-centos-centos9-action@48ba43a548c1b204f449c9aa48e4b2400681659d # main
         with:
           group: local
           hosts: localhost
@@ -79,10 +79,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout PR
-        uses: actions/checkout@v5
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
       - name: ansible check with centos 10
-        uses: roles-ansible/check-ansible-centos-centos10-action@main
+        uses: roles-ansible/check-ansible-centos-centos10-action@3ee9596dbc15ac62ee732f1d896e782cfe6259dd # main
         with:
           group: local
           hosts: localhost
