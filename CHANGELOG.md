@@ -1,6 +1,24 @@
 Changelog
 =========
 
+[v0.29.0] - 2025-11-14
+--------------------
+
+### New Features
+
+- feat: Add new configuration option CanonicalMatchUser on RHEL/CentOS (#332)
+
+### Bug Fixes
+
+- fix: Allow specifying OS vars from playbook_dir (#330)
+
+### Other Changes
+
+- build(deps): bump actions/checkout from 4 to 5 (#327)
+- build(deps): bump roles-ansible/check-ansible-debian-bookworm-action from 1 to 2 (#328)
+- ci: remove ubuntu-focal tests as [focal is] publicly EOL (#334)
+- ci: pin gh actions inline with security practices (#335)
+
 [v0.28.0] - 2025-09-07
 --------------------
 
