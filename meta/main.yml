@@ -48,6 +48,9 @@ galaxy_info:
     - name: Alpine
       versions:
         - all
+    - name: NetBSD
+      versions:
+        - all
   galaxy_tags:
     - networking
     - system
