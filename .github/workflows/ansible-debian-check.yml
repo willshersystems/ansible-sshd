@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout PR
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: ansible check with debian trixie (13)
         uses: domrim/check-ansible-debian-trixie-action@73e85f4f7f02f9c10fa84512d6d31f82ff2e2761 # v1
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout PR
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: ansible check with debian bookworm (12)
         uses: roles-ansible/check-ansible-debian-bookworm-action@00c5d5b5605ef19af942a78842caab6ed073b57e # v2
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout PR
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: ansible check with debian bullseye (11)
         uses: roles-ansible/check-ansible-debian-bullseye-action@7dcf4e32b769b26e1c0b5f67ab46813283ba989f # main
