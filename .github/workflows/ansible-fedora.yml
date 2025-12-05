@@ -8,7 +8,7 @@ jobs:
     steps:
       # Important: This sets up your GITHUB_WORKSPACE environment variable
       - name: checkout PR
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v5
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: ansible check with fedora:latest
         uses: roles-ansible/check-ansible-fedora-latest-action@41eed7f9706e601967c7927ee3f7e9cc0cb817a3 # master
