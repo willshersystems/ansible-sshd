@@ -77,10 +77,18 @@
             src: "/etc/systemd/system/sshd2.service"
           register: service
 
+        - name: Print the generated service file
+          ansible.builtin.debug:
+            msg: "{{ service.content | b64decode }}"
+
         - name: Read the created socket file
           ansible.builtin.slurp:
             src: "/etc/systemd/system/sshd2.socket"
           register: socket
+
+        - name: Print the generated socket file
+          ansible.builtin.debug:
+            msg: "{{ socket.content | b64decode }}"
 
         - name: Check content of the created service file
           ansible.builtin.assert:
@@ -101,7 +109,11 @@
             src: "/etc/systemd/system/sshd2@.service"
           register: service_inst
 
-        - name: Check content of the created service file
+        - name: Print the generated instantiated service file
+          ansible.builtin.debug:
+            msg: "{{ service_inst.content | b64decode }}"
+
+        - name: Check content of the created instantiated service file
           ansible.builtin.assert:
             that:
               - "' -f/etc/ssh/sshd_config' not in service_inst.content | b64decode"
