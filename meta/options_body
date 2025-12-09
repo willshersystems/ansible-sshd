@@ -38,6 +38,7 @@ ForceCommand
 GatewayPorts
 GSSAPIAuthentication
 GSSAPICleanupCredentials
+GSSAPIDelegateCredentials
 GSSAPIEnablek5users
 GSSAPIIndicators
 GSSAPIKeyExchange
