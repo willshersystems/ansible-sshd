@@ -32,3 +32,4 @@ __sshd_service_wants:
   - sshd-keygen.target
   - ssh-host-keys-migration.service
 __sshd_service_restart_timeout: 42s
+__sshd_service_ephemeral_authorized_keys: "{{ ansible_facts['distribution_version'] is version('43', '>=') }}"

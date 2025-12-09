@@ -24,15 +24,26 @@ EnvironmentFile=-{{ file }}
 {%   endfor %}
 {% endif %}
 ExecStart=-{{ sshd_binary }} -i
-{%- for var in __sshd_environment_variable %} ${{ var }}{% endfor %} -f
-{%- if sshd_main_config_file is not none and sshd_config_file | dirname == sshd_main_config_file ~ '.d' %}
-{{- sshd_main_config_file }}
-{% else %}
-{{- sshd_config_file }}
-{% endif %}
+{%- for var in __sshd_environment_variable %} ${{ var }}{% endfor -%}
+{# When the system is not supporting drop-in directory and the config file is different than default #}
+{%- if sshd_main_config_file is none and sshd_config_file != __sshd_config_file %}
+ -f {{ sshd_config_file -}}
+{# When the system supports drop-in directory and its different from the distribution default and the file is in the directory that will be an include path #}
+{%- elif sshd_main_config_file is not none and sshd_main_config_file != __sshd_main_config_file and sshd_config_file | dirname == sshd_main_config_file ~ '.d' %}
+ -f {{ sshd_main_config_file -}}
+{# When the config file is different from distribution config just print it #}
+{%- elif sshd_config_file != __sshd_config_file %}
+ -f {{ sshd_config_file -}}
+{%- endif %}
+{%- if __sshd_service_ephemeral_authorized_keys %}
+ -o "AuthorizedKeysFile ${CREDENTIALS_DIRECTORY}/ssh.ephemeral-authorized_keys-all .ssh/authorized_keys"
+{%  endif %}
 StandardInput=socket
 {% if __sshd_runtime_directory is not none %}
 RuntimeDirectory={{ __sshd_runtime_directory }}
 RuntimeDirectoryPreserve=yes
 RuntimeDirectoryMode={{ __sshd_runtime_directory_mode }}
+{% endif %}
+{% if __sshd_service_ephemeral_authorized_keys %}
+ImportCredential=ssh.ephemeral-authorized_keys-all
 {% endif %}

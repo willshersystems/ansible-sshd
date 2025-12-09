@@ -129,7 +129,8 @@
               ansible.builtin.assert:
                 that:
                   - "' -f/etc/ssh/sshd_config' not in service_inst.content | b64decode"
-                  - "' -f/etc/ssh2/sshd_config' in service_inst.content | b64decode"
+                  - "' -f /etc/ssh/sshd_config' not in service_inst.content | b64decode"
+                  - "' -f /etc/ssh2/sshd_config' in service_inst.content | b64decode"
       always:
         - name: Stop second service
           ansible.builtin.service:

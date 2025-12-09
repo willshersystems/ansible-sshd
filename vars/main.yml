@@ -87,6 +87,9 @@ __sshd_service_wants: ~
 # The systemd service RestartSec directive
 __sshd_service_restart_timeout: ~
 
+# Plug the systemd ephemeral authorized keys to the instantiated service file
+__sshd_service_ephemeral_authorized_keys: false
+
 # The systemd socket file does not accept the connection
 __sshd_socket_accept: true
 
