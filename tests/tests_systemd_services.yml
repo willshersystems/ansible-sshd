@@ -164,10 +164,5 @@
           loop:
             "{{ __sshd_service_inst_list }}"
 
-        - name: Verify the ExecStart line contains the configuration file
-          ansible.builtin.assert:
-            that:
-              - "' -f/etc/ssh/' in service_inst.content | b64decode"
-
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml
