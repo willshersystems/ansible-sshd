@@ -6,7 +6,7 @@ jobs:
   centos-6:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
     # Workaround missing support for end_host in old ansible
     - run: "sed -i -e 's/meta: end_host/assert:\\n    that: __sshd_os_supported|bool/' tasks/install.yml"
@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout PR
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - run: "sed -i -e 's/ansible.posix.//g' */*.yml */*/*.yml"
 
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout PR
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: ansible check with centos 8
         uses: roles-ansible/check-ansible-centos-centos8-action@8c2c4b5f78b0f240e3b47cfeae961c49959731e7 # master
@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout PR
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: ansible check with centos 9
         uses: roles-ansible/check-ansible-centos-centos9-action@48ba43a548c1b204f449c9aa48e4b2400681659d # main
@@ -79,7 +79,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout PR
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: ansible check with centos 10
         uses: roles-ansible/check-ansible-centos-centos10-action@3ee9596dbc15ac62ee732f1d896e782cfe6259dd # main
