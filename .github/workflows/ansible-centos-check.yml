@@ -2,6 +2,9 @@ name: Run Ansible Check on CentOS
 
 on: [push, pull_request]
 
+env:
+  ANSIBLE_INJECT_FACT_VARS: "false"
+
 jobs:
   centos-6:
     runs-on: ubuntu-latest

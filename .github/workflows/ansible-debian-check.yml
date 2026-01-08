@@ -2,6 +2,9 @@ name: Run tests on Debian
 
 on: [push, pull_request]
 
+env:
+  ANSIBLE_INJECT_FACT_VARS: "false"
+
 jobs:
   debian-trixie:
     runs-on: ubuntu-latest

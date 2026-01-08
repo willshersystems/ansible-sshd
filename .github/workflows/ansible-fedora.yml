@@ -2,6 +2,9 @@ name: Run tests on Fedora latest
 
 on: [push, pull_request]
 
+env:
+  ANSIBLE_INJECT_FACT_VARS: "false"
+
 jobs:
   build:
     runs-on: ubuntu-latest

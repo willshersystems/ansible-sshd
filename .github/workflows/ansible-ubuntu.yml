@@ -2,6 +2,9 @@ name: Run Ansible Check on Ubuntu
 
 on: [push, pull_request]
 
+env:
+  ANSIBLE_INJECT_FACT_VARS: "false"
+
 jobs:
   ubuntu-latest:
     runs-on: ubuntu-latest
