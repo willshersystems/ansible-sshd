@@ -1,6 +1,23 @@
 Changelog
 =========
 
+[v0.31.0] - 2026-01-22
+--------------------
+
+### New Features
+
+- feat: New OpenSSH configuration option GSSAPIDelegateCredentials (#343)
+- feat: Add systemd ephemeral authorized_keys to the instantiated service file on Fedora (#344)
+
+### Other Changes
+
+- build(deps): bump actions/checkout from 5.0.0 to 6.0.0 (#340)
+- build(deps): bump ansible/ansible-lint from 25.11.0 to 25.11.1 (#341)
+- build(deps): bump ansible/ansible-lint from 25.11.1 to 25.12.2 (#345)
+- build(deps): bump actions/upload-artifact from 5.0.0 to 6.0.0 (#346)
+- build(deps): bump actions/checkout from 6.0.0 to 6.0.1 (#347)
+- ci: ensure testing with INJECT_FACTS_AS_VARS=false (#348)
+
 [v0.30.0] - 2025-11-16
 --------------------
 
