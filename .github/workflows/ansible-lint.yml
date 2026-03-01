@@ -66,7 +66,7 @@ jobs:
           echo "coll_req_file=$coll_req_file" >> $GITHUB_OUTPUT
 
       - name: Run ansible-lint
-        uses: ansible/ansible-lint@a2bc8b8b13a80802215856c56823d85007d3baf5 # v25.12.2
+        uses: ansible/ansible-lint@19f673a091111d07688352cd2f19f0460055feba # v26.2.0
         with:
           working_directory: ${{ github.workspace }}/.tox/ansible_collections/${{ env.LSR_ROLE2COLL_NAMESPACE }}/${{ env.LSR_ROLE2COLL_NAME }}
           requirements_file: ${{ steps.collection.outputs.coll_req_file }}
