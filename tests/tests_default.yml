@@ -11,8 +11,11 @@
 
 - name: Test defaults
   hosts: all
-  roles:
-    - ansible-sshd
+  tasks:
+    - name: Run ansible-sshd role
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+      vars:
+        __sr_public: true
 
 - name: Test default - restore
   hosts: all

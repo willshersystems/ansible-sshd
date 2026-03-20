@@ -26,8 +26,7 @@
       ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Configure sshd with default options and install service files
-      ansible.builtin.include_role:
-        name: ansible-sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
         sshd_install_service: true
 

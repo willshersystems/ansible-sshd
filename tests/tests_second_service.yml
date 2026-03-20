@@ -27,8 +27,7 @@
         mode: '0755'
 
     - name: Configure alternative sshd_config file
-      ansible.builtin.include_role:
-        name: ansible-sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
         sshd_service: sshd2
         sshd_config_file: /etc/ssh2/sshd_config

@@ -33,8 +33,7 @@
         TMPDIR: "{{ __tmpdir }}"
       block:
         - name: Configure sshd with BAD config
-          ansible.builtin.include_role:
-            name: ansible-sshd
+          ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
           vars:
             sshd_skip_defaults: true
             sshd_verify_hostkeys: []

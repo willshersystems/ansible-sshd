@@ -1,7 +1,6 @@
 ---
 - name: Test managing firewall and selinux from role
   hosts: all
-  gather_facts: true  # needs os_family, etc.
   vars:
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
@@ -13,9 +12,8 @@
     - name: Call role with no args to get access to __sshd_skip_virt_env
       ansible.builtin.include_role:
         name: ansible-sshd
+        tasks_from: variables.yml
         public: true
-      vars:
-        sshd_enable: false  # skip everything but loading vars
 
     - name: See if we can test firewall or selinux
       ansible.builtin.set_fact:
@@ -31,8 +29,7 @@
     # First test: default port
     ##########
     - name: Configure the role on default port and let it handle firewall settings
-      ansible.builtin.include_role:
-        name: ansible-sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
         sshd_manage_selinux: "{{ __sshd_test_selinux }}"
         sshd_manage_firewall: "{{ __sshd_test_firewall }}"
@@ -60,8 +57,7 @@
     ##########
     # is this going to break some tests running ansible through ssh?
     - name: Configure the role on another port and let it handle firewall settings
-      ansible.builtin.include_role:
-        name: ansible-sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
         sshd_manage_firewall: "{{ __sshd_test_firewall }}"
         sshd_manage_selinux: "{{ __sshd_test_selinux }}"
@@ -88,8 +84,7 @@
     # Third test: multiple ports
     ##########
     - name: Configure the role on several ports and let it handle firewall settings
-      ansible.builtin.include_role:
-        name: ansible-sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
         sshd_manage_firewall: "{{ __sshd_test_firewall }}"
         sshd_manage_selinux: "{{ __sshd_test_selinux }}"

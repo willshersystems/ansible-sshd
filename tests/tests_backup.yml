@@ -22,8 +22,7 @@
       with_items: "{{ backup_files.files }}"
 
     - name: Configure sshd without creating backup
-      ansible.builtin.include_role:
-        name: ansible-sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
         sshd_backup: false
 
@@ -34,8 +33,7 @@
       register: no_backup
 
     - name: Configure sshd again with different configuration and with backup
-      ansible.builtin.include_role:
-        name: ansible-sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
         sshd_Banner: /tmp/banner  # noqa var-naming
       register: second_run
