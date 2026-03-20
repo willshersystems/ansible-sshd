@@ -27,7 +27,10 @@ __sshd_hostkeys_nofips: []
 __sshd_required_facts:
   - distribution
   - distribution_major_version
+  - distribution_version
   - os_family
+  - service_mgr
+  - virtualization_type
 
 __sshd_skip_virt_env:
   - docker
