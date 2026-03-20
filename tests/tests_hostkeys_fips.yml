@@ -13,8 +13,7 @@
       ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Run the role with default parameters without FIPS mode
-      ansible.builtin.include_role:
-        name: ansible-sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
 
     - name: Verify the options are correctly set
       when:
@@ -95,8 +94,7 @@
         state: absent
 
     - name: Run the role with default parameters
-      ansible.builtin.include_role:
-        name: ansible-sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
 
     - name: Verify the options are correctly set after reconfiguration
       when:

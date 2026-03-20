@@ -12,15 +12,13 @@
       ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Configure config1
-      ansible.builtin.include_role:
-        name: ansible-sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
 
 - name: Test duplicates - default config
   hosts: all
   tasks:
     - name: Configure default config
-      ansible.builtin.include_role:
-        name: ansible-sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
 
 - name: Test duplicates - setup config2
   hosts: all
@@ -28,9 +26,9 @@
     sshd_config_file: /etc/ssh/dup_config2
   tasks:
     - name: Configure config2
-      ansible.builtin.include_role:
-        name: ansible-sshd
-        public: true
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+      vars:
+        __sr_public: true
 
     - name: Convert exported variable to fact so that it is available in next plays
       ansible.builtin.set_fact:

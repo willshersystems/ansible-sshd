@@ -13,8 +13,7 @@
     - name: Configure sshd with bad sysconfig configuration
       block:
         - name: Include the role
-          ansible.builtin.include_role:
-            name: ansible-sshd
+          ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
           vars:
             sshd_skip_defaults: true
             sshd_verify_hostkeys: []
@@ -36,8 +35,7 @@
     - name: Configure sshd with bad path to sshd binary
       block:
         - name: Include the role
-          ansible.builtin.include_role:
-            name: ansible-sshd
+          ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
           vars:
             sshd_skip_defaults: true
             sshd_verify_hostkeys: []
@@ -59,8 +57,7 @@
     - name: Configure sshd with bad path sshd config
       block:
         - name: Include the role
-          ansible.builtin.include_role:
-            name: ansible-sshd
+          ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
           vars:
             sshd_skip_defaults: true
             sshd_verify_hostkeys: []

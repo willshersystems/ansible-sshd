@@ -10,8 +10,7 @@
       ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Configure sshd
-      ansible.builtin.include_role:
-        name: ansible-sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
         # For Fedora containers, we need to make sure we have keys for sshd -T below
         sshd_verify_hostkeys:
