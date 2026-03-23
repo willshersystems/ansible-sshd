@@ -26,9 +26,9 @@
       changed_when: false
 
     - name: Configure sshd
-      ansible.builtin.include_role:
-        name: ansible-sshd
-        public: true
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+      vars:
+        __sr_public: true
 
     - name: Show effective configuration after running role (role defaults)
       ansible.builtin.command: sshd -T

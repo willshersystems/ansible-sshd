@@ -14,10 +14,12 @@
     - name: "Backup configuration files"
       ansible.builtin.include_tasks: tasks/backup.yml
 
+    - name: Set fact for second service drop-in test availability
+      ansible.builtin.set_fact:
+        __sshd_when_second_service_drop_in: "{{ (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] | int > 8) or (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version'] | int >= 20) }}"
+
     - name: Run the test
-      when:
-        - (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] | int > 8) or
-          (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version'] | int >= 20)
+      when: __sshd_when_second_service_drop_in
       block:
         - name: Create ssh2 directory
           ansible.builtin.file:
@@ -32,8 +34,7 @@
             mode: '0600'
 
         - name: Configure alternative sshd_config file
-          ansible.builtin.include_role:
-            name: ansible-sshd
+          ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
           vars:
             sshd_service: sshd2
             sshd_main_config_file: /etc/ssh2/sshd_config
