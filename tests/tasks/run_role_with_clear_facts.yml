@@ -3,8 +3,11 @@
 # Include this with include_tasks or import_tasks
 # Input:
 # - __sr_tasks_from: tasks_from to run - same as tasks_from in include_role
+#   https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/include_role_module.html#parameter-tasks_from
 # - __sr_public: export private vars from role - same as public in include_role
-# - __sr_failed_when: set to false to ignore role errors - same as failed_when in include_role
+#   https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/include_role_module.html#parameter-public
+# - __sr_failed_when: set to false to ignore role errors - same as failed_when keyword
+#   https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_error_handling.html#defining-failure
 - name: Clear facts
   ansible.builtin.meta: clear_facts
 
