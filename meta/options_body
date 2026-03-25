@@ -36,6 +36,7 @@ ExposeAuthInfo
 FingerprintHash
 ForceCommand
 GatewayPorts
+GSSAPIAllowS4U2Self
 GSSAPIAuthentication
 GSSAPICleanupCredentials
 GSSAPIDelegateCredentials
@@ -43,6 +44,7 @@ GSSAPIEnablek5users
 GSSAPIIndicators
 GSSAPIKeyExchange
 GSSAPIKexAlgorithms
+GSSAPIProxyS4U2Services
 GSSAPIStoreCredentialsOnRekey
 GSSAPIStrictAcceptorCheck
 HPNBufferSize
