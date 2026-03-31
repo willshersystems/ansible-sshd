@@ -10,8 +10,7 @@
       ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Configure sshd
-      ansible.builtin.include_role:
-        name: ansible-sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
         sshd:
           AcceptEnv: LANG
@@ -70,13 +69,14 @@
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
       - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
-  pre_tasks:
+  tasks:
     - name: "Backup configuration files"
       ansible.builtin.include_tasks: tasks/backup.yml
 
-  roles:
-    - role: ansible-sshd
+    - name: Configure sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
+        __sr_public: true
         sshd:
           AcceptEnv: LANG
           Banner: /etc/issue
@@ -84,7 +84,6 @@
           UseDNS: true
         sshd_config_file: /etc/ssh/sshd_config
 
-  tasks:
     - name: Verify the options are correctly set
       tags: tests::verify
       block:

@@ -9,13 +9,15 @@
     - name: "Backup configuration files"
       ansible.builtin.include_tasks: tasks/backup.yml
 
+    - name: Set fact for uncommon options test block condition
+      ansible.builtin.set_fact:
+        __sshd_when_uncommon_options_test: "{{ not (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6') }}"
+
     - name: Configure sshd with uncommon options, making sure it keeps running
-      when:
-        - not (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '6')
+      when: __sshd_when_uncommon_options_test
       block:
         - name: Configure ssh with unsupported options
-          ansible.builtin.include_role:
-            name: ansible-sshd
+          ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
           vars:
             sshd_config:
               # Unsupported in new versions, but ignored ?

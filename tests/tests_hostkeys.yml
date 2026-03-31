@@ -28,8 +28,7 @@
         shell: /sbin/nologin
 
     - name: Configure sshd with alternative host keys
-      ansible.builtin.include_role:
-        name: ansible-sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
         # very BAD example
         sshd_hostkey_owner: "nobody"

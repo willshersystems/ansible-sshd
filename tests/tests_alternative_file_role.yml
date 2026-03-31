@@ -27,8 +27,6 @@
 # Configure alternative sshd_config file
 - name: Test first alternative role file
   hosts: all
-  roles:
-    - ansible-sshd
   vars:
     # just anything -- will not get processed by sshd
     sshd_config_file: /etc/ssh/sshd_config_custom
@@ -40,12 +38,15 @@
       Banner: /etc/issue
       Ciphers: aes256-ctr
     sshd_LogLevel: DEBUG1  # noqa var-naming
+  tasks:
+    - name: Run ansible-sshd role
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+      vars:
+        __sr_public: true
 
 # Configure second alternative sshd_config file
 - name: Test first alternative role file
   hosts: all
-  roles:
-    - ansible-sshd
   vars:
     # just anything -- will not get processed by sshd
     sshd_config_file: /etc/ssh/sshd_config_custom_second
@@ -54,12 +55,15 @@
       Banner: /etc/issue2
       Ciphers: aes128-ctr
     sshd_MaxStartups: 100  # noqa var-naming
+  tasks:
+    - name: Run ansible-sshd role
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+      vars:
+        __sr_public: true
 
 # Now configure the main sshd_config file
 - name: Test main config file
   hosts: all
-  roles:
-    - ansible-sshd
   vars:
     sshd_config_file: /etc/ssh/sshd_config
     sshd_config:
@@ -68,6 +72,11 @@
       HostKey:
         - /tmp/ssh_host_ecdsa_key
     sshd_PasswordAuthentication: false  # noqa var-naming
+  tasks:
+    - name: Run ansible-sshd role
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+      vars:
+        __sr_public: true
 
 - name: Verify config files are correct
   hosts: all

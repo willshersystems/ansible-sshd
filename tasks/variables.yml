@@ -1,9 +1,11 @@
 ---
 - name: Ensure ansible_facts used by role
   ansible.builtin.setup:
-    gather_subset: min
-  when: not ansible_facts.keys() | list |
-    intersect(__sshd_required_facts) == __sshd_required_facts
+    gather_subset:
+      - min
+      - virtual
+  when: __sshd_required_facts |
+    difference(ansible_facts.keys() | list) | length > 0
 
 - name: Determine if system is ostree and set flag
   when: not __sshd_is_ostree is defined

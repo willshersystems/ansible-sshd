@@ -1,7 +1,6 @@
 ---
 - name: Test we can handle all configuration options documented in manual page
   hosts: all
-  gather_facts: true
   vars:
     __sshd_test_backup_files:
       - /etc/dnf/dnf.conf
@@ -114,8 +113,7 @@
       when: not sshd_skip_test
 
     - name: Run role
-      ansible.builtin.include_role:
-        name: ansible-sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
         # The configuration is not valid as we are using bogus values
         __sshd_supports_validate: false

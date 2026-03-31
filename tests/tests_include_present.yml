@@ -20,8 +20,7 @@
           (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version'] | int >= 20)
 
     - name: Create a new configuration in drop-in directory
-      ansible.builtin.include_role:
-        name: ansible-sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
         sshd_config_file: /etc/ssh/sshd_config.d/00-ansible_system_role.conf
         sshd_config:
@@ -108,8 +107,7 @@
         mode: '0777'
 
     - name: Create a new configuration in a custom drop-in directory
-      ansible.builtin.include_role:
-        name: ansible-sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
         sshd_config_file: /etc/ssh/custom_sshd_config.d/custom-drop-in
         sshd_main_config_file: /etc/ssh/custom_sshd_config

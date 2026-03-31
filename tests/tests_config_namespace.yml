@@ -11,8 +11,7 @@
       ansible.builtin.include_tasks: tasks/backup.yml
 
     - name: Add configuration block to default configuration file
-      ansible.builtin.include_role:
-        name: ansible-sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
         sshd_config_file: /etc/ssh/sshd_config
         sshd_config_namespace: nm1
@@ -24,8 +23,7 @@
             AllowAgentForwarding: false
 
     - name: Add second configuration block to default configuration file
-      ansible.builtin.include_role:
-        name: ansible-sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
         sshd_config_file: /etc/ssh/sshd_config
         sshd_config_namespace: nm2
