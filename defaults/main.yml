@@ -3,6 +3,9 @@
 # Set to false to disable this role completely
 sshd_enable: true
 
+# If true, record begin/success fingerprints in the system log (for diagnostics/telemetry)
+sshd_enable_fingerprint: false
+
 # Don't apply OS defaults when set to true
 sshd_skip_defaults: false
 

@@ -67,6 +67,8 @@ jobs:
 
       - name: Run ansible-lint
         uses: ansible/ansible-lint@8ba9595a4acd1b906eb75568b34f6ef592cd1528 # v26.3.0
+        env:
+          ANSIBLE_COLLECTIONS_PATH: ${{ github.workspace }}/.tox
         with:
           working_directory: ${{ github.workspace }}/.tox/ansible_collections/${{ env.LSR_ROLE2COLL_NAMESPACE }}/${{ env.LSR_ROLE2COLL_NAME }}
           requirements_file: ${{ steps.collection.outputs.coll_req_file }}
