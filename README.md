@@ -80,6 +80,12 @@ minus the comments and in a different order.
 
 If set to *false*, the role will be completely disabled. Defaults to *true*.
 
+#### sshd_enable_fingerprint
+
+If set to *true*, the role records begin and success message strings in the
+system log via syslog (visible in `journalctl` on systemd hosts). Defaults to
+*false*.
+
 #### sshd_skip_defaults
 
 If set to *true*, don't apply default values. This means that you must have a
