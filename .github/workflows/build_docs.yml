@@ -98,7 +98,7 @@ jobs:
           git commit -m "Update README.html for ${{ env.RELEASE_VERSION }}"
 
       - name: Push changes
-        uses: ad-m/github-push-action@77c5b412c50b723d2a4fbc6d71fb5723bcd439aa # master
+        uses: ad-m/github-push-action@4cc74773234f74829a8c21bc4d69dd4be9cfa599 # master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: docs
