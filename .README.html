@@ -147,6 +147,8 @@ id="toc-optional-requirements">Optional requirements</a></li>
 id="toc-primary-role-variables">Primary role variables</a>
 <ul>
 <li><a href="#sshd_enable" id="toc-sshd_enable">sshd_enable</a></li>
+<li><a href="#sshd_enable_fingerprint"
+id="toc-sshd_enable_fingerprint">sshd_enable_fingerprint</a></li>
 <li><a href="#sshd_skip_defaults"
 id="toc-sshd_skip_defaults">sshd_skip_defaults</a></li>
 <li><a href="#sshd_manage_service"
@@ -356,6 +358,10 @@ matches the OS default, minus the comments and in a different order.</p>
 <h3 id="sshd_enable">sshd_enable</h3>
 <p>If set to <em>false</em>, the role will be completely disabled.
 Defaults to <em>true</em>.</p>
+<h3 id="sshd_enable_fingerprint">sshd_enable_fingerprint</h3>
+<p>If set to <em>true</em>, the role records begin and success message
+strings in the system log via syslog (visible in <code>journalctl</code>
+on systemd hosts). Defaults to <em>false</em>.</p>
 <h3 id="sshd_skip_defaults">sshd_skip_defaults</h3>
 <p>If set to <em>true</em>, don't apply default values. This means that
 you must have a complete set of configuration defaults via either the
