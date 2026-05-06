@@ -1,6 +1,23 @@
 Changelog
 =========
 
+[v0.32.0] - 2026-05-01
+--------------------
+
+### New Features
+
+- feat: Add new c10s options GSSAPIAllowS4U2Self and GSSAPIProxyS4U2Services (#357)
+- feat: add role fingerprints to syslog (#361)
+
+### Other Changes
+
+- ci: tox.ini is not executable (#351)
+- build(deps): bump actions/checkout from 6.0.1 to 6.0.2 (#352)
+- build(deps): bump ansible/ansible-lint from 25.12.2 to 26.2.0 (#354)
+- build(deps): bump actions/upload-artifact from 6.0.0 to 7.0.0 (#355)
+- test: ensure role gathers the facts it uses by having test clear_facts before include_role (#356)
+- build(deps): bump ansible/ansible-lint from 26.2.0 to 26.3.0 (#358)
+
 [v0.31.0] - 2026-01-22
 --------------------
 
