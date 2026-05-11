@@ -6,6 +6,7 @@
       - virtual
   when: __sshd_required_facts |
     difference(ansible_facts.keys() | list) | length > 0
+  no_log: "{{ ansible_verbosity < 3 }}"
 
 - name: Record role begin fingerprint
   sr_fingerprint:
