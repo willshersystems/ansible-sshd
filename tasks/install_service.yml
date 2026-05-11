@@ -51,6 +51,7 @@
     - sshd_manage_service|bool
     - ansible_facts['virtualization_type'] | default(None) not in __sshd_skip_virt_env
     - ansible_connection != 'chroot'
+  no_log: "{{ ansible_verbosity < 3 }}"
 
 # Due to ansible bug 21026, cannot use service module on RHEL 7
 - name: Enable service in chroot
