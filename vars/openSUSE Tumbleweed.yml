@@ -1,0 +1,23 @@
+---
+__sshd_os_supported: true
+
+__sshd_packages:
+  - openssh
+  - openssh-server
+__sshd_sftp_server: /usr/libexec/ssh/sftp-server
+__sshd_config_file: /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+# Tumbleweed does not have default configuration file in /etc/
+# __sshd_defaults:
+
+__sshd_verify_hostkeys_default:
+  - /etc/ssh/ssh_host_rsa_key
+  - /etc/ssh/ssh_host_ecdsa_key
+  - /etc/ssh/ssh_host_ed25519_key
+
+__sshd_drop_in_dir_mode: '0755'
+__sshd_main_config_file: /etc/ssh/sshd_config
+
+__sshd_environment_file: /etc/sysconfig/ssh
+__sshd_environment_variable:
+  - SSHD_OPTS
+__sshd_service_ephemeral_authorized_keys: true
