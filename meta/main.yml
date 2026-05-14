@@ -19,14 +19,7 @@ galaxy_info:
         - trixie
     - name: Ubuntu
       versions:
-        - precise
-        - trusty
-        - xenial
-        - bionic
-        - focal
-        - jammy
-        - noble
-        - resolute
+        - all
     - name: FreeBSD
       versions:
         - "10.1"
