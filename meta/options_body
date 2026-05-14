@@ -125,6 +125,7 @@ UnusedConnectionTimeout
 UseDNS
 UseLogin
 UsePAM
+UsePAMCheckLocks
 UsePrivilegeSeparation
 VersionAddendum
 X11DisplayOffset
