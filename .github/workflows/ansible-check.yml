@@ -1,0 +1,39 @@
+name: Ansible CI
+on: [push, pull_request]
+
+env:
+  ANSIBLE_INJECT_FACT_VARS: "false"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os_image:
+          - alpine:latest
+          - quay.io/centos/centos:stream8
+          - quay.io/centos/centos:stream9
+          - quay.io/centos/centos:stream10
+          - debian:bullseye
+          - debian:bookworm
+          - debian:latest
+          - fedora:latest
+          - ubuntu:22.04
+          - ubuntu:24.04
+          - ubuntu:latest
+          # - opensuse/tumbleweed:latest # too odd
+          - opensuse/leap:latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Test Ansible SSHD Role
+        uses: Jakuje/check-ansible-action@main
+        with:
+          image: ${{ matrix.os_image }}
+          group: local
+          hosts: localhost
+          targets: "tests/tests_*.yml"
+          requirements: tests/requirements.yml
