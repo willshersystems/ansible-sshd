@@ -29,6 +29,10 @@
         - ansible_facts['os_family'] == "RedHat"
         - not __sshd_is_ostree | d(false)
 
+    - name: Skip test on Tumbleweed as its not possible to install them
+      ansible.builtin.meta: end_play
+      when: ansible_facts['distribution'] == "openSUSE Tumbleweed"
+
     - name: Reinstall manual pages for openssh-server on RHEL
       ansible.builtin.command: "{{ pkg_mgr | quote }} reinstall -y openssh-server"
       when:
@@ -67,6 +71,12 @@
       when:
         - ansible_facts['os_family'] == "RedHat"
         - ansible_facts['distribution_major_version'] | int > 6
+
+    - name: Fix openSUSE dependency conflicts (remove busybox-less)
+      ansible.builtin.package:
+        name: busybox-less
+        state: absent
+      when: ansible_facts['os_family'] == "Suse"
 
     - name: Make sure manual pages, gawk and bash are installed elsewhere
       ansible.builtin.package:
