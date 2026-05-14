@@ -29,6 +29,7 @@ galaxy_info:
         - "7"
         - "8"
         - "9"
+        - "10"
     - name: Fedora
       versions:
         - all
