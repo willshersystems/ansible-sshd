@@ -7,18 +7,9 @@
       - /etc/yum.conf
       - /tmp/sshd_config
     sshd_c: {}
-    sshd_skip_test: false
-    pkg_mgr: "{{ 'dnf' if ansible_facts['distribution_version'] | int > 7 else 'yum' }}"
   tasks:
     - name: Backup configuration files
       ansible.builtin.include_tasks: tasks/backup.yml
-
-    - name: Skip test on EL6 as it has some crippled manpages
-      ansible.builtin.set_fact:
-        sshd_skip_test: true
-      when:
-        - ansible_facts['os_family'] == "RedHat"
-        - ansible_facts['distribution_version'] | int <= 6
 
     - name: Enable installation of manual pages on Fedora/RHEL
       ansible.builtin.lineinfile:
@@ -34,7 +25,7 @@
       when: ansible_facts['distribution'] == "openSUSE Tumbleweed"
 
     - name: Reinstall manual pages for openssh-server on RHEL
-      ansible.builtin.command: "{{ pkg_mgr | quote }} reinstall -y openssh-server"
+      ansible.builtin.command: "dnf reinstall -y openssh-server"
       when:
         - ansible_facts['os_family'] == "RedHat"
         - not __sshd_is_ostree | d(false)
@@ -110,7 +101,6 @@
         executable: /bin/bash
       register: sshd_options
       changed_when: false
-      when: not sshd_skip_test
 
     - name: Print all the possible options
       ansible.builtin.debug:
@@ -121,7 +111,6 @@
         sshd_c: "{{ sshd_c | combine({item: 'yes'}) }}"
       loop:
         "{{ sshd_options.stdout_lines }}"
-      when: not sshd_skip_test
 
     - name: Run role
       ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
@@ -133,26 +122,22 @@
         sshd_config_file: /tmp/sshd_config
         sshd_config:
           "{{ sshd_c }}"
-      when: not sshd_skip_test
 
     - name: Download the configuration file
       ansible.builtin.slurp:
         src: /tmp/sshd_config
       register: config
-      when: not sshd_skip_test
 
     - name: Verify the options are in the file
       ansible.builtin.assert:
         that: item ~ " yes" in config.content | b64decode
       loop: "{{ sshd_options.stdout_lines }}"
-      when: not sshd_skip_test
 
     - name: Check generated files for ansible_managed, fingerprint
       ansible.builtin.include_tasks: tasks/check_header.yml
       vars:
         __file_content: "{{ config }}"
         __fingerprint: "willshersystems:ansible-sshd"
-      when: not sshd_skip_test
 
     - name: Restore configuration files
       ansible.builtin.include_tasks: tasks/restore.yml
