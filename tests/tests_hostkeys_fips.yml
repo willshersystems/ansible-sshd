@@ -136,7 +136,7 @@
         - name: Unmount the file
           ansible.posix.mount:
             path: /proc/sys/crypto/fips_enabled
-            state: unmounted
+            state: absent
           failed_when: false
 
         - name: Remove the temporary directory
