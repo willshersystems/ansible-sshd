@@ -1,6 +1,19 @@
 Changelog
 =========
 
+[v0.33.0] - 2026-06-23
+--------------------
+
+### New Features
+
+- feat: Add verbosity-based logging to reduce verbose output (#366)
+
+### Other Changes
+
+- chore: adding the default include for leap (#359)
+- ci: Use generalized action to test against different distributions (#367)
+- test: ensure fips_enabled bind mount is removed from fstab (#369)
+
 [v0.32.0] - 2026-05-01
 --------------------
 
