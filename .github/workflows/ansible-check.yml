@@ -10,20 +10,33 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os_image:
-          - alpine:latest
-          - quay.io/centos/centos:stream8
-          - quay.io/centos/centos:stream9
-          - quay.io/centos/centos:stream10
-          - debian:bullseye
-          - debian:bookworm
-          - debian:latest
-          - fedora:latest
-          - ubuntu:22.04
-          - ubuntu:24.04
-          - ubuntu:latest
-          # - opensuse/tumbleweed:latest # too odd
-          - opensuse/leap:latest
+        scenario:
+          - os_image: alpine:latest
+            req_file: tests/requirements.yml
+          - os_image: quay.io/centos/centos:stream8
+            req_file: tests/requirements.yml
+          - os_image: quay.io/centos/centos:stream9
+            req_file: tests/requirements.yml
+          - os_image: quay.io/centos/centos:stream10
+            req_file: tests/requirements.yml
+          - os_image: debian:bullseye
+            req_file: tests/requirements-no-fedora-lsr.yml
+          - os_image: debian:bookworm
+            req_file: tests/requirements.yml
+          - os_image: debian:latest
+            req_file: tests/requirements.yml
+          - os_image: fedora:latest
+            req_file: tests/requirements.yml
+          - os_image: ubuntu:22.04
+            req_file: tests/requirements-no-fedora-lsr.yml
+          - os_image: ubuntu:24.04
+            req_file: tests/requirements.yml
+          - os_image: ubuntu:latest
+            req_file: tests/requirements.yml
+          # - os_image: opensuse/tumbleweed:latest # too odd
+          #   req_file: tests/requirements.yml
+          # - os_image: opensuse/leap:latest  # can't find python3
+          #  req_file: tests/requirements-no-fedora-lsr.yml
 
     steps:
       - name: Checkout code
@@ -32,8 +45,8 @@ jobs:
       - name: Test Ansible SSHD Role
         uses: Jakuje/check-ansible-action@main
         with:
-          image: ${{ matrix.os_image }}
+          image: ${{ matrix.scenario.os_image }}
           group: local
           hosts: localhost
           targets: "tests/tests_*.yml"
-          requirements: tests/requirements.yml
+          requirements: ${{ matrix.scenario.req_file }}
