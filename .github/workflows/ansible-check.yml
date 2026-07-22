@@ -35,8 +35,8 @@ jobs:
             req_file: tests/requirements.yml
           # - os_image: opensuse/tumbleweed:latest # too odd
           #   req_file: tests/requirements.yml
-          - os_image: opensuse/leap:latest
-            req_file: tests/requirements-no-fedora-lsr.yml
+          # - os_image: opensuse/leap:latest  # can't find python3
+          #  req_file: tests/requirements-no-fedora-lsr.yml
 
     steps:
       - name: Checkout code
