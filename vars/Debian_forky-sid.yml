@@ -1,0 +1,23 @@
+---
+__sshd_service: ssh
+__sshd_packages:
+  - openssh-server
+  - openssh-sftp-server
+__sshd_config_mode: "0644"
+__sshd_defaults:
+  Include: /etc/ssh/sshd_config.d/*.conf
+  KbdInteractiveAuthentication: false
+  UsePAM: true
+  X11Forwarding: true
+  PrintMotd: false
+  AcceptEnv: LANG LC_*
+  Subsystem: "sftp {{ __sshd_sftp_server }}"
+__sshd_os_supported: true
+__sshd_runtime_directory: sshd
+
+__sshd_environment_file: /etc/default/ssh
+__sshd_environment_variable:
+  - SSHD_OPTS
+__sshd_service_after: nss-user-lookup.target auditd.service
+__sshd_service_alias: sshd
+__sshd_socket_accept: false
