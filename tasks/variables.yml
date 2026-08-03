@@ -50,7 +50,7 @@
   with_first_found:
     - files:
         - "{{ ansible_facts['distribution'] }}_{{ _distribution_lts_version }}.yml"
-        - "{{ ansible_facts['os_family'] }}_{{ ansible_facts['distribution_major_version'] }}.yml"
+        - "{{ ansible_facts['os_family'] }}_{{ ansible_facts['distribution_major_version'] | replace('/', '-') }}.yml"
         - "{{ ansible_facts['distribution'] }}.yml"
         - "{{ ansible_facts['os_family'] }}.yml"
       paths:
