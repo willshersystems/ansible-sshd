@@ -1,6 +1,6 @@
 {{ ansible_managed | comment }}
 {{ "willshersystems:ansible-sshd" | comment(prefix="", postfix="") }}
-{% macro render_option(key,value,indent=false) %}
+{% macro render_option(key,value,indent=false,join_list=false) %}
 {%   if value is defined and value is not none %}
 {%     if value is sameas true %}
 {%       if indent %}  {% endif %}
@@ -11,6 +11,9 @@
 {%     elif value is string or value is number %}
 {%       if indent %}  {% endif %}
 {{ key }} {{ value | string }}
+{%     elif join_list is sameas true %}
+{%       if indent %}  {% endif %}
+{{ key }} {{ value | reject('none') | map('string') | join(',') }}
 {%     else %}
 {%       for i in value %}
 {%         if i is none %}
@@ -25,20 +28,20 @@
 {{- '' -}}
 {%   endif %}
 {% endmacro %}
-{% macro body_option(key,override) %}
+{% macro body_option(key,override,join_list=false) %}
 {%   if override is defined %}
-{{     render_option(key, override) -}}
+{{     render_option(key, override, false, join_list) -}}
 {%   elif __sshd_config[key] is defined %}
-{{     render_option(key, __sshd_config[key]) -}}
+{{     render_option(key, __sshd_config[key], false, join_list) -}}
 {%   elif sshd_main_config_file is not none
         and sshd_config_file | dirname == sshd_main_config_file ~ '.d' %}
 {#     Do not use the defaults from main file to avoid recursion #}
 {{- '' -}}
 {%   elif __sshd_defaults[key] is defined and not sshd_skip_defaults %}
 {%     if key == 'HostKey' and __sshd_fips_mode %}
-{{       render_option(key, __sshd_defaults[key] | difference(__sshd_hostkeys_nofips)) -}}
+{{       render_option(key, __sshd_defaults[key] | difference(__sshd_hostkeys_nofips), false, join_list) -}}
 {%     else %}
-{{       render_option(key, __sshd_defaults[key]) -}}
+{{       render_option(key, __sshd_defaults[key], false, join_list) -}}
 {%     endif %}
 {%   else %}
 {{- '' -}}
@@ -58,15 +61,12 @@ Match {{ match["Condition"] }}
 {{       render_option("AllowStreamLocalForwarding",match["AllowStreamLocalForwarding"],true) -}}
 {{       render_option("AllowTcpForwarding",match["AllowTcpForwarding"],true) -}}
 {{       render_option("AllowUsers",match["AllowUsers"],true) -}}
-{{       render_option("AuthenticationMethods",match["AuthenticationMethods"],true) -}}
 {{       render_option("AuthorizedKeysCommand",match["AuthorizedKeysCommand"],true) -}}
 {{       render_option("AuthorizedKeysCommandUser",match["AuthorizedKeysCommandUser"],true) -}}
-{{       render_option("AuthorizedKeysFile",match["AuthorizedKeysFile"],true) -}}
 {{       render_option("AuthorizedPrincipalsCommand",match["AuthorizedPrincipalsCommand"],true) -}}
 {{       render_option("AuthorizedPrincipalsCommandUser",match["AuthorizedPrincipalsCommandUser"],true) -}}
 {{       render_option("AuthorizedPrincipalsFile",match["AuthorizedPrincipalsFile"],true) -}}
 {{       render_option("Banner",match["Banner"],true) -}}
-{{       render_option("CASignatureAlgorithms",match["CASignatureAlgorithms"],true) -}}
 {{       render_option("ChrootDirectory",match["ChrootDirectory"],true) -}}
 {{       render_option("ChannelTimeout",match["ChannelTimeout"],true) -}}
 {{       render_option("ClientAliveCountMax",match["ClientAliveCountMax"],true) -}}
@@ -78,8 +78,6 @@ Match {{ match["Condition"] }}
 {{       render_option("ForceCommand",match["ForceCommand"],true) -}}
 {{       render_option("GatewayPorts",match["GatewayPorts"],true) -}}
 {{       render_option("GSSAPIAuthentication",match["GSSAPIAuthentication"],true) -}}
-{{       render_option("HostbasedAcceptedKeyTypes",match["HostbasedAcceptedKeyTypes"],true) -}}
-{{       render_option("HostbasedAcceptedAlgorithms",match["HostbasedAcceptedAlgorithms"],true) -}}
 {{       render_option("HostbasedAuthentication",match["HostbasedAuthentication"],true) -}}
 {{       render_option("HostbasedUsesNameFromPacketOnly",match["HostbasedUsesNameFromPacketOnly"],true) -}}
 {{       render_option("IgnoreRhosts",match["IgnoreRhosts"],true) -}}
@@ -99,7 +97,6 @@ Match {{ match["Condition"] }}
 {{       render_option("PermitTunnel",match["PermitTunnel"],true) -}}
 {{       render_option("PermitUserRC",match["PermitUserRC"],true) -}}
 {{       render_option("PubkeyAcceptedKeyTypes",match["PubkeyAcceptedKeyTypes"],true) -}}
-{{       render_option("PubkeyAcceptedAlgorithms",match["PubkeyAcceptedAlgorithms"],true) -}}
 {{       render_option("PubkeyAuthentication",match["PubkeyAuthentication"],true) -}}
 {{       render_option("PubkeyAuthOptions",match["PubkeyAuthOptions"],true) -}}
 {{       render_option("RDomain",match["RDomain"],true) -}}
@@ -119,6 +116,12 @@ Match {{ match["Condition"] }}
 {{       render_option("X11MaxDisplays",match["X11MaxDisplays"],true) -}}
 {{       render_option("X11Forwarding",match["X11Forwarding"],true) -}}
 {{       render_option("X11UseLocalHost",match["X11UseLocalHost"],true) -}}
+{{       render_option("AuthenticationMethods",match["AuthenticationMethods"],true,true) -}}
+{{       render_option("AuthorizedKeysFile",match["AuthorizedKeysFile"],true,true) -}}
+{{       render_option("CASignatureAlgorithms",match["CASignatureAlgorithms"],true,true) -}}
+{{       render_option("HostbasedAcceptedKeyTypes",match["HostbasedAcceptedKeyTypes"],true,true) -}}
+{{       render_option("HostbasedAcceptedAlgorithms",match["HostbasedAcceptedAlgorithms"],true,true) -}}
+{{       render_option("PubkeyAcceptedAlgorithms",match["PubkeyAcceptedAlgorithms"],true,true) -}}
 {%     endfor %}
 {%   endif %}
 {% endmacro %}
@@ -143,20 +146,16 @@ Match {{ match["Condition"] }}
 {{ body_option("AllowStreamLocalForwarding",sshd_AllowStreamLocalForwarding) -}}
 {{ body_option("AllowTcpForwarding",sshd_AllowTcpForwarding) -}}
 {{ body_option("AllowUsers",sshd_AllowUsers) -}}
-{{ body_option("AuthenticationMethods",sshd_AuthenticationMethods) -}}
 {{ body_option("AuthorizedKeysCommand",sshd_AuthorizedKeysCommand) -}}
 {{ body_option("AuthorizedKeysCommandUser",sshd_AuthorizedKeysCommandUser) -}}
-{{ body_option("AuthorizedKeysFile",sshd_AuthorizedKeysFile) -}}
 {{ body_option("AuthorizedPrincipalsCommand",sshd_AuthorizedPrincipalsCommand) -}}
 {{ body_option("AuthorizedPrincipalsCommandUser",sshd_AuthorizedPrincipalsCommandUser) -}}
 {{ body_option("AuthorizedPrincipalsFile",sshd_AuthorizedPrincipalsFile) -}}
 {{ body_option("Banner",sshd_Banner) -}}
 {{ body_option("CanonicalMatchUser",sshd_CanonicalMatchUser) -}}
-{{ body_option("CASignatureAlgorithms",sshd_CASignatureAlgorithms) -}}
 {{ body_option("ChallengeResponseAuthentication",sshd_ChallengeResponseAuthentication) -}}
 {{ body_option("ChannelTimeout",sshd_ChannelTimeout) -}}
 {{ body_option("ChrootDirectory",sshd_ChrootDirectory) -}}
-{{ body_option("Ciphers",sshd_Ciphers) -}}
 {{ body_option("ClientAliveCountMax",sshd_ClientAliveCountMax) -}}
 {{ body_option("ClientAliveInterval",sshd_ClientAliveInterval) -}}
 {{ body_option("Compression",sshd_Compression) -}}
@@ -184,9 +183,6 @@ Match {{ match["Condition"] }}
 {{ body_option("HPNDisabled",sshd_HPNDisabled) -}}
 {{ body_option("HostCertificate",sshd_HostCertificate) -}}
 {{ body_option("HostKeyAgent",sshd_HostKeyAgent) -}}
-{{ body_option("HostKeyAlgorithms",sshd_HostKeyAlgorithms) -}}
-{{ body_option("HostbasedAcceptedKeyTypes",sshd_HostbasedAcceptedKeyTypes) -}}
-{{ body_option("HostbasedAcceptedAlgorithms",sshd_HostbasedAcceptedAlgorithms) -}}
 {{ body_option("HostbasedAuthentication",sshd_HostbasedAuthentication) -}}
 {{ body_option("HostbasedUsesNameFromPacketOnly",sshd_HostbasedUsesNameFromPacketOnly) -}}
 {{ body_option("IPQoS",sshd_IPQoS) -}}
@@ -200,7 +196,6 @@ Match {{ match["Condition"] }}
 {{ body_option("KerberosUniqueTicket",sshd_KerberosUniqueTicket) -}}
 {{ body_option("KerberosUniqueCCache",sshd_KerberosUniqueCCache) -}}
 {{ body_option("KerberosUseKuserok",sshd_KerberosUseKuserok) -}}
-{{ body_option("KexAlgorithms",sshd_KexAlgorithms) -}}
 {{ body_option("KeyRegenerationInterval",sshd_KeyRegenerationInterval) -}}
 {{ body_option("LogLevel",sshd_LogLevel) -}}
 {{ body_option("LogVerbose",sshd_LogVerbose) -}}
@@ -229,7 +224,6 @@ Match {{ match["Condition"] }}
 {{ body_option("PrintLastLog",sshd_PrintLastLog) -}}
 {{ body_option("PrintMotd",sshd_PrintMotd) -}}
 {{ body_option("PubkeyAcceptedKeyTypes",sshd_PubkeyAcceptedKeyTypes) -}}
-{{ body_option("PubkeyAcceptedAlgorithms",sshd_PubkeyAcceptedAlgorithms) -}}
 {{ body_option("PubkeyAuthOptions",sshd_PubkeyAuthOptions) -}}
 {{ body_option("PubkeyAuthentication",sshd_PubkeyAuthentication) -}}
 {{ body_option("RSAAuthentication",sshd_RSAAuthentication) -}}
@@ -266,6 +260,15 @@ Match {{ match["Condition"] }}
 {{ body_option("X11Forwarding",sshd_X11Forwarding) -}}
 {{ body_option("X11UseLocalhost",sshd_X11UseLocalhost) -}}
 {{ body_option("XAuthLocation",sshd_XAuthLocation) -}}
+{{ body_option("AuthenticationMethods",sshd_AuthenticationMethods,true) -}}
+{{ body_option("AuthorizedKeysFile",sshd_AuthorizedKeysFile,true) -}}
+{{ body_option("CASignatureAlgorithms",sshd_CASignatureAlgorithms,true) -}}
+{{ body_option("Ciphers",sshd_Ciphers,true) -}}
+{{ body_option("HostKeyAlgorithms",sshd_HostKeyAlgorithms,true) -}}
+{{ body_option("HostbasedAcceptedKeyTypes",sshd_HostbasedAcceptedKeyTypes,true) -}}
+{{ body_option("HostbasedAcceptedAlgorithms",sshd_HostbasedAcceptedAlgorithms,true) -}}
+{{ body_option("KexAlgorithms",sshd_KexAlgorithms,true) -}}
+{{ body_option("PubkeyAcceptedAlgorithms",sshd_PubkeyAcceptedAlgorithms,true) -}}
 {% if __sshd_config['Match'] is defined %}
 {{   match_iterate_block(__sshd_config['Match']) -}}
 {% endif %}

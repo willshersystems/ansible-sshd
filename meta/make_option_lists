@@ -10,11 +10,21 @@
 print "{{       render_option(\""$1"\",match[\""$1"\"],true) -}}"
 }'
 
+  cat options_list_match |
+    awk '{
+print "{{       render_option(\""$1"\",match[\""$1"\"],true,true) -}}"
+}'
+
   cat 20_middle.j2
 
   cat options_body |
     awk '{
 print "{{ body_option(\""$1"\",sshd_"$1") -}}"
+}'
+
+  cat options_list_body |
+    awk '{
+print "{{ body_option(\""$1"\",sshd_"$1",true) -}}"
 }'
 
   cat 30_bottom.j2
@@ -30,11 +40,21 @@ print "{{ body_option(\""$1"\",sshd_"$1") -}}"
 print "{{       render_option(\""$1"\",match[\""$1"\"],true) -}}"
 }'
 
+  cat options_list_match |
+    awk '{
+print "{{       render_option(\""$1"\",match[\""$1"\"],true,true) -}}"
+}'
+
   cat 20_middle.j2
 
   cat options_body |
     awk '{
 print "{{ body_option(\""$1"\",sshd_"$1") -}}"
+}'
+
+  cat options_list_body |
+    awk '{
+print "{{ body_option(\""$1"\",sshd_"$1",true) -}}"
 }'
 
   cat 30_bottom.j2
