@@ -1,3 +1,6 @@
+{{ ansible_managed | comment(prefix="", postfix="") -}}
+{{- "willshersystems:ansible-sshd" | comment(prefix="", postfix="") }}
+
 [Unit]
 Description=OpenBSD Secure Shell server socket
 Documentation=man:sshd(8) man:sshd_config(5)

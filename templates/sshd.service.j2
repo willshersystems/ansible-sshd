@@ -1,3 +1,6 @@
+{{ ansible_managed | comment(prefix="", postfix="") -}}
+{{- "willshersystems:ansible-sshd" | comment(prefix="", postfix="") }}
+
 [Unit]
 Description=OpenBSD Secure Shell server
 After=network.target{{ (__sshd_service_after is none) | ternary('', ' ' ~ __sshd_service_after) }}
