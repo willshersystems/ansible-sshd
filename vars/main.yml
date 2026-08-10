@@ -1,4 +1,6 @@
 ---
+__sshd_write_log_file: false
+
 __sshd_config: "{{ sshd_config | default({}) or sshd | default({}) }}"
 __sshd_config_file: "/etc/ssh/sshd_config"
 __sshd_config_owner: "root"
