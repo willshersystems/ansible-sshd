@@ -1,6 +1,19 @@
 Changelog
 =========
 
+[v0.34.0] - 2026-08-10
+--------------------
+
+### New Features
+
+- feat: Write roles fingerprints to /var/log/sysroles.jsonl (#381)
+
+### Other Changes
+
+- build(deps): bump actions/upload-artifact from 7.0.0 to 7.0.1 (#363)
+- build(deps): bump ansible/ansible-lint from 26.3.0 to 26.6.0 (#371)
+- build(deps): bump actions/checkout from 6 to 7 (#372)
+
 [v0.33.1] - 2026-07-22
 --------------------
 
