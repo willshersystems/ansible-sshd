@@ -2,6 +2,8 @@
 name: Woke
 on:  # yamllint disable-line rule:truthy
   - pull_request
+permissions:
+  contents: read
 jobs:
   woke:
     name: Detect non-inclusive language
@@ -9,6 +11,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Run lsr-woke-action
         # Originally, uses: get-woke/woke-action@v0
