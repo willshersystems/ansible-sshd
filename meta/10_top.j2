@@ -1,4 +1,16 @@
-{% macro render_option(key,value,indent=false) %}
+{% macro join_list(value,seps) %}
+{%- set ns = namespace(parts=[]) -%}
+{%- for item in value -%}
+{%-   if item is none -%}
+{%-   elif item is iterable and item is not string and seps | length > 1 -%}
+{%-     set ns.parts = ns.parts + [ item | map('string') | join(seps[1]) ] -%}
+{%-   else -%}
+{%-     set ns.parts = ns.parts + [ item | string ] -%}
+{%-   endif -%}
+{%- endfor -%}
+{{- ns.parts | join(seps[0]) -}}
+{% endmacro %}
+{% macro render_option(key,value,indent=false,seps=none) %}
 {%   if value is defined and value is not none %}
 {%     if value is sameas true %}
 {%       if indent %}  {% endif %}
@@ -9,6 +21,9 @@
 {%     elif value is string or value is number %}
 {%       if indent %}  {% endif %}
 {{ key }} {{ value | string }}
+{%     elif seps is not none and value is iterable and value | length > 0 %}
+{%       if indent %}  {% endif %}
+{{ key }} {{ join_list(value, seps) }}
 {%     else %}
 {%       for i in value %}
 {%         if i is none %}
@@ -23,20 +38,20 @@
 {{- '' -}}
 {%   endif %}
 {% endmacro %}
-{% macro body_option(key,override) %}
+{% macro body_option(key,override,seps=none) %}
 {%   if override is defined %}
-{{     render_option(key, override) -}}
+{{     render_option(key, override, seps=seps) -}}
 {%   elif __sshd_config[key] is defined %}
-{{     render_option(key, __sshd_config[key]) -}}
+{{     render_option(key, __sshd_config[key], seps=seps) -}}
 {%   elif sshd_main_config_file is not none
         and sshd_config_file | dirname == sshd_main_config_file ~ '.d' %}
 {#     Do not use the defaults from main file to avoid recursion #}
 {{- '' -}}
 {%   elif __sshd_defaults[key] is defined and not sshd_skip_defaults %}
 {%     if key == 'HostKey' and __sshd_fips_mode %}
-{{       render_option(key, __sshd_defaults[key] | difference(__sshd_hostkeys_nofips)) -}}
+{{       render_option(key, __sshd_defaults[key] | difference(__sshd_hostkeys_nofips), seps=seps) -}}
 {%     else %}
-{{       render_option(key, __sshd_defaults[key]) -}}
+{{       render_option(key, __sshd_defaults[key], seps=seps) -}}
 {%     endif %}
 {%   else %}
 {{- '' -}}
