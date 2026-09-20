@@ -1,0 +1,41 @@
+#!/bin/sh
+
+# Full configuration file
+(
+  cat 01_ansible_head.j2
+  cat 10_top.j2
+
+  cat options_match |
+    awk '{
+print "{{       render_option(\""$1"\",match[\""$1"\"],true) -}}"
+}'
+
+  cat 20_middle.j2
+
+  cat options_body |
+    awk '{
+print "{{ body_option(\""$1"\",sshd_"$1") -}}"
+}'
+
+  cat 30_bottom.j2
+) >../templates/sshd_config.j2
+
+# Snippet of configuration file
+(
+  cat 10_top.j2 |
+    sed -e "s/indent=false/indent=true/"
+
+  cat options_match |
+    awk '{
+print "{{       render_option(\""$1"\",match[\""$1"\"],true) -}}"
+}'
+
+  cat 20_middle.j2
+
+  cat options_body |
+    awk '{
+print "{{ body_option(\""$1"\",sshd_"$1") -}}"
+}'
+
+  cat 30_bottom.j2
+) >../templates/sshd_config_snippet.j2
