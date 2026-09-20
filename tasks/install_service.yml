@@ -42,13 +42,31 @@
         - sshd_reload
         - sshd_socket_restart
 
-- name: Service enabled and running
-  ansible.builtin.service:
-    name: "{{ sshd_service }}"
-    enabled: true
-    state: started
+# sshd can be run as a service or via socket activation. Those two
+# units most not be enabled concurrently. Make sure the unwanted is
+# disabled (first) and the wanted one enabled.
+- name: Ensure unwanted sshd.(socket|service) unit is disabled
+  ansible.builtin.systemd:
+    name: "{{ sshd_service }}.{{ _sshd_unit_suffix }}"
+    enabled: false
+    masked: true
+  vars:
+    _sshd_unit_suffix: >-
+      {{ "socket" if sshd_systemd_unit == 'service'
+          else "service" }}
   when:
-    - sshd_manage_service|bool
+    - sshd_manage_service | bool
+    - ansible_facts['virtualization_type'] | default(None) not in __sshd_skip_virt_env
+    - ansible_connection != 'chroot'
+  no_log: "{{ ansible_verbosity < 3 }}"
+
+- name: Ensure wanted sshd.(socket|service) unit is enabled
+  ansible.builtin.systemd:
+    name: "{{ sshd_service }}.{{ sshd_systemd_unit }}"
+    enabled: true
+    masked: false
+  when:
+    - sshd_manage_service | bool
     - ansible_facts['virtualization_type'] | default(None) not in __sshd_skip_virt_env
     - ansible_connection != 'chroot'
   no_log: "{{ ansible_verbosity < 3 }}"
@@ -58,6 +76,7 @@
   ansible.builtin.command: systemctl enable {{ sshd_service | quote }}  # noqa command-instead-of-module
   when:
     - ansible_connection == 'chroot'
+    - sshd_systemd_unit == 'service'
     - ansible_facts['os_family'] == 'RedHat'
     - ansible_facts['distribution_major_version'] | int >= 7
   changed_when: true
