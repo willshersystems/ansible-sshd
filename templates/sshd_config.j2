@@ -1,6 +1,19 @@
 {{ ansible_managed | comment }}
 {{ "willshersystems:ansible-sshd" | comment(prefix="", postfix="") }}
-{% macro render_option(key,value,indent=false) %}
+
+{% macro join_list(value,seps) %}
+{%- set ns = namespace(parts=[]) -%}
+{%- for item in value -%}
+{%-   if item is none -%}
+{%-   elif item is iterable and item is not string and seps | length > 1 -%}
+{%-     set ns.parts = ns.parts + [ item | map('string') | join(seps[1]) ] -%}
+{%-   else -%}
+{%-     set ns.parts = ns.parts + [ item | string ] -%}
+{%-   endif -%}
+{%- endfor -%}
+{{- ns.parts | join(seps[0]) -}}
+{% endmacro %}
+{% macro render_option(key,value,indent=false,seps=none) %}
 {%   if value is defined and value is not none %}
 {%     if value is sameas true %}
 {%       if indent %}  {% endif %}
@@ -11,6 +24,9 @@
 {%     elif value is string or value is number %}
 {%       if indent %}  {% endif %}
 {{ key }} {{ value | string }}
+{%     elif seps is not none and value is iterable and value | length > 0 %}
+{%       if indent %}  {% endif %}
+{{ key }} {{ join_list(value, seps) }}
 {%     else %}
 {%       for i in value %}
 {%         if i is none %}
@@ -25,20 +41,20 @@
 {{- '' -}}
 {%   endif %}
 {% endmacro %}
-{% macro body_option(key,override) %}
+{% macro body_option(key,override,seps=none) %}
 {%   if override is defined %}
-{{     render_option(key, override) -}}
+{{     render_option(key, override, seps=seps) -}}
 {%   elif __sshd_config[key] is defined %}
-{{     render_option(key, __sshd_config[key]) -}}
+{{     render_option(key, __sshd_config[key], seps=seps) -}}
 {%   elif sshd_main_config_file is not none
         and sshd_config_file | dirname == sshd_main_config_file ~ '.d' %}
 {#     Do not use the defaults from main file to avoid recursion #}
 {{- '' -}}
 {%   elif __sshd_defaults[key] is defined and not sshd_skip_defaults %}
 {%     if key == 'HostKey' and __sshd_fips_mode %}
-{{       render_option(key, __sshd_defaults[key] | difference(__sshd_hostkeys_nofips)) -}}
+{{       render_option(key, __sshd_defaults[key] | difference(__sshd_hostkeys_nofips), seps=seps) -}}
 {%     else %}
-{{       render_option(key, __sshd_defaults[key]) -}}
+{{       render_option(key, __sshd_defaults[key], seps=seps) -}}
 {%     endif %}
 {%   else %}
 {{- '' -}}
@@ -54,32 +70,32 @@ Match {{ match["Condition"] }}
 {{       render_option("Include",match["Include"],true) -}}
 {{       render_option("AcceptEnv",match["AcceptEnv"],true) -}}
 {{       render_option("AllowAgentForwarding",match["AllowAgentForwarding"],true) -}}
-{{       render_option("AllowGroups",match["AllowGroups"],true) -}}
+{{       render_option("AllowGroups",match["AllowGroups"],true,seps=[" "]) -}}
 {{       render_option("AllowStreamLocalForwarding",match["AllowStreamLocalForwarding"],true) -}}
 {{       render_option("AllowTcpForwarding",match["AllowTcpForwarding"],true) -}}
-{{       render_option("AllowUsers",match["AllowUsers"],true) -}}
-{{       render_option("AuthenticationMethods",match["AuthenticationMethods"],true) -}}
+{{       render_option("AllowUsers",match["AllowUsers"],true,seps=[" "]) -}}
+{{       render_option("AuthenticationMethods",match["AuthenticationMethods"],true,seps=[" ", ","]) -}}
 {{       render_option("AuthorizedKeysCommand",match["AuthorizedKeysCommand"],true) -}}
 {{       render_option("AuthorizedKeysCommandUser",match["AuthorizedKeysCommandUser"],true) -}}
-{{       render_option("AuthorizedKeysFile",match["AuthorizedKeysFile"],true) -}}
+{{       render_option("AuthorizedKeysFile",match["AuthorizedKeysFile"],true,seps=[" "]) -}}
 {{       render_option("AuthorizedPrincipalsCommand",match["AuthorizedPrincipalsCommand"],true) -}}
 {{       render_option("AuthorizedPrincipalsCommandUser",match["AuthorizedPrincipalsCommandUser"],true) -}}
 {{       render_option("AuthorizedPrincipalsFile",match["AuthorizedPrincipalsFile"],true) -}}
 {{       render_option("Banner",match["Banner"],true) -}}
-{{       render_option("CASignatureAlgorithms",match["CASignatureAlgorithms"],true) -}}
+{{       render_option("CASignatureAlgorithms",match["CASignatureAlgorithms"],true,seps=[","]) -}}
 {{       render_option("ChrootDirectory",match["ChrootDirectory"],true) -}}
-{{       render_option("ChannelTimeout",match["ChannelTimeout"],true) -}}
+{{       render_option("ChannelTimeout",match["ChannelTimeout"],true,seps=[" "]) -}}
 {{       render_option("ClientAliveCountMax",match["ClientAliveCountMax"],true) -}}
 {{       render_option("ClientAliveInterval",match["ClientAliveInterval"],true) -}}
-{{       render_option("DenyGroups",match["DenyGroups"],true) -}}
-{{       render_option("DenyUsers",match["DenyUsers"],true) -}}
+{{       render_option("DenyGroups",match["DenyGroups"],true,seps=[" "]) -}}
+{{       render_option("DenyUsers",match["DenyUsers"],true,seps=[" "]) -}}
 {{       render_option("DisableForwarding",match["DisableForwarding"],true) -}}
 {{       render_option("ExposeAuthInfo",match["ExposeAuthInfo"],true) -}}
 {{       render_option("ForceCommand",match["ForceCommand"],true) -}}
 {{       render_option("GatewayPorts",match["GatewayPorts"],true) -}}
 {{       render_option("GSSAPIAuthentication",match["GSSAPIAuthentication"],true) -}}
-{{       render_option("HostbasedAcceptedKeyTypes",match["HostbasedAcceptedKeyTypes"],true) -}}
-{{       render_option("HostbasedAcceptedAlgorithms",match["HostbasedAcceptedAlgorithms"],true) -}}
+{{       render_option("HostbasedAcceptedKeyTypes",match["HostbasedAcceptedKeyTypes"],true,seps=[","]) -}}
+{{       render_option("HostbasedAcceptedAlgorithms",match["HostbasedAcceptedAlgorithms"],true,seps=[","]) -}}
 {{       render_option("HostbasedAuthentication",match["HostbasedAuthentication"],true) -}}
 {{       render_option("HostbasedUsesNameFromPacketOnly",match["HostbasedUsesNameFromPacketOnly"],true) -}}
 {{       render_option("IgnoreRhosts",match["IgnoreRhosts"],true) -}}
@@ -92,16 +108,16 @@ Match {{ match["Condition"] }}
 {{       render_option("PAMServiceName",match["PAMServiceName"],true) -}}
 {{       render_option("PasswordAuthentication",match["PasswordAuthentication"],true) -}}
 {{       render_option("PermitEmptyPasswords",match["PermitEmptyPasswords"],true) -}}
-{{       render_option("PermitListen",match["PermitListen"],true) -}}
-{{       render_option("PermitOpen",match["PermitOpen"],true) -}}
+{{       render_option("PermitListen",match["PermitListen"],true,seps=[" "]) -}}
+{{       render_option("PermitOpen",match["PermitOpen"],true,seps=[" "]) -}}
 {{       render_option("PermitRootLogin",match["PermitRootLogin"],true) -}}
 {{       render_option("PermitTTY",match["PermitTTY"],true) -}}
 {{       render_option("PermitTunnel",match["PermitTunnel"],true) -}}
 {{       render_option("PermitUserRC",match["PermitUserRC"],true) -}}
-{{       render_option("PubkeyAcceptedKeyTypes",match["PubkeyAcceptedKeyTypes"],true) -}}
-{{       render_option("PubkeyAcceptedAlgorithms",match["PubkeyAcceptedAlgorithms"],true) -}}
+{{       render_option("PubkeyAcceptedKeyTypes",match["PubkeyAcceptedKeyTypes"],true,seps=[","]) -}}
+{{       render_option("PubkeyAcceptedAlgorithms",match["PubkeyAcceptedAlgorithms"],true,seps=[","]) -}}
 {{       render_option("PubkeyAuthentication",match["PubkeyAuthentication"],true) -}}
-{{       render_option("PubkeyAuthOptions",match["PubkeyAuthOptions"],true) -}}
+{{       render_option("PubkeyAuthOptions",match["PubkeyAuthOptions"],true,seps=[" "]) -}}
 {{       render_option("RDomain",match["RDomain"],true) -}}
 {{       render_option("RefuseConnection",match["RefuseConnection"],true) -}}
 {{       render_option("RekeyLimit",match["RekeyLimit"],true) -}}
@@ -110,7 +126,7 @@ Match {{ match["Condition"] }}
 {{       render_option("RhostsRSAAuthentication",match["RhostsRSAAuthentication"],true) -}}
 {{       render_option("RSAAuthentication",match["RSAAuthentication"],true) -}}
 {{       render_option("RSAMinSize",match["RSAMinSize"],true) -}}
-{{       render_option("SetEnv",match["SetEnv"],true) -}}
+{{       render_option("SetEnv",match["SetEnv"],true,seps=[" "]) -}}
 {{       render_option("StreamLocalBindMask",match["StreamLocalBindMask"],true) -}}
 {{       render_option("StreamLocalBindUnlink",match["StreamLocalBindUnlink"],true) -}}
 {{       render_option("TrustedUserCAKeys",match["TrustedUserCAKeys"],true) -}}
@@ -139,30 +155,30 @@ Match {{ match["Condition"] }}
 {{ body_option("HostKey",sshd_HostKey) -}}
 {{ body_option("AcceptEnv",sshd_AcceptEnv) -}}
 {{ body_option("AllowAgentForwarding",sshd_AllowAgentForwarding) -}}
-{{ body_option("AllowGroups",sshd_AllowGroups) -}}
+{{ body_option("AllowGroups",sshd_AllowGroups,seps=[" "]) -}}
 {{ body_option("AllowStreamLocalForwarding",sshd_AllowStreamLocalForwarding) -}}
 {{ body_option("AllowTcpForwarding",sshd_AllowTcpForwarding) -}}
-{{ body_option("AllowUsers",sshd_AllowUsers) -}}
-{{ body_option("AuthenticationMethods",sshd_AuthenticationMethods) -}}
+{{ body_option("AllowUsers",sshd_AllowUsers,seps=[" "]) -}}
+{{ body_option("AuthenticationMethods",sshd_AuthenticationMethods,seps=[" ", ","]) -}}
 {{ body_option("AuthorizedKeysCommand",sshd_AuthorizedKeysCommand) -}}
 {{ body_option("AuthorizedKeysCommandUser",sshd_AuthorizedKeysCommandUser) -}}
-{{ body_option("AuthorizedKeysFile",sshd_AuthorizedKeysFile) -}}
+{{ body_option("AuthorizedKeysFile",sshd_AuthorizedKeysFile,seps=[" "]) -}}
 {{ body_option("AuthorizedPrincipalsCommand",sshd_AuthorizedPrincipalsCommand) -}}
 {{ body_option("AuthorizedPrincipalsCommandUser",sshd_AuthorizedPrincipalsCommandUser) -}}
 {{ body_option("AuthorizedPrincipalsFile",sshd_AuthorizedPrincipalsFile) -}}
 {{ body_option("Banner",sshd_Banner) -}}
 {{ body_option("CanonicalMatchUser",sshd_CanonicalMatchUser) -}}
-{{ body_option("CASignatureAlgorithms",sshd_CASignatureAlgorithms) -}}
+{{ body_option("CASignatureAlgorithms",sshd_CASignatureAlgorithms,seps=[","]) -}}
 {{ body_option("ChallengeResponseAuthentication",sshd_ChallengeResponseAuthentication) -}}
-{{ body_option("ChannelTimeout",sshd_ChannelTimeout) -}}
+{{ body_option("ChannelTimeout",sshd_ChannelTimeout,seps=[" "]) -}}
 {{ body_option("ChrootDirectory",sshd_ChrootDirectory) -}}
-{{ body_option("Ciphers",sshd_Ciphers) -}}
+{{ body_option("Ciphers",sshd_Ciphers,seps=[","]) -}}
 {{ body_option("ClientAliveCountMax",sshd_ClientAliveCountMax) -}}
 {{ body_option("ClientAliveInterval",sshd_ClientAliveInterval) -}}
 {{ body_option("Compression",sshd_Compression) -}}
 {{ body_option("DebianBanner",sshd_DebianBanner) -}}
-{{ body_option("DenyGroups",sshd_DenyGroups) -}}
-{{ body_option("DenyUsers",sshd_DenyUsers) -}}
+{{ body_option("DenyGroups",sshd_DenyGroups,seps=[" "]) -}}
+{{ body_option("DenyUsers",sshd_DenyUsers,seps=[" "]) -}}
 {{ body_option("DisableForwarding",sshd_DisableForwarding) -}}
 {{ body_option("ExposeAuthenticationMethods",sshd_ExposeAuthenticationMethods) -}}
 {{ body_option("ExposeAuthInfo",sshd_ExposeAuthInfo) -}}
@@ -176,7 +192,7 @@ Match {{ match["Condition"] }}
 {{ body_option("GSSAPIEnablek5users",sshd_GSSAPIEnablek5users) -}}
 {{ body_option("GSSAPIIndicators",sshd_GSSAPIIndicators) -}}
 {{ body_option("GSSAPIKeyExchange",sshd_GSSAPIKeyExchange) -}}
-{{ body_option("GSSAPIKexAlgorithms",sshd_GSSAPIKexAlgorithms) -}}
+{{ body_option("GSSAPIKexAlgorithms",sshd_GSSAPIKexAlgorithms,seps=[","]) -}}
 {{ body_option("GSSAPIProxyS4U2Services",sshd_GSSAPIProxyS4U2Services) -}}
 {{ body_option("GSSAPIStoreCredentialsOnRekey",sshd_GSSAPIStoreCredentialsOnRekey) -}}
 {{ body_option("GSSAPIStrictAcceptorCheck",sshd_GSSAPIStrictAcceptorCheck) -}}
@@ -184,9 +200,9 @@ Match {{ match["Condition"] }}
 {{ body_option("HPNDisabled",sshd_HPNDisabled) -}}
 {{ body_option("HostCertificate",sshd_HostCertificate) -}}
 {{ body_option("HostKeyAgent",sshd_HostKeyAgent) -}}
-{{ body_option("HostKeyAlgorithms",sshd_HostKeyAlgorithms) -}}
-{{ body_option("HostbasedAcceptedKeyTypes",sshd_HostbasedAcceptedKeyTypes) -}}
-{{ body_option("HostbasedAcceptedAlgorithms",sshd_HostbasedAcceptedAlgorithms) -}}
+{{ body_option("HostKeyAlgorithms",sshd_HostKeyAlgorithms,seps=[","]) -}}
+{{ body_option("HostbasedAcceptedKeyTypes",sshd_HostbasedAcceptedKeyTypes,seps=[","]) -}}
+{{ body_option("HostbasedAcceptedAlgorithms",sshd_HostbasedAcceptedAlgorithms,seps=[","]) -}}
 {{ body_option("HostbasedAuthentication",sshd_HostbasedAuthentication) -}}
 {{ body_option("HostbasedUsesNameFromPacketOnly",sshd_HostbasedUsesNameFromPacketOnly) -}}
 {{ body_option("IPQoS",sshd_IPQoS) -}}
@@ -200,12 +216,12 @@ Match {{ match["Condition"] }}
 {{ body_option("KerberosUniqueTicket",sshd_KerberosUniqueTicket) -}}
 {{ body_option("KerberosUniqueCCache",sshd_KerberosUniqueCCache) -}}
 {{ body_option("KerberosUseKuserok",sshd_KerberosUseKuserok) -}}
-{{ body_option("KexAlgorithms",sshd_KexAlgorithms) -}}
+{{ body_option("KexAlgorithms",sshd_KexAlgorithms,seps=[","]) -}}
 {{ body_option("KeyRegenerationInterval",sshd_KeyRegenerationInterval) -}}
 {{ body_option("LogLevel",sshd_LogLevel) -}}
-{{ body_option("LogVerbose",sshd_LogVerbose) -}}
+{{ body_option("LogVerbose",sshd_LogVerbose,seps=[","]) -}}
 {{ body_option("LoginGraceTime",sshd_LoginGraceTime) -}}
-{{ body_option("MACs",sshd_MACs) -}}
+{{ body_option("MACs",sshd_MACs,seps=[","]) -}}
 {{ body_option("MaxAuthTries",sshd_MaxAuthTries) -}}
 {{ body_option("MaxSessions",sshd_MaxSessions) -}}
 {{ body_option("MaxStartups",sshd_MaxStartups) -}}
@@ -214,23 +230,23 @@ Match {{ match["Condition"] }}
 {{ body_option("PAMServiceName",sshd_PAMServiceName) -}}
 {{ body_option("PasswordAuthentication",sshd_PasswordAuthentication) -}}
 {{ body_option("PermitEmptyPasswords",sshd_PermitEmptyPasswords) -}}
-{{ body_option("PermitListen",sshd_PermitListen) -}}
-{{ body_option("PermitOpen",sshd_PermitOpen) -}}
+{{ body_option("PermitListen",sshd_PermitListen,seps=[" "]) -}}
+{{ body_option("PermitOpen",sshd_PermitOpen,seps=[" "]) -}}
 {{ body_option("PermitRootLogin",sshd_PermitRootLogin) -}}
 {{ body_option("PermitTTY",sshd_PermitTTY) -}}
 {{ body_option("PermitTunnel",sshd_PermitTunnel) -}}
 {{ body_option("PermitUserEnvironment",sshd_PermitUserEnvironment) -}}
 {{ body_option("PermitUserRC",sshd_PermitUserRC) -}}
-{{ body_option("PerSourcePenalties",sshd_PerSourcePenalties) -}}
+{{ body_option("PerSourcePenalties",sshd_PerSourcePenalties,seps=[" "]) -}}
 {{ body_option("PerSourcePenaltyExemptList",sshd_PerSourcePenaltyExemptList) -}}
 {{ body_option("PerSourceMaxStartups",sshd_PerSourceMaxStartups) -}}
 {{ body_option("PerSourceNetBlockSize",sshd_PerSourceNetBlockSize) -}}
 {{ body_option("PidFile",sshd_PidFile) -}}
 {{ body_option("PrintLastLog",sshd_PrintLastLog) -}}
 {{ body_option("PrintMotd",sshd_PrintMotd) -}}
-{{ body_option("PubkeyAcceptedKeyTypes",sshd_PubkeyAcceptedKeyTypes) -}}
-{{ body_option("PubkeyAcceptedAlgorithms",sshd_PubkeyAcceptedAlgorithms) -}}
-{{ body_option("PubkeyAuthOptions",sshd_PubkeyAuthOptions) -}}
+{{ body_option("PubkeyAcceptedKeyTypes",sshd_PubkeyAcceptedKeyTypes,seps=[","]) -}}
+{{ body_option("PubkeyAcceptedAlgorithms",sshd_PubkeyAcceptedAlgorithms,seps=[","]) -}}
+{{ body_option("PubkeyAuthOptions",sshd_PubkeyAuthOptions,seps=[" "]) -}}
 {{ body_option("PubkeyAuthentication",sshd_PubkeyAuthentication) -}}
 {{ body_option("RSAAuthentication",sshd_RSAAuthentication) -}}
 {{ body_option("RSAMinSize",sshd_RSAMinSize) -}}
@@ -241,7 +257,7 @@ Match {{ match["Condition"] }}
 {{ body_option("RDomain",sshd_RDomain) -}}
 {{ body_option("RhostsRSAAuthentication",sshd_RhostsRSAAuthentication) -}}
 {{ body_option("SecurityKeyProvider",sshd_SecurityKeyProvider) -}}
-{{ body_option("SetEnv",sshd_SetEnv) -}}
+{{ body_option("SetEnv",sshd_SetEnv,seps=[" "]) -}}
 {{ body_option("ServerKeyBits",sshd_ServerKeyBits) -}}
 {{ body_option("ShowPatchLevel",sshd_ShowPatchLevel) -}}
 {{ body_option("SshdAuthPath",sshd_SshdAuthPath) -}}
