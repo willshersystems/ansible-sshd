@@ -22,8 +22,6 @@ jobs:
             req_file: tests/requirements.yml
           - os_image: quay.io/centos/centos:stream10
             req_file: tests/requirements.yml
-          - os_image: debian:bullseye
-            req_file: tests/requirements-no-fedora-lsr.yml
           - os_image: debian:bookworm
             req_file: tests/requirements.yml
           - os_image: debian:latest
