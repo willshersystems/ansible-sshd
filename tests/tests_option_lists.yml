@@ -1,0 +1,217 @@
+---
+- name: Test list rendering kinds (comma, space, space/comma, lines)
+  hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+      - /tmp/ssh_host_rsa_key_list1
+      - /tmp/ssh_host_ed25519_key_list1
+  tasks:
+    - name: Setup variables
+      ansible.builtin.include_tasks: tasks/setup.yml
+
+    - name: "Backup configuration files"
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+    - name: Remove host keys before the test
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /tmp/ssh_host_rsa_key_list1
+        - /tmp/ssh_host_ed25519_key_list1
+
+    - name: Configure sshd with list-valued options of different kinds
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+      vars:
+        # Deliberately NOT pinning sshd_config_file here. On RHEL-family >8
+        # and Ubuntu >=20 the role defaults it to
+        # /etc/ssh/sshd_config.d/00-ansible_system_role.conf rather than the
+        # main file - and that "00-" prefix is why the role's own Ciphers/
+        # MACs/etc. win over the OS-shipped crypto-policy drop-in
+        # (/etc/ssh/sshd_config.d/50-redhat.conf on RHEL), since sshd takes
+        # the first directive it encounters and "00-" sorts before "50-" in
+        # the glob. Forcing the main file here would put our directives
+        # after the main file's own "Include /etc/ssh/sshd_config.d/*.conf"
+        # line, letting 50-redhat.conf's crypto policy win instead - see
+        # main_sshd_config (tasks/setup.yml) for where the actual file
+        # lives on this OS.
+        sshd_config:
+          # comma kind: rendered as a single line, items joined by ","
+          Ciphers:
+            - aes256-ctr
+            - aes192-ctr
+            - aes128-ctr
+          # comma kind, second example, to cover more than one directive
+          MACs:
+            - hmac-sha2-256
+            - hmac-sha2-512
+          # space kind: rendered as a single line, items joined by " "
+          AllowUsers:
+            - alice
+            - bob
+          # space kind, second example: unlike AllowUsers, sshd -T keeps
+          # this one joined on a single line rather than repeating it -
+          # the two are tested separately below because of that difference
+          AuthorizedKeysFile:
+            - .ssh/authorized_keys
+            - .ssh/authorized_keys2
+          # space/comma kind: list of lists, outer joined by " ", inner by ","
+          AuthenticationMethods: [["publickey", "password"], ["publickey"]]
+          # this can also correctly be written as:
+          #  - - publickey
+          #    - password
+          #  - - publickey
+          #  but ansible-lint doesn't like that
+          # no kind (default "lines"): keyword repeated once per list item
+          HostKey:
+            - /tmp/ssh_host_rsa_key_list1
+            - /tmp/ssh_host_ed25519_key_list1
+
+    - name: Verify the options are correctly set
+      tags: tests::verify
+      block:
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
+
+        - name: List effective configuration using sshd -T
+          ansible.builtin.command: sshd -T
+          register: runtime
+          changed_when: false
+
+        - name: Print current configuration file
+          ansible.builtin.slurp:
+            src: "{{ main_sshd_config }}"
+          register: config
+
+        - name: Check the comma- and space/comma-kind options are effective
+          # note, the options are in lower-case here
+          ansible.builtin.assert:
+            that:
+              - "'ciphers aes256-ctr,aes192-ctr,aes128-ctr' in runtime.stdout"
+              - "'macs hmac-sha2-256,hmac-sha2-512' in runtime.stdout"
+              - "'authenticationmethods publickey,password publickey' in runtime.stdout"
+              - "'authorizedkeysfile .ssh/authorized_keys .ssh/authorized_keys2' in runtime.stdout"
+
+        - name: Check the space-kind AllowUsers is effective
+          # sshd -T dumps AllowUsers/DenyUsers/AllowGroups/SetEnv (like
+          # HostKey) as one repeated line per value, even though the config
+          # file itself has them space-joined on a single line - that's an
+          # sshd quirk, not something the role's rendering needs to
+          # reproduce. AuthorizedKeysFile above does NOT get this treatment
+          # and stays on one joined line, hence the separate assertion.
+          ansible.builtin.assert:
+            that:
+              - "'allowusers alice' in runtime.stdout"
+              - "'allowusers bob' in runtime.stdout"
+
+        - name: Check the default lines-kind HostKey is effective
+          ansible.builtin.assert:
+            that:
+              - "'hostkey /tmp/ssh_host_rsa_key_list1' in runtime.stdout"
+              - "'hostkey /tmp/ssh_host_ed25519_key_list1' in runtime.stdout"
+
+        - name: Check the comma-kind options are rendered on a single line
+          vars:
+            __config_text: "{{ config.content | b64decode }}"
+          ansible.builtin.assert:
+            that:
+              - "'Ciphers aes256-ctr,aes192-ctr,aes128-ctr' in __config_text"
+              - "'MACs hmac-sha2-256,hmac-sha2-512' in __config_text"
+
+        - name: Check the space-kind options are rendered on a single line
+          vars:
+            __config_text: "{{ config.content | b64decode }}"
+          ansible.builtin.assert:
+            that:
+              - "'AllowUsers alice bob' in __config_text"
+              - "'AuthorizedKeysFile .ssh/authorized_keys .ssh/authorized_keys2' in __config_text"
+
+        - name: Check the space/comma-kind option is rendered as one line
+          ansible.builtin.assert:
+            that:
+              - "'AuthenticationMethods publickey,password publickey' in config.content | b64decode"
+
+        - name: Check the default lines-kind option repeats the keyword
+          vars:
+            __config_text: "{{ config.content | b64decode }}"
+          ansible.builtin.assert:
+            that:
+              - "'HostKey /tmp/ssh_host_rsa_key_list1' in __config_text"
+              - "'HostKey /tmp/ssh_host_ed25519_key_list1' in __config_text"
+              # exactly two HostKey lines were added by this test, one per list item
+              - "__config_text.split('\\n') | select('match', '^HostKey /tmp/ssh_host_.*_key_list1$') | list | length == 2"
+
+        - name: Get stat of generated host keys
+          ansible.builtin.stat:
+            path: "{{ item }}"
+          register: __hostkey_stat
+          loop:
+            - /tmp/ssh_host_rsa_key_list1
+            - /tmp/ssh_host_ed25519_key_list1
+
+        - name: Check the missing host keys were generated
+          ansible.builtin.assert:
+            that:
+              - item.stat.exists
+          loop: "{{ __hostkey_stat.results }}"
+          loop_control:
+            label: "{{ item.item }}"
+
+    - name: "Restore configuration files"
+      ansible.builtin.include_tasks: tasks/restore.yml
+
+- name: Test that an empty list member resets everything rendered before it
+  hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+  tasks:
+    - name: Setup variables
+      ansible.builtin.include_tasks: tasks/setup.yml
+
+    - name: "Backup configuration files"
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+    - name: Configure sshd with a list containing a reset marker
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+      vars:
+        sshd_config:
+          # the empty string discards "stale_user" so only "real_user" remains
+          AllowUsers:
+            - stale_user
+            - ""
+            - real_user
+
+    - name: Verify the option is correctly reset
+      tags: tests::verify
+      block:
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
+
+        - name: List effective configuration using sshd -T
+          ansible.builtin.command: sshd -T
+          register: runtime
+          changed_when: false
+
+        - name: Print current configuration file
+          ansible.builtin.slurp:
+            src: "{{ main_sshd_config }}"
+          register: config
+
+        - name: Check only the item after the reset marker is effective
+          ansible.builtin.assert:
+            that:
+              - "'allowusers real_user' in runtime.stdout"
+              - "'stale_user' not in runtime.stdout"
+
+        - name: Check only the item after the reset marker is in configuration file
+          ansible.builtin.assert:
+            that:
+              - "'AllowUsers real_user' in config.content | b64decode"
+              - "'stale_user' not in config.content | b64decode"
+
+    - name: "Restore configuration files"
+      ansible.builtin.include_tasks: tasks/restore.yml
