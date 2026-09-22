@@ -11,6 +11,8 @@ This role configures the OpenSSH daemon. It:
 * Supports Match sets
 * Supports all `sshd_config` options. Templates are programmatically generated.
   (see [`meta/make_option_lists`](meta/make_option_lists))
+* List-valued options are rendered using the correct `sshd_config` syntax for
+  that option (comma-separated, space-separated, or repeated keyword lines)
 * Tests the `sshd_config` before reloading sshd.
 
 **WARNING** Misconfiguration of this role can lock you out of your server!
@@ -219,6 +221,81 @@ Renders as:
 ```text
 ListenAddress 0.0.0.0
 ListenAddress ::
+```
+
+Some options are instead rendered as a single line, with the list items
+joined by a separator, to match the syntax `sshd_config` expects for that
+option. For example `Ciphers`, `MACs` and similar algorithm lists are
+comma-separated:
+
+```yaml
+sshd_Ciphers:
+  - aes256-ctr
+  - aes192-ctr
+  - aes128-ctr
+```
+
+Renders as:
+
+```text
+Ciphers aes256-ctr,aes192-ctr,aes128-ctr
+```
+
+while options such as `AllowUsers`, `DenyUsers` and `AuthorizedKeysFile` are
+space-separated:
+
+```yaml
+sshd_AllowUsers:
+  - alice
+  - bob
+```
+
+Renders as:
+
+```text
+AllowUsers alice bob
+```
+
+`AuthenticationMethods` takes a list of lists: the outer list is
+space-separated and each inner list is comma-separated, matching the
+`method1,method2 method3` syntax sshd uses to express alternative sets of
+required authentication methods:
+
+```yaml
+sshd_AuthenticationMethods:
+  - - publickey
+    - password
+  - - publickey
+```
+
+Renders as:
+
+```text
+AuthenticationMethods publickey,password publickey
+```
+
+Which options use which rendering is fixed per-option (see
+[`meta/make_option_lists`](meta/make_option_lists) for the full list) and is
+not something you configure per-playbook. Options not listed there keep the
+default, repeated-keyword rendering shown above for `ListenAddress`.
+
+OpenSSH's list syntax allows the FIRST member of the list to be prefixed with
+`+`, `-`, or `^`, influencing the semantics of the complete list. When joining
+lists, for example from global, group, and host variables, this might cause
+surprising results. It is therefore possible to clean out the prepared list by
+including an empty list member (`none`, `""` or `[]`)into the list.
+
+```yaml
+sshd_AllowUsers:
+  - stale_user
+  - ""
+  - real_user
+```
+
+Renders as:
+
+```text
+AllowUsers real_user
 ```
 
 #### sshd_match, sshd_match_1 through sshd_match_9
