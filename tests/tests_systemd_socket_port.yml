@@ -29,6 +29,7 @@
       ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
         sshd_install_service: true
+        sshd_systemd_unit: socket
         sshd_config:
           Port:
             - 33
