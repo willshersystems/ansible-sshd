@@ -16,7 +16,7 @@
       set -o pipefail
     fi
     set -eu
-    if test -f {{ item | quote }}; then
+    if test -e {{ item | quote }} -o -L {{ item | quote }}; then
       mkdir -p {{ __sshd_test_backup.path | quote }}/$(dirname {{ item | quote }})
       cp -a {{ item | quote }} {{ __sshd_test_backup.path | quote }}/$(dirname {{ item | quote }})
     fi

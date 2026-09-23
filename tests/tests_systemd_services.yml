@@ -51,10 +51,10 @@
             src: "/etc/systemd/system/{{ __sshd_test_service_name }}.service"
           register: service
 
-        - name: Read the created socket file
-          ansible.builtin.slurp:
-            src: "/etc/systemd/system/{{ __sshd_test_service_name }}.socket"
-          register: socket
+        - name: Check whether the created socket unit is masked
+          ansible.builtin.stat:
+            path: "/etc/systemd/system/{{ __sshd_test_service_name }}.socket"
+          register: __sshd_test_socket_stat
 
         - name: Decode service file
           ansible.builtin.set_fact:
@@ -89,35 +89,49 @@
             that:
               - "' -f/etc/ssh/' in service.content | b64decode"
 
-        - name: Decode socket file
-          ansible.builtin.set_fact:
-            socket_old: "{{ socket_old.content | b64decode }}"
+        # The socket unit file is always rendered by the role, but when
+        # sshd_systemd_unit != "socket" it is immediately masked (replaced
+        # with a /dev/null symlink) as the "unwanted" unit. In that case
+        # its on-disk content is empty and comparing it against the
+        # distribution's original socket options is meaningless, so skip
+        # the comparison entirely.
+        - name: Compare socket options when the socket unit is actually in use
+          when: __sshd_test_socket_stat.stat.lnk_source | default('') != '/dev/null'
+          block:
+            - name: Read the created socket file
+              ansible.builtin.slurp:
+                src: "/etc/systemd/system/{{ __sshd_test_service_name }}.socket"
+              register: socket
 
-        # quite basic, but it should do the job
-        #  * I do not think the ConditionPathExists is much useful so skipping on Ubuntu
-        #  * Before= does not make any sense in combination with Conflicts=
-        #  * I do not think the Description needs to match verbatim either
-        - name: Construct the options list from old socket file
-          ansible.builtin.set_fact:
-            __sshd_socket_list: "{{ __sshd_socket_list + [item] }}"
-          when:
-            - not item.startswith("#")
-            - not item.startswith("ConditionPathExists=")
-            - not item.startswith("Before=")
-            - not item.startswith("Description=")
-          loop:
-            "{{ socket_old.splitlines() }}"
+            - name: Decode socket file
+              ansible.builtin.set_fact:
+                socket_old: "{{ socket_old.content | b64decode }}"
 
-        - name: Print the generated socket file
-          ansible.builtin.debug:
-            msg: "{{ socket.content | b64decode }}"
+            # quite basic, but it should do the job
+            #  * I do not think the ConditionPathExists is much useful so skipping on Ubuntu
+            #  * Before= does not make any sense in combination with Conflicts=
+            #  * I do not think the Description needs to match verbatim either
+            - name: Construct the options list from old socket file
+              ansible.builtin.set_fact:
+                __sshd_socket_list: "{{ __sshd_socket_list + [item] }}"
+              when:
+                - not item.startswith("#")
+                - not item.startswith("ConditionPathExists=")
+                - not item.startswith("Before=")
+                - not item.startswith("Description=")
+              loop:
+                "{{ socket_old.splitlines() }}"
 
-        - name: Test options in sshd.socket are kept
-          ansible.builtin.assert:
-            that:
-              - "item in socket.content | b64decode"
-          loop:
-            "{{ __sshd_socket_list }}"
+            - name: Print the generated socket file
+              ansible.builtin.debug:
+                msg: "{{ socket.content | b64decode }}"
+
+            - name: Test options in sshd.socket are kept
+              ansible.builtin.assert:
+                that:
+                  - "item in socket.content | b64decode"
+              loop:
+                "{{ __sshd_socket_list }}"
 
     - name: Read the instantiated service file and verify they are reasonable
       tags: tests::verify
