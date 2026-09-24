@@ -1,0 +1,9 @@
+AuthenticationMethods
+AuthorizedKeysFile
+CASignatureAlgorithms
+Ciphers
+HostKeyAlgorithms
+HostbasedAcceptedKeyTypes
+HostbasedAcceptedAlgorithms
+KexAlgorithms
+PubkeyAcceptedAlgorithms

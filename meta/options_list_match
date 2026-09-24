@@ -1,0 +1,6 @@
+AuthenticationMethods
+AuthorizedKeysFile
+CASignatureAlgorithms
+HostbasedAcceptedKeyTypes
+HostbasedAcceptedAlgorithms
+PubkeyAcceptedAlgorithms

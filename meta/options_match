@@ -5,15 +5,12 @@ AllowGroups
 AllowStreamLocalForwarding
 AllowTcpForwarding
 AllowUsers
-AuthenticationMethods
 AuthorizedKeysCommand
 AuthorizedKeysCommandUser
-AuthorizedKeysFile
 AuthorizedPrincipalsCommand
 AuthorizedPrincipalsCommandUser
 AuthorizedPrincipalsFile
 Banner
-CASignatureAlgorithms
 ChrootDirectory
 ChannelTimeout
 ClientAliveCountMax
@@ -25,8 +22,6 @@ ExposeAuthInfo
 ForceCommand
 GatewayPorts
 GSSAPIAuthentication
-HostbasedAcceptedKeyTypes
-HostbasedAcceptedAlgorithms
 HostbasedAuthentication
 HostbasedUsesNameFromPacketOnly
 IgnoreRhosts
@@ -46,7 +41,6 @@ PermitTTY
 PermitTunnel
 PermitUserRC
 PubkeyAcceptedKeyTypes
-PubkeyAcceptedAlgorithms
 PubkeyAuthentication
 PubkeyAuthOptions
 RDomain

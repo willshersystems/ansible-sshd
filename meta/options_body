@@ -10,20 +10,16 @@ AllowGroups
 AllowStreamLocalForwarding
 AllowTcpForwarding
 AllowUsers
-AuthenticationMethods
 AuthorizedKeysCommand
 AuthorizedKeysCommandUser
-AuthorizedKeysFile
 AuthorizedPrincipalsCommand
 AuthorizedPrincipalsCommandUser
 AuthorizedPrincipalsFile
 Banner
 CanonicalMatchUser
-CASignatureAlgorithms
 ChallengeResponseAuthentication
 ChannelTimeout
 ChrootDirectory
-Ciphers
 ClientAliveCountMax
 ClientAliveInterval
 Compression
@@ -51,9 +47,6 @@ HPNBufferSize
 HPNDisabled
 HostCertificate
 HostKeyAgent
-HostKeyAlgorithms
-HostbasedAcceptedKeyTypes
-HostbasedAcceptedAlgorithms
 HostbasedAuthentication
 HostbasedUsesNameFromPacketOnly
 IPQoS
@@ -67,7 +60,6 @@ KerberosTicketCleanup
 KerberosUniqueTicket
 KerberosUniqueCCache
 KerberosUseKuserok
-KexAlgorithms
 KeyRegenerationInterval
 LogLevel
 LogVerbose
@@ -96,7 +88,6 @@ PidFile
 PrintLastLog
 PrintMotd
 PubkeyAcceptedKeyTypes
-PubkeyAcceptedAlgorithms
 PubkeyAuthOptions
 PubkeyAuthentication
 RSAAuthentication
