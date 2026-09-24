@@ -45,15 +45,38 @@
 # sshd can be run as a service or via socket activation. Those two
 # units most not be enabled concurrently. Make sure the unwanted is
 # disabled (first) and the wanted one enabled.
+#
+# NOTE: masking is done directly with a /dev/null symlink instead of
+# ansible.builtin.systemd's masked=true, for two reasons:
+#  1. The "Install service/socket unit file" tasks above always write a
+#     real unit file to /etc/systemd/system/ for *both* units, regardless
+#     of which one is wanted. "systemctl mask" (and the systemd module)
+#     refuse to replace a real, pre-existing unit file with the /dev/null
+#     symlink it needs, so masking the "unwanted" unit fails with
+#     "File '...' already exists" whenever that path isn't already a
+#     mask symlink from a previous run.
+#  2. For a custom sshd_service name (e.g. a second sshd instance, such
+#     as "sshd2"), there is no vendor-shipped unit anywhere else on the
+#     system. If the leftover file were simply removed first instead,
+#     systemd would no longer know the unit at all, and
+#     ansible.builtin.systemd's masked=true would then fail with
+#     "Could not find the requested service <name>: host".
+# Creating the /dev/null symlink directly with force=true sidesteps both
+# problems: it works whether or not systemd has ever heard of the unit,
+# and it happily replaces whatever (if anything) already sits at that
+# path.
 - name: Ensure unwanted sshd.(socket|service) unit is disabled
-  ansible.builtin.systemd:
-    name: "{{ sshd_service }}.{{ _sshd_unit_suffix }}"
-    enabled: false
-    masked: true
+  ansible.builtin.file:
+    src: /dev/null
+    dest: "/etc/systemd/system/{{ sshd_service }}.{{ _sshd_unit_suffix }}"
+    state: link
+    force: true
   vars:
     _sshd_unit_suffix: >-
       {{ "socket" if sshd_systemd_unit == 'service'
           else "service" }}
+  notify:
+    - sshd_daemon_reload
   when:
     - sshd_manage_service | bool
     - ansible_facts['virtualization_type'] | default(None) not in __sshd_skip_virt_env
