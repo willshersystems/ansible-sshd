@@ -1,41 +1,127 @@
-#!/bin/sh
+#!/usr/bin/python3
+"""Generate templates/sshd_config.j2 and sshd_config_snippet.j2 from the
+fragment files in this directory.
 
-# Full configuration file
-(
-  cat 01_ansible_head.j2
-  cat 10_top.j2
+options_match / options_body: one option per line, optionally followed by a
+"kind" saying how a list value is rendered:
 
-  cat options_match |
-    awk '{
-print "{{       render_option(\""$1"\",match[\""$1"\"],true) -}}"
-}'
+    Ciphers                      (kind from DEFAULT_KINDS, else default)
+    AuthenticationMethods space/comma
+    HostKey lines
 
-  cat 20_middle.j2
+Kind syntax: separators from outermost to innermost, joined with "/":
+    comma          -> one line, items joined by ","
+    space          -> one line, items joined by " "
+    space/comma    -> list of lists; outer joined by " ", inner by ","
+    lines | (none) -> keyword repeated once per list item (old behaviour)
+"""
+import argparse
+import json
+import sys
+from pathlib import Path
 
-  cat options_body |
-    awk '{
-print "{{ body_option(\""$1"\",sshd_"$1") -}}"
-}'
+SEPARATORS = {"comma": ",", "space": " ", "colon": ":"}
 
-  cat 30_bottom.j2
-) >../templates/sshd_config.j2
+# Kinds applied when the options file gives none. An explicit second column
+# in options_match / options_body always wins.
+DEFAULT_KINDS = {
+    # comma separated
+    "Ciphers": "comma",
+    "MACs": "comma",
+    "KexAlgorithms": "comma",
+    "HostKeyAlgorithms": "comma",
+    "HostbasedAcceptedAlgorithms": "comma",
+    "PubkeyAcceptedAlgorithms": "comma",
+    "PubkeyAcceptedKeyTypes": "comma",
+    "HostbasedAcceptedKeyTypes": "comma",
+    "CASignatureAlgorithms": "comma",
+    "GSSAPIKexAlgorithms": "comma",
+    "LogVerbose": "comma",
+    # space separated
+    "AllowUsers": "space",
+    "DenyUsers": "space",
+    "AllowGroups": "space",
+    "DenyGroups": "space",
+    "AuthorizedKeysFile": "space",
+    "PermitOpen": "space",
+    "PermitListen": "space",
+    "SetEnv": "space",
+    "ChannelTimeout": "space",
+    "PubkeyAuthOptions": "space",
+    "PerSourcePenalties": "space",
+    # space separated list of comma separated lists
+    "AuthenticationMethods": "space/comma",
+}
 
-# Snippet of configuration file
-(
-  cat 10_top.j2 |
-    sed -e "s/indent=false/indent=true/"
 
-  cat options_match |
-    awk '{
-print "{{       render_option(\""$1"\",match[\""$1"\"],true) -}}"
-}'
+def parse_kind(spec):
+    """Return a list of separators (outermost first) or None for 'lines'."""
+    if spec in ("", "default", "lines", "scalar"):
+        return None
+    try:
+        return [SEPARATORS[tok] for tok in spec.split("/")]
+    except KeyError as exc:
+        raise ValueError(f"unknown separator {exc} in kind {spec!r}") from None
 
-  cat 20_middle.j2
 
-  cat options_body |
-    awk '{
-print "{{ body_option(\""$1"\",sshd_"$1") -}}"
-}'
+def read_options(path):
+    for lineno, line in enumerate(path.read_text().splitlines(), 1):
+        line = line.split("#", 1)[0].strip()
+        if not line:
+            continue
+        fields = line.split()
+        name = fields[0]
+        spec = fields[1] if len(fields) > 1 else DEFAULT_KINDS.get(name, "")
+        try:
+            yield name, parse_kind(spec)
+        except ValueError as exc:
+            sys.exit(f"{path}:{lineno}: {exc}")
 
-  cat 30_bottom.j2
-) >../templates/sshd_config_snippet.j2
+
+def seps_arg(seps):
+    return "" if seps is None else ",seps=" + json.dumps(seps)
+
+
+def match_lines(options):
+    return "".join(
+        '{{       render_option("%s",match["%s"],true%s) -}}\n'
+        % (name, name, seps_arg(seps))
+        for name, seps in options
+    )
+
+
+def body_lines(options):
+    return "".join(
+        '{{ body_option("%s",sshd_%s%s) -}}\n' % (name, name, seps_arg(seps))
+        for name, seps in options
+    )
+
+
+def main():
+    here = Path(__file__).resolve().parent
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--srcdir", type=Path, default=here)
+    ap.add_argument("--outdir", type=Path, default=here.parent / "templates")
+    args = ap.parse_args()
+
+    src = args.srcdir
+
+    def frag(name):
+        return (src / name).read_text()
+
+    match = match_lines(read_options(src / "options_match"))
+    body = body_lines(read_options(src / "options_body"))
+    top = frag("10_top.j2")
+
+    full = (frag("01_ansible_head.j2") + top + match
+            + frag("20_middle.j2") + body + frag("30_bottom.j2"))
+    snippet = (top.replace("indent=false", "indent=true") + match
+               + frag("20_middle.j2") + body + frag("30_bottom.j2"))
+
+    args.outdir.mkdir(parents=True, exist_ok=True)
+    (args.outdir / "sshd_config.j2").write_text(full)
+    (args.outdir / "sshd_config_snippet.j2").write_text(snippet)
+
+
+if __name__ == "__main__":
+    main()
