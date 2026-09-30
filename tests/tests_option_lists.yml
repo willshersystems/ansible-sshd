@@ -215,3 +215,73 @@
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml
+
+- name: Test that list options can also be given as a string in sshd's own syntax
+  hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+  tasks:
+    - name: Setup variables
+      ansible.builtin.include_tasks: tasks/setup.yml
+
+    - name: "Backup configuration files"
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+    - name: Configure sshd giving the list options exactly as sshd expects them
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+      vars:
+        # As in the first play, sshd_config_file is deliberately not pinned,
+        # so that the role's Ciphers/MACs win over an OS crypto-policy drop-in.
+        sshd_config:
+          # comma kind
+          Ciphers: aes256-ctr,aes192-ctr,aes128-ctr
+          MACs: hmac-sha2-256,hmac-sha2-512
+          # space kind
+          AllowUsers: alice bob
+          AuthorizedKeysFile: .ssh/authorized_keys .ssh/authorized_keys2
+          # space/comma kind
+          AuthenticationMethods: publickey,password publickey
+
+    - name: Verify the options are correctly set
+      tags: tests::verify
+      block:
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
+
+        - name: List effective configuration using sshd -T
+          ansible.builtin.command: sshd -T
+          register: runtime
+          changed_when: false
+
+        - name: Print current configuration file
+          ansible.builtin.slurp:
+            src: "{{ main_sshd_config }}"
+          register: config
+
+        - name: Check the options are effective
+          # note, the options are in lower-case here; sshd -T reports
+          # AllowUsers as one line per value, see the first play
+          ansible.builtin.assert:
+            that:
+              - "'ciphers aes256-ctr,aes192-ctr,aes128-ctr' in runtime.stdout_lines"
+              - "'macs hmac-sha2-256,hmac-sha2-512' in runtime.stdout_lines"
+              - "'authorizedkeysfile .ssh/authorized_keys .ssh/authorized_keys2' in runtime.stdout_lines"
+              - "'authenticationmethods publickey,password publickey' in runtime.stdout_lines"
+              - "'allowusers alice' in runtime.stdout_lines"
+              - "'allowusers bob' in runtime.stdout_lines"
+
+        - name: Check the strings are passed through unchanged
+          vars:
+            __config_lines: "{{ (config.content | b64decode).splitlines() }}"
+          ansible.builtin.assert:
+            that:
+              - "'Ciphers aes256-ctr,aes192-ctr,aes128-ctr' in __config_lines"
+              - "'MACs hmac-sha2-256,hmac-sha2-512' in __config_lines"
+              - "'AllowUsers alice bob' in __config_lines"
+              - "'AuthorizedKeysFile .ssh/authorized_keys .ssh/authorized_keys2' in __config_lines"
+              - "'AuthenticationMethods publickey,password publickey' in __config_lines"
+
+    - name: "Restore configuration files"
+      ansible.builtin.include_tasks: tasks/restore.yml
