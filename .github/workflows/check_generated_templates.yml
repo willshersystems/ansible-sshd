@@ -1,0 +1,27 @@
+---
+# yamllint disable rule:line-length
+name: Check generated templates
+on: # yamllint disable-line rule:truthy
+  pull_request:
+  merge_group:
+    branches:
+      - main
+    types:
+      - checks_requested
+  push:
+    branches:
+      - main
+permissions:
+  contents: read  #  to fetch code (actions/checkout)
+jobs:
+  check_generated_templates:
+    name: templates/sshd_config*.j2 are up to date with meta/
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Regenerate the templates from meta/ and compare
+        run: python3 meta/make_option_lists --check
