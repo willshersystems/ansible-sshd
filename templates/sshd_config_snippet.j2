@@ -1,7 +1,21 @@
+{#  Macros can only return strings, not booleans: these return a non-empty
+    string for "true" and an empty one for "false", which is what
+    {% if %}, "and" and "not" need. "List-like" means any iterable that is not
+    a string (a list, but also a tuple or a dict). #}
+{% macro is_list_like(value) -%}
+{%-   if value is iterable and value is not string -%}
+yes
+{%-   endif -%}
+{% endmacro %}
+{% macro is_empty_list_like(value) -%}
+{%-   if is_list_like(value) and value | length == 0 -%}
+yes
+{%-   endif -%}
+{% endmacro %}
 {% macro join_list(value,seps) %}
 {%- set ns = namespace(parts=[]) -%}
 {%- for item in value -%}
-{%-   if item is iterable and item is not string and seps | length > 1 -%}
+{%-   if is_list_like(item) and seps | length > 1 -%}
 {%-     set ns.parts = ns.parts + [ item | map('string') | join(seps[1]) ] -%}
 {%-   else -%}
 {%-     set ns.parts = ns.parts + [ item | string ] -%}
@@ -25,7 +39,7 @@
 {%     else %}
 {%       set acc = namespace(items=[]) %}
 {%       for i in value %}
-{%         if i is none or i == '' or (i is not string and i is iterable and i | length == 0) %}
+{%         if i is none or i == '' or is_empty_list_like(i) %}
 {%           set acc.items = [] %}
 {%         else %}
 {%           set acc.items = acc.items + [ i ] %}
