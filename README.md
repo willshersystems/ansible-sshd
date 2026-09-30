@@ -256,10 +256,26 @@ Renders as:
 AllowUsers alice bob
 ```
 
-`AuthenticationMethods` takes a list of lists: the outer list is
-space-separated and each inner list is comma-separated, matching the
-`method1,method2 method3` syntax sshd uses to express alternative sets of
-required authentication methods:
+`AuthenticationMethods` is a space-separated list of alternative lists of
+required authentication methods, where the methods within one set are
+comma-separated (`method1,method2 method3`). As a list of list is clumsy to
+write in YAML, each alternative can be written as a string in sshd's
+own comma-separated syntax:
+
+```yaml
+sshd_AuthenticationMethods:
+  - publickey,password
+  - publickey
+```
+
+or as an inner list of methods, in which case the role does the comma-joining:
+
+```yaml
+sshd_AuthenticationMethods: [["publickey", "password"], ["publickey"]]
+```
+
+The same nested lists can be written in block style, which is clumsy to
+write and read, and tends to upset linters:
 
 ```yaml
 sshd_AuthenticationMethods:
@@ -268,11 +284,23 @@ sshd_AuthenticationMethods:
   - - publickey
 ```
 
-Renders as:
+Finally, the whole value can be given as a single string, exactly as it would
+appear in `sshd_config`:
+
+```yaml
+sshd_AuthenticationMethods: publickey,password publickey
+```
+
+All of these examples render as:
 
 ```text
 AuthenticationMethods publickey,password publickey
 ```
+
+The same applies to the other options rendered on a single line: a string
+in the syntax sshd expects is passed through unchanged, so
+`sshd_Ciphers: aes256-ctr,aes128-ctr` and `sshd_AllowUsers: alice bob` work
+as well as the list forms shown above.
 
 Which options use which rendering is fixed per-option (see
 [`meta/make_option_lists`](meta/make_option_lists) for the full list) and is
