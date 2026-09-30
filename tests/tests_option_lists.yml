@@ -285,3 +285,74 @@
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml
+
+- name: Test AuthenticationMethods as list of strings and in a Match block
+  hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+  tasks:
+    - name: Setup variables
+      ansible.builtin.include_tasks: tasks/setup.yml
+
+    - name: "Backup configuration files"
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+    - name: Configure sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+      vars:
+        sshd_config:
+          # each alternative as a string of comma-separated methods
+          AuthenticationMethods:
+            - publickey,password
+            - publickey
+          Match:
+            - Condition: "User carol"
+              # a string in sshd's own syntax, and a different value from the
+              # global one so that it shows whether the Match block applies
+              AuthenticationMethods: publickey,password
+              AllowUsers: carol dave
+
+    - name: Verify the options are correctly set
+      tags: tests::verify
+      block:
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
+
+        - name: List effective configuration using sshd -T for a user outside the Match block
+          ansible.builtin.command: sshd -T -C user=erin,addr=127.0.0.1,host=example.com
+          register: other_effective
+          changed_when: false
+
+        - name: List effective configuration using sshd -T for carol
+          ansible.builtin.command: sshd -T -C user=carol,addr=127.0.0.1,host=example.com
+          register: carol_effective
+          changed_when: false
+
+        - name: Print current configuration file
+          ansible.builtin.slurp:
+            src: "{{ main_sshd_config }}"
+          register: config
+
+        - name: Check the options are effective
+          # whole lines are compared: the Match value is a prefix of the global one
+          ansible.builtin.assert:
+            that:
+              - "'authenticationmethods publickey,password publickey' in other_effective.stdout_lines"
+              - "'authenticationmethods publickey,password' in carol_effective.stdout_lines"
+              - "'allowusers carol' in carol_effective.stdout_lines"
+              - "'allowusers dave' in carol_effective.stdout_lines"
+
+        - name: Check the options are in configuration file
+          vars:
+            __config_lines: "{{ (config.content | b64decode).splitlines() }}"
+          ansible.builtin.assert:
+            that:
+              - "'AuthenticationMethods publickey,password publickey' in __config_lines"
+              - "'Match User carol' in __config_lines"
+              - "'  AuthenticationMethods publickey,password' in __config_lines"
+              - "'  AllowUsers carol dave' in __config_lines"
+
+    - name: "Restore configuration files"
+      ansible.builtin.include_tasks: tasks/restore.yml
