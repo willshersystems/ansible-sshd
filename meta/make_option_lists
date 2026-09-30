@@ -16,6 +16,7 @@ Kind syntax: separators from outermost to innermost, joined with "/":
     lines | (none) -> keyword repeated once per list item (old behaviour)
 """
 import argparse
+import difflib
 import json
 import sys
 from pathlib import Path
@@ -97,14 +98,8 @@ def body_lines(options):
     )
 
 
-def main():
-    here = Path(__file__).resolve().parent
-    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--srcdir", type=Path, default=here)
-    ap.add_argument("--outdir", type=Path, default=here.parent / "templates")
-    args = ap.parse_args()
-
-    src = args.srcdir
+def generate(src):
+    """Return {file name: content} of the templates built from src."""
 
     def frag(name):
         return (src / name).read_text()
@@ -117,10 +112,45 @@ def main():
             + frag("20_middle.j2") + body + frag("30_bottom.j2"))
     snippet = (top.replace("indent=false", "indent=true") + match
                + frag("20_middle.j2") + body + frag("30_bottom.j2"))
+    return {"sshd_config.j2": full, "sshd_config_snippet.j2": snippet}
+
+
+def check(outdir, generated):
+    """Print a diff for every template that is not up to date; return ok."""
+    ok = True
+    for name, text in generated.items():
+        path = outdir / name
+        current = path.read_text() if path.exists() else ""
+        if current == text:
+            continue
+        ok = False
+        sys.stdout.writelines(difflib.unified_diff(
+            current.splitlines(keepends=True), text.splitlines(keepends=True),
+            fromfile=f"{path} (checked in)", tofile=f"{path} (generated)"))
+    if not ok:
+        print("\nThe generated templates are out of date. Run\n"
+              "    meta/make_option_lists\n"
+              "and commit the result.", file=sys.stderr)
+    return ok
+
+
+def main():
+    here = Path(__file__).resolve().parent
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--srcdir", type=Path, default=here)
+    ap.add_argument("--outdir", type=Path, default=here.parent / "templates")
+    ap.add_argument("--check", action="store_true",
+                    help="write nothing; show a diff and exit 1 if the "
+                         "templates in outdir differ from the generated ones")
+    args = ap.parse_args()
+
+    generated = generate(args.srcdir)
+    if args.check:
+        sys.exit(0 if check(args.outdir, generated) else 1)
 
     args.outdir.mkdir(parents=True, exist_ok=True)
-    (args.outdir / "sshd_config.j2").write_text(full)
-    (args.outdir / "sshd_config_snippet.j2").write_text(snippet)
+    for name, text in generated.items():
+        (args.outdir / name).write_text(text)
 
 
 if __name__ == "__main__":
