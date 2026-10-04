@@ -11,6 +11,8 @@ This role configures the OpenSSH daemon. It:
 * Supports Match sets
 * Supports all `sshd_config` options. Templates are programmatically generated.
   (see [`meta/make_option_lists`](meta/make_option_lists))
+* List-valued options are rendered using the correct `sshd_config` syntax for
+  that option (comma-separated, space-separated, or repeated keyword lines)
 * Tests the `sshd_config` before reloading sshd.
 
 **WARNING** Misconfiguration of this role can lock you out of your server!
@@ -28,6 +30,12 @@ invoked using `roles` keyword. Using `include_role` won't trigger handlers
 as described in the Ansible ['taskify includes' proposal](https://github.com/ansible/proposals/issues/136). To work around this, call `meta: flush_handlers` as detailed in the
 [official Ansible documentation](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_handlers.html#controlling-when-handlers-run).
 If you need to invoke the handlers in this case, use `meta: flush_handlers`.
+
+NOTE Due to the [change #390](https://github.com/willshersystems/ansible-sshd/pull/390)
+the role will render lists differently for some list-valued parameters which
+will cause the role to report `changed: true` with no specified changes when
+first run after upgrading the role. This is expected behavior and the role will
+report `changed: false` for subsequent runs if nothing changes.
 
 ## Requirements
 
@@ -220,6 +228,95 @@ Renders as:
 ListenAddress 0.0.0.0
 ListenAddress ::
 ```
+
+Some options are instead rendered as a single line, with the list items
+joined by a separator, to match the syntax `sshd_config` expects for that
+option. For example `Ciphers`, `MACs` and similar algorithm lists are
+comma-separated:
+
+```yaml
+Ciphers:
+  - aes256-ctr
+  - aes192-ctr
+  - aes128-ctr
+```
+
+Renders as:
+
+```text
+Ciphers aes256-ctr,aes192-ctr,aes128-ctr
+```
+
+while options such as `AllowUsers`, `DenyUsers` and `AuthorizedKeysFile` are
+space-separated:
+
+```yaml
+AllowUsers:
+  - alice
+  - bob
+```
+
+Renders as:
+
+```text
+AllowUsers alice bob
+```
+
+`AuthenticationMethods` is an oddball, expecting a space-separated list of
+alternative lists of required authentication methods, where the methods within
+one set are comma-separated (`method1,method2 method3`). As a list of lists is
+clumsy to write in YAML, each alternative can be written as a string in sshd's
+own comma-separated syntax:
+
+```yaml
+AuthenticationMethods:
+  - publickey,password
+  - publickey
+```
+
+or as an inner list of methods, in which case the role does the comma-joining:
+
+```yaml
+AuthenticationMethods: [["publickey", "password"], ["publickey"]]
+```
+
+The same nested lists can be written in block style, which is clumsy to
+write and read, and tends to upset linters:
+
+```yaml
+AuthenticationMethods:
+  - - publickey
+    - password
+  - - publickey
+```
+
+A `null` member of an inner list is left out.
+
+Finally, the whole value can be given as a single string, exactly as it would
+appear in `sshd_config`:
+
+```yaml
+AuthenticationMethods: publickey,password publickey
+```
+
+All of these examples render as:
+
+```text
+AuthenticationMethods publickey,password publickey
+```
+
+The same applies to the other options rendered on a single line: a string in
+the syntax sshd expects is passed through unchanged, so `Ciphers:
+aes256-ctr,aes128-ctr` and `AllowUsers: alice bob` work as well as the list
+forms shown above.
+
+Which options use which rendering is fixed per-option (see
+[`meta/make_option_lists`](meta/make_option_lists) for the full list).
+
+OpenSSH's list syntax allows the FIRST member of the list to be prefixed with
+`+`, `-`, or `^`, influencing the semantics of the complete list. When joining
+lists, for example from global, group, and host variables, this might cause
+surprising results when merging lists from different parts of your inventory.
 
 #### sshd_match, sshd_match_1 through sshd_match_9
 
