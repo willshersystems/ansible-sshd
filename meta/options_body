@@ -1,3 +1,7 @@
+# One option per line. A second column says how a list value is rendered:
+# comma, space, space/comma (a list of lists), or lines (the default: the
+# keyword is repeated for every list item). See make_option_lists. The kind
+# given here is also used for the same option in options_match.
 Include
 Port
 AddressFamily
@@ -6,30 +10,30 @@ Protocol
 HostKey
 AcceptEnv
 AllowAgentForwarding
-AllowGroups
+AllowGroups space
 AllowStreamLocalForwarding
 AllowTcpForwarding
-AllowUsers
-AuthenticationMethods
+AllowUsers space
+AuthenticationMethods space/comma
 AuthorizedKeysCommand
 AuthorizedKeysCommandUser
-AuthorizedKeysFile
+AuthorizedKeysFile space
 AuthorizedPrincipalsCommand
 AuthorizedPrincipalsCommandUser
 AuthorizedPrincipalsFile
 Banner
 CanonicalMatchUser
-CASignatureAlgorithms
+CASignatureAlgorithms comma
 ChallengeResponseAuthentication
-ChannelTimeout
+ChannelTimeout space
 ChrootDirectory
-Ciphers
+Ciphers comma
 ClientAliveCountMax
 ClientAliveInterval
 Compression
 DebianBanner
-DenyGroups
-DenyUsers
+DenyGroups space
+DenyUsers space
 DisableForwarding
 ExposeAuthenticationMethods
 ExposeAuthInfo
@@ -43,7 +47,7 @@ GSSAPIDelegateCredentials
 GSSAPIEnablek5users
 GSSAPIIndicators
 GSSAPIKeyExchange
-GSSAPIKexAlgorithms
+GSSAPIKexAlgorithms comma
 GSSAPIProxyS4U2Services
 GSSAPIStoreCredentialsOnRekey
 GSSAPIStrictAcceptorCheck
@@ -51,9 +55,9 @@ HPNBufferSize
 HPNDisabled
 HostCertificate
 HostKeyAgent
-HostKeyAlgorithms
-HostbasedAcceptedKeyTypes
-HostbasedAcceptedAlgorithms
+HostKeyAlgorithms comma
+HostbasedAcceptedKeyTypes comma
+HostbasedAcceptedAlgorithms comma
 HostbasedAuthentication
 HostbasedUsesNameFromPacketOnly
 IPQoS
@@ -67,12 +71,12 @@ KerberosTicketCleanup
 KerberosUniqueTicket
 KerberosUniqueCCache
 KerberosUseKuserok
-KexAlgorithms
+KexAlgorithms comma
 KeyRegenerationInterval
 LogLevel
-LogVerbose
+LogVerbose comma
 LoginGraceTime
-MACs
+MACs comma
 MaxAuthTries
 MaxSessions
 MaxStartups
@@ -81,23 +85,23 @@ NoneEnabled
 PAMServiceName
 PasswordAuthentication
 PermitEmptyPasswords
-PermitListen
-PermitOpen
+PermitListen space
+PermitOpen space
 PermitRootLogin
 PermitTTY
 PermitTunnel
 PermitUserEnvironment
 PermitUserRC
-PerSourcePenalties
+PerSourcePenalties space
 PerSourcePenaltyExemptList
 PerSourceMaxStartups
 PerSourceNetBlockSize
 PidFile
 PrintLastLog
 PrintMotd
-PubkeyAcceptedKeyTypes
-PubkeyAcceptedAlgorithms
-PubkeyAuthOptions
+PubkeyAcceptedKeyTypes comma
+PubkeyAcceptedAlgorithms comma
+PubkeyAuthOptions space
 PubkeyAuthentication
 RSAAuthentication
 RSAMinSize
@@ -108,7 +112,7 @@ RevokedKeys
 RDomain
 RhostsRSAAuthentication
 SecurityKeyProvider
-SetEnv
+SetEnv space
 ServerKeyBits
 ShowPatchLevel
 SshdAuthPath

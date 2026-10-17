@@ -5,9 +5,13 @@ fragment files in this directory.
 options_match / options_body: one option per line, optionally followed by a
 "kind" saying how a list value is rendered:
 
-    Ciphers                      (kind from DEFAULT_KINDS, else default)
+    Ciphers comma
     AuthenticationMethods space/comma
-    HostKey lines
+    HostKey                      (no kind: one line per list item)
+
+The kind of an option in options_body is also used for the same option (the
+case does not matter) in options_match. A kind given in options_match
+overrides it.
 
 Kind syntax: separators from outermost to innermost, joined with "/":
     comma          -> one line, items joined by ","
@@ -23,38 +27,6 @@ from pathlib import Path
 
 SEPARATORS = {"comma": ",", "space": " ", "colon": ":"}
 
-# Kinds applied when the options file gives none. An explicit second column
-# in options_match / options_body always wins.
-DEFAULT_KINDS = {
-    # comma separated
-    "Ciphers": "comma",
-    "MACs": "comma",
-    "KexAlgorithms": "comma",
-    "HostKeyAlgorithms": "comma",
-    "HostbasedAcceptedAlgorithms": "comma",
-    "PerSourcePenaltyExemptList": "comma",
-    "PubkeyAcceptedAlgorithms": "comma",
-    "PubkeyAcceptedKeyTypes": "comma",
-    "HostbasedAcceptedKeyTypes": "comma",
-    "CASignatureAlgorithms": "comma",
-    "GSSAPIKexAlgorithms": "comma",
-    "LogVerbose": "comma",
-    # space separated
-    "AllowUsers": "space",
-    "DenyUsers": "space",
-    "AllowGroups": "space",
-    "DenyGroups": "space",
-    "AuthorizedKeysFile": "space",
-    "PermitOpen": "space",
-    "PermitListen": "space",
-    "SetEnv": "space",
-    "ChannelTimeout": "space",
-    "PubkeyAuthOptions": "space",
-    "PerSourcePenalties": "space",
-    # space separated list of comma separated lists
-    "AuthenticationMethods": "space/comma",
-}
-
 
 def parse_kind(spec):
     """Return a list of separators (outermost first) or None for 'lines'."""
@@ -66,14 +38,26 @@ def parse_kind(spec):
         raise ValueError(f"unknown separator {exc} in kind {spec!r}") from None
 
 
-def read_options(path):
+def read_specs(path):
+    """Return [(line number, option, kind)] of an options file. The kind is
+    None for a line that does not give one."""
+    specs = []
     for lineno, line in enumerate(path.read_text().splitlines(), 1):
         line = line.split("#", 1)[0].strip()
         if not line:
             continue
         fields = line.split()
-        name = fields[0]
-        spec = fields[1] if len(fields) > 1 else DEFAULT_KINDS.get(name, "")
+        specs.append((lineno, fields[0], fields[1] if len(fields) > 1 else None))
+    return specs
+
+
+def read_options(path, specs, inherited=None):
+    """Yield (option, separators) for the specs read from path. An option
+    without a kind of its own gets the one it has in inherited (by lower case
+    option name), and is rendered as lines if it has none."""
+    for lineno, name, spec in specs:
+        if spec is None:
+            spec = (inherited or {}).get(name.lower(), "")
         try:
             yield name, parse_kind(spec)
         except ValueError as exc:
@@ -105,8 +89,13 @@ def generate(src):
     def frag(name):
         return (src / name).read_text()
 
-    match = match_lines(read_options(src / "options_match"))
-    body = body_lines(read_options(src / "options_body"))
+    body_specs = read_specs(src / "options_body")
+    body = body_lines(read_options(src / "options_body", body_specs))
+    # a kind given in options_body is also the kind in options_match
+    inherited = {name.lower(): spec for _, name, spec in body_specs
+                 if spec is not None}
+    match = match_lines(read_options(
+        src / "options_match", read_specs(src / "options_match"), inherited))
     top = frag("10_top.j2")
 
     full = (frag("01_ansible_head.j2") + top + match

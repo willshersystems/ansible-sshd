@@ -1,3 +1,6 @@
+# The options that are allowed in a Match block. How a list value is rendered
+# is taken from the same option in options_body; a second column here
+# overrides it.
 Include
 AcceptEnv
 AllowAgentForwarding
