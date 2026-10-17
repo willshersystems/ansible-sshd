@@ -87,3 +87,63 @@
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml
+
+- name: Test the spellings of X11UseLocalhost in match blocks
+  hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+  tasks:
+    - name: "Backup configuration files"
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+    - name: Configure sshd
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+      vars:
+        # For Fedora containers, we need to make sure we have keys for sshd -T below
+        sshd_verify_hostkeys:
+          - /etc/ssh/ssh_host_rsa_key
+        sshd_config:
+          X11UseLocalhost: true
+        sshd_match:
+          - Condition: "User carol"
+            X11UseLocalhost: false
+        # the misspelling that was always accepted in match blocks
+        sshd_match_1:
+          - Condition: "User dave"
+            X11UseLocalHost: false
+        # sshd uses the first value, which is the one of the correct spelling
+        sshd_match_2:
+          - Condition: "User erin"
+            X11UseLocalhost: false
+            X11UseLocalHost: true
+
+    - name: Verify the options are correctly set
+      tags: tests::verify
+      block:
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
+
+        - name: List effective configuration using sshd -T for each user
+          ansible.builtin.command: "sshd -T -C user={{ item }},addr=127.0.0.1,host=example.com"
+          register: effective
+          changed_when: false
+          loop:
+            - carol
+            - dave
+            - erin
+            - frank
+
+        - name: Check the effective setting of each user
+          vars:
+            __by_user: "{{ dict(effective.results | map(attribute='item') | zip(effective.results | map(attribute='stdout_lines'))) }}"
+          ansible.builtin.assert:
+            that:
+              - "'x11uselocalhost no' in __by_user.carol"
+              - "'x11uselocalhost no' in __by_user.dave"
+              - "'x11uselocalhost no' in __by_user.erin"
+              - "'x11uselocalhost yes' in __by_user.frank"
+
+    - name: "Restore configuration files"
+      ansible.builtin.include_tasks: tasks/restore.yml

@@ -325,6 +325,11 @@ do not override match blocks as defined in the `sshd` dict. All of the sources
 will be reflected in the resulting configuration file. The use of
 `sshd_match_*` variant is deprecated and no longer recommended.
 
+In a match block, the option is spelled `X11UseLocalhost`, like everywhere
+else. The misspelling `X11UseLocalHost` is accepted as well, for
+compatibility. If both are given in the same block, the correct spelling is
+used.
+
 #### sshd_backup
 
 When set to *false*, the original `sshd_config` file is not backed up. Default
