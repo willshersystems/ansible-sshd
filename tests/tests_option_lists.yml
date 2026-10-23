@@ -365,3 +365,84 @@
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml
+
+- name: Test that PerSourcePenaltyExemptList is rendered as a comma-separated list
+  hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+  tasks:
+    - name: Setup variables
+      ansible.builtin.include_tasks: tasks/setup.yml
+
+    - name: "Backup configuration files"
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+    # The option was added in OpenSSH 9.8, and an sshd that does not know it
+    # refuses to start, so find out whether the installed one knows it
+    - name: Create a configuration file to ask sshd about the option
+      ansible.builtin.tempfile:
+        state: file
+      register: __probe_file
+
+    - name: Write the option to it
+      ansible.builtin.copy:
+        content: "PerSourcePenaltyExemptList 10.0.0.0/8\n"
+        dest: "{{ __probe_file.path }}"
+        mode: "0600"
+
+    - name: Let sshd check the file
+      ansible.builtin.command: "sshd -t -f {{ __probe_file.path }}"
+      register: __probe
+      changed_when: false
+      failed_when: false
+
+    - name: Remove the configuration file
+      ansible.builtin.file:
+        path: "{{ __probe_file.path }}"
+        state: absent
+
+    - name: Run the test if sshd knows the option
+      when: __probe.stderr is not search('Bad configuration option|Unsupported option')
+      block:
+        - name: Configure sshd with a list of addresses
+          ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+          vars:
+            # sshd uses only the first of repeated directives, so the members
+            # must be in one directive
+            sshd_config:
+              PerSourcePenaltyExemptList:
+                - 10.0.0.0/8
+                - 192.168.0.0/16
+
+        - name: Verify the option is correctly set
+          tags: tests::verify
+          block:
+            - name: Flush handlers
+              ansible.builtin.meta: flush_handlers
+
+            - name: List effective configuration using sshd -T
+              ansible.builtin.command: sshd -T
+              register: runtime
+              changed_when: false
+
+            - name: Print current configuration file
+              ansible.builtin.slurp:
+                src: "{{ main_sshd_config }}"
+              register: config
+
+            - name: Check the option is effective with both members
+              ansible.builtin.assert:
+                that:
+                  - "'persourcepenaltyexemptlist 10.0.0.0/8,192.168.0.0/16' in runtime.stdout_lines"
+
+            - name: Check the option is in the configuration file once
+              vars:
+                __config_lines: "{{ (config.content | b64decode).splitlines() }}"
+              ansible.builtin.assert:
+                that:
+                  - __config_lines | select('match', '^PerSourcePenaltyExemptList ') | list == ['PerSourcePenaltyExemptList 10.0.0.0/8,192.168.0.0/16']
+
+    - name: "Restore configuration files"
+      ansible.builtin.include_tasks: tasks/restore.yml

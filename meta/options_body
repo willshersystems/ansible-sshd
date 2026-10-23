@@ -93,7 +93,7 @@ PermitTunnel
 PermitUserEnvironment
 PermitUserRC
 PerSourcePenalties space
-PerSourcePenaltyExemptList
+PerSourcePenaltyExemptList comma
 PerSourceMaxStartups
 PerSourceNetBlockSize
 PidFile
