@@ -68,7 +68,7 @@ jobs:
           echo "coll_req_file=$coll_req_file" >> $GITHUB_OUTPUT
 
       - name: Run ansible-lint
-        uses: ansible/ansible-lint@e7f397ad6dfa20d274afa17cd7bbedd84ed136f5 # v26.9.0
+        uses: ansible/ansible-lint@9bce2bfb8f4a984e6b13767bc0d6bf0a49492164 # v26.10.1
         env:
           ANSIBLE_COLLECTIONS_PATH: ${{ github.workspace }}/.tox
         with:
