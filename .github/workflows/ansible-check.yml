@@ -46,7 +46,7 @@ jobs:
           persist-credentials: false
 
       - name: Test Ansible SSHD Role
-        uses: Jakuje/check-ansible-action@f64d87a5598747f49294b37d7302083afbc15c76 # main
+        uses: Jakuje/check-ansible-action@0143234d704d797c5796f013275a41b6b3fa5361 # main
         with:
           image: ${{ matrix.scenario.os_image }}
           group: local
