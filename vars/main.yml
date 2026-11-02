@@ -44,6 +44,9 @@ __sshd_skip_virt_env:
 __sshd_binary: /usr/sbin/sshd
 __sshd_service: sshd
 __sshd_sftp_server: /usr/lib/openssh/sftp-server
+# Placeholder until an OS-specific vars file replaces it. Argument spec
+# validation templates sshd_packages before those files are loaded.
+__sshd_packages: []
 
 __sshd_defaults: {}
 __sshd_os_supported: false
@@ -112,3 +115,142 @@ __sshd_socket_bind_ipv6only: false
 
 # Most of the distribution use sshd daemon directly as a service
 __sshd_systemd_unit: "service"
+
+# BEGIN GENERATED __sshd_option_vars - do not edit by hand
+__sshd_option_vars:
+  - sshd_Include
+  - sshd_Port
+  - sshd_AddressFamily
+  - sshd_ListenAddress
+  - sshd_Protocol
+  - sshd_HostKey
+  - sshd_AcceptEnv
+  - sshd_AllowAgentForwarding
+  - sshd_AllowGroups
+  - sshd_AllowStreamLocalForwarding
+  - sshd_AllowTcpForwarding
+  - sshd_AllowUsers
+  - sshd_AuthenticationMethods
+  - sshd_AuthorizedKeysCommand
+  - sshd_AuthorizedKeysCommandUser
+  - sshd_AuthorizedKeysFile
+  - sshd_AuthorizedPrincipalsCommand
+  - sshd_AuthorizedPrincipalsCommandUser
+  - sshd_AuthorizedPrincipalsFile
+  - sshd_Banner
+  - sshd_CanonicalMatchUser
+  - sshd_CASignatureAlgorithms
+  - sshd_ChallengeResponseAuthentication
+  - sshd_ChannelTimeout
+  - sshd_ChrootDirectory
+  - sshd_Ciphers
+  - sshd_ClientAliveCountMax
+  - sshd_ClientAliveInterval
+  - sshd_Compression
+  - sshd_DebianBanner
+  - sshd_DenyGroups
+  - sshd_DenyUsers
+  - sshd_DisableForwarding
+  - sshd_ExposeAuthenticationMethods
+  - sshd_ExposeAuthInfo
+  - sshd_FingerprintHash
+  - sshd_ForceCommand
+  - sshd_GatewayPorts
+  - sshd_GSSAPIAllowS4U2Self
+  - sshd_GSSAPIAuthentication
+  - sshd_GSSAPICleanupCredentials
+  - sshd_GSSAPIDelegateCredentials
+  - sshd_GSSAPIEnablek5users
+  - sshd_GSSAPIIndicators
+  - sshd_GSSAPIKeyExchange
+  - sshd_GSSAPIKexAlgorithms
+  - sshd_GSSAPIProxyS4U2Services
+  - sshd_GSSAPIStoreCredentialsOnRekey
+  - sshd_GSSAPIStrictAcceptorCheck
+  - sshd_HPNBufferSize
+  - sshd_HPNDisabled
+  - sshd_HostCertificate
+  - sshd_HostKeyAgent
+  - sshd_HostKeyAlgorithms
+  - sshd_HostbasedAcceptedKeyTypes
+  - sshd_HostbasedAcceptedAlgorithms
+  - sshd_HostbasedAuthentication
+  - sshd_HostbasedUsesNameFromPacketOnly
+  - sshd_IPQoS
+  - sshd_IgnoreRhosts
+  - sshd_IgnoreUserKnownHosts
+  - sshd_KbdInteractiveAuthentication
+  - sshd_KerberosAuthentication
+  - sshd_KerberosGetAFSToken
+  - sshd_KerberosOrLocalPasswd
+  - sshd_KerberosTicketCleanup
+  - sshd_KerberosUniqueTicket
+  - sshd_KerberosUniqueCCache
+  - sshd_KerberosUseKuserok
+  - sshd_KexAlgorithms
+  - sshd_KeyRegenerationInterval
+  - sshd_LogLevel
+  - sshd_LogVerbose
+  - sshd_LoginGraceTime
+  - sshd_MACs
+  - sshd_MaxAuthTries
+  - sshd_MaxSessions
+  - sshd_MaxStartups
+  - sshd_ModuliFile
+  - sshd_NoneEnabled
+  - sshd_PAMServiceName
+  - sshd_PasswordAuthentication
+  - sshd_PermitEmptyPasswords
+  - sshd_PermitListen
+  - sshd_PermitOpen
+  - sshd_PermitRootLogin
+  - sshd_PermitTTY
+  - sshd_PermitTunnel
+  - sshd_PermitUserEnvironment
+  - sshd_PermitUserRC
+  - sshd_PerSourcePenalties
+  - sshd_PerSourcePenaltyExemptList
+  - sshd_PerSourceMaxStartups
+  - sshd_PerSourceNetBlockSize
+  - sshd_PidFile
+  - sshd_PrintLastLog
+  - sshd_PrintMotd
+  - sshd_PubkeyAcceptedKeyTypes
+  - sshd_PubkeyAcceptedAlgorithms
+  - sshd_PubkeyAuthOptions
+  - sshd_PubkeyAuthentication
+  - sshd_RSAAuthentication
+  - sshd_RSAMinSize
+  - sshd_RefuseConnection
+  - sshd_RekeyLimit
+  - sshd_RequiredRSASize
+  - sshd_RevokedKeys
+  - sshd_RDomain
+  - sshd_RhostsRSAAuthentication
+  - sshd_SecurityKeyProvider
+  - sshd_SetEnv
+  - sshd_ServerKeyBits
+  - sshd_ShowPatchLevel
+  - sshd_SshdAuthPath
+  - sshd_SshdSessionPath
+  - sshd_StreamLocalBindMask
+  - sshd_StreamLocalBindUnlink
+  - sshd_StrictModes
+  - sshd_Subsystem
+  - sshd_SyslogFacility
+  - sshd_TCPKeepAlive
+  - sshd_TcpRcvBufPoll
+  - sshd_TrustedUserCAKeys
+  - sshd_UnusedConnectionTimeout
+  - sshd_UseDNS
+  - sshd_UseLogin
+  - sshd_UsePAM
+  - sshd_UsePAMCheckLocks
+  - sshd_UsePrivilegeSeparation
+  - sshd_VersionAddendum
+  - sshd_X11DisplayOffset
+  - sshd_X11MaxDisplays
+  - sshd_X11Forwarding
+  - sshd_X11UseLocalhost
+  - sshd_XAuthLocation
+# END GENERATED __sshd_option_vars

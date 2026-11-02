@@ -1,0 +1,628 @@
+# SPDX-License-Identifier: MIT
+---
+- name: Verify invalid parameters are rejected
+  hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+  tasks:
+    - name: Backup configuration files
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+    - name: Run invalid input tests
+      block:
+        # ====================================================
+        # Section 1: Verify role works with valid defaults
+        # ====================================================
+        - name: Run role with valid defaults
+          ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+
+        - name: Mark valid defaults succeeded
+          ansible.builtin.set_fact:
+            __valid_defaults_succeeded: true
+
+        - name: Assert role completed with valid defaults
+          ansible.builtin.assert:
+            that:
+              - __valid_defaults_succeeded | default(false)
+            fail_msg: >-
+              Role should succeed with default parameters
+
+        # ====================================================
+        # Section 2: argument_specs validation (Ansible 2.11+)
+        # ====================================================
+        - name: Run argument specs validation tests
+          when: ansible_version.full is version("2.11", ">=")
+          block:
+            - name: Argument specs reject invalid sshd_backup type
+              block:
+                - name: Run role with sshd_backup as a non-boolean string
+                  ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+                  vars:
+                    sshd_backup: not_a_bool
+              rescue:
+                - name: Mark invalid sshd_backup rejected
+                  ansible.builtin.set_fact:
+                    __invalid_input_backup_type_failed: true
+                  when: >-
+                    'Validation of arguments failed' in
+                    (ansible_failed_result | default({}) | to_json)
+
+            - name: Assert invalid sshd_backup type failed validation
+              ansible.builtin.assert:
+                that:
+                  - __invalid_input_backup_type_failed | default(false)
+                fail_msg: >-
+                  meta/argument_specs should reject sshd_backup values
+                  that are not booleans
+
+            - name: Argument specs reject invalid sshd_sysconfig_use_strong_rng type
+              block:
+                - name: Run role with sshd_sysconfig_use_strong_rng as a non-integer
+                  ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+                  vars:
+                    sshd_sysconfig_use_strong_rng: not_an_int
+              rescue:
+                - name: Mark invalid sshd_sysconfig_use_strong_rng rejected
+                  ansible.builtin.set_fact:
+                    __invalid_input_strong_rng_type_failed: true
+                  when: >-
+                    'Validation of arguments failed' in
+                    (ansible_failed_result | default({}) | to_json)
+
+            - name: Assert invalid sshd_sysconfig_use_strong_rng type failed validation
+              ansible.builtin.assert:
+                that:
+                  - __invalid_input_strong_rng_type_failed | default(false)
+                fail_msg: >-
+                  meta/argument_specs should reject
+                  sshd_sysconfig_use_strong_rng values that are not integers
+
+            - name: Argument specs reject invalid sshd_packages type
+              block:
+                - name: Run role with sshd_packages as a dict
+                  ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+                  vars:
+                    sshd_packages:
+                      not: a_list
+              rescue:
+                - name: Mark invalid sshd_packages rejected
+                  ansible.builtin.set_fact:
+                    __invalid_input_packages_type_failed: true
+                  when: >-
+                    'Validation of arguments failed' in
+                    (ansible_failed_result | default({}) | to_json)
+
+            - name: Assert invalid sshd_packages type failed validation
+              ansible.builtin.assert:
+                that:
+                  - __invalid_input_packages_type_failed | default(false)
+                fail_msg: >-
+                  meta/argument_specs should reject sshd_packages values
+                  that cannot be converted to a list
+
+            - name: Argument specs reject invalid sshd_principals type
+              block:
+                - name: Run role with sshd_principals as a list
+                  ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+                  vars:
+                    sshd_principals:
+                      - not_a_dict
+              rescue:
+                - name: Mark invalid sshd_principals rejected
+                  ansible.builtin.set_fact:
+                    __invalid_input_principals_type_failed: true
+                  when: >-
+                    'Validation of arguments failed' in
+                    (ansible_failed_result | default({}) | to_json)
+
+            - name: Assert invalid sshd_principals type failed validation
+              ansible.builtin.assert:
+                that:
+                  - __invalid_input_principals_type_failed | default(false)
+                fail_msg: >-
+                  meta/argument_specs should reject sshd_principals values
+                  that are not dictionaries
+
+            - name: Argument specs reject invalid sshd_systemd_unit choice
+              block:
+                - name: Run role with sshd_systemd_unit set to an unknown unit
+                  ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+                  vars:
+                    sshd_systemd_unit: not_a_unit
+              rescue:
+                - name: Mark invalid sshd_systemd_unit rejected
+                  ansible.builtin.set_fact:
+                    __invalid_input_systemd_unit_choice_failed: true
+                  when: >-
+                    'Validation of arguments failed' in
+                    (ansible_failed_result | default({}) | to_json)
+
+            - name: Assert invalid sshd_systemd_unit choice failed validation
+              ansible.builtin.assert:
+                that:
+                  - __invalid_input_systemd_unit_choice_failed | default(false)
+                fail_msg: >-
+                  meta/argument_specs should reject sshd_systemd_unit
+                  value 'not_a_unit'
+
+            - name: Argument specs reject invalid sshd_config type
+              block:
+                - name: Run role with sshd_config as a string
+                  ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+                  vars:
+                    sshd_config: not_a_dict
+              rescue:
+                - name: Mark invalid sshd_config rejected
+                  ansible.builtin.set_fact:
+                    __invalid_input_config_type_failed: true
+                  when: >-
+                    'Validation of arguments failed' in
+                    (ansible_failed_result | default({}) | to_json)
+
+            - name: Assert invalid sshd_config type failed validation
+              ansible.builtin.assert:
+                that:
+                  - __invalid_input_config_type_failed | default(false)
+                fail_msg: >-
+                  meta/argument_specs should reject sshd_config values
+                  that are not dictionaries
+
+        # ====================================================
+        # Section 3: assert_role_vars validation (all versions)
+        # ====================================================
+        - name: Assert rejects sshd_sysconfig_use_strong_rng below 14
+          block:
+            - name: Run role with sshd_sysconfig_use_strong_rng set to 7
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                sshd_sysconfig_use_strong_rng: 7
+          rescue:
+            - name: Mark out-of-range sshd_sysconfig_use_strong_rng rejected
+              ansible.builtin.set_fact:
+                __invalid_input_strong_rng_range_failed: true
+              when: >-
+                'sshd_sysconfig_use_strong_rng must be' in
+                (ansible_failed_result | default({}) | to_json)
+
+        - name: Assert sshd_sysconfig_use_strong_rng below 14 failed validation
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_strong_rng_range_failed | default(false)
+            fail_msg: >-
+              tasks/assert_role_vars.yml should reject
+              sshd_sysconfig_use_strong_rng values between 1 and 13
+
+        - name: Assert rejects sshd_sysconfig_use_strong_rng as a boolean
+          block:
+            - name: Run role with sshd_sysconfig_use_strong_rng set to false
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                sshd_sysconfig_use_strong_rng: false
+          rescue:
+            - name: Mark boolean sshd_sysconfig_use_strong_rng rejected
+              ansible.builtin.set_fact:
+                __invalid_input_strong_rng_bool_failed: true
+              when: >-
+                'sshd_sysconfig_use_strong_rng must be' in
+                (ansible_failed_result | default({}) | to_json)
+
+        - name: Assert sshd_sysconfig_use_strong_rng as boolean failed validation
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_strong_rng_bool_failed | default(false)
+            fail_msg: >-
+              tasks/assert_role_vars.yml should reject
+              sshd_sysconfig_use_strong_rng when it is a boolean
+
+        - name: Assert rejects sshd_service as a list
+          block:
+            - name: Run role with sshd_service as a list
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                sshd_service:
+                  - not_a_service
+          rescue:
+            - name: Mark sshd_service list rejected
+              ansible.builtin.set_fact:
+                __invalid_input_service_type_failed: true
+              when: >-
+                'sshd_service must be' in
+                (ansible_failed_result | default({}) | to_json)
+
+        - name: Assert sshd_service as list failed validation
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_service_type_failed | default(false)
+            fail_msg: >-
+              sshd_service should be rejected when it is a list
+              instead of a string
+
+        - name: Assert rejects sshd_config_mode as a boolean
+          block:
+            - name: Run role with sshd_config_mode as a boolean
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                sshd_config_mode: true
+          rescue:
+            - name: Mark sshd_config_mode boolean rejected
+              ansible.builtin.set_fact:
+                __invalid_input_config_mode_bool_failed: true
+              when: >-
+                'sshd_config_mode must be' in
+                (ansible_failed_result | default({}) | to_json)
+
+        - name: Assert sshd_config_mode as boolean failed validation
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_config_mode_bool_failed | default(false)
+            fail_msg: >-
+              tasks/assert_role_vars.yml should reject sshd_config_mode
+              when it is a boolean instead of a string or integer
+
+        - name: Assert rejects sshd_drop_in_dir_mode as a boolean
+          block:
+            - name: Run role with sshd_drop_in_dir_mode as a boolean
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                sshd_drop_in_dir_mode: true
+          rescue:
+            - name: Mark sshd_drop_in_dir_mode boolean rejected
+              ansible.builtin.set_fact:
+                __invalid_input_drop_in_dir_mode_bool_failed: true
+              when: >-
+                'sshd_drop_in_dir_mode must be' in
+                (ansible_failed_result | default({}) | to_json)
+
+        - name: Assert sshd_drop_in_dir_mode as boolean failed validation
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_drop_in_dir_mode_bool_failed | default(false)
+            fail_msg: >-
+              tasks/assert_role_vars.yml should reject
+              sshd_drop_in_dir_mode when it is a boolean instead of a
+              string or integer
+
+        - name: Assert rejects sshd_main_config_file as an integer
+          block:
+            - name: Run role with sshd_main_config_file as an integer
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                sshd_main_config_file: 123
+          rescue:
+            - name: Mark sshd_main_config_file integer rejected
+              ansible.builtin.set_fact:
+                __invalid_input_main_config_file_int_failed: true
+              when: >-
+                'sshd_main_config_file must be' in
+                (ansible_failed_result | default({}) | to_json)
+
+        - name: Assert sshd_main_config_file as integer failed validation
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_main_config_file_int_failed | default(false)
+            fail_msg: >-
+              tasks/assert_role_vars.yml should reject
+              sshd_main_config_file when it is an integer instead of
+              null or a string
+
+        - name: Assert rejects sshd_trustedusercakeys_directory_mode as a boolean
+          block:
+            - name: Run role with sshd_trustedusercakeys_directory_mode as a boolean
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                sshd_trustedusercakeys_directory_mode: true
+          rescue:
+            - name: Mark sshd_trustedusercakeys_directory_mode boolean rejected
+              ansible.builtin.set_fact:
+                __invalid_input_cakeys_dir_mode_bool_failed: true
+              when: >-
+                'sshd_trustedusercakeys_directory_mode must be' in
+                (ansible_failed_result | default({}) | to_json)
+
+        - name: Assert sshd_trustedusercakeys_directory_mode as boolean failed validation
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_cakeys_dir_mode_bool_failed | default(false)
+            fail_msg: >-
+              tasks/assert_role_vars.yml should reject
+              sshd_trustedusercakeys_directory_mode when it is a boolean
+              instead of a string or integer
+
+        - name: Assert rejects sshd_trustedusercakeys_file_mode as a boolean
+          block:
+            - name: Run role with sshd_trustedusercakeys_file_mode as a boolean
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                sshd_trustedusercakeys_file_mode: true
+          rescue:
+            - name: Mark sshd_trustedusercakeys_file_mode boolean rejected
+              ansible.builtin.set_fact:
+                __invalid_input_cakeys_file_mode_bool_failed: true
+              when: >-
+                'sshd_trustedusercakeys_file_mode must be' in
+                (ansible_failed_result | default({}) | to_json)
+
+        - name: Assert sshd_trustedusercakeys_file_mode as boolean failed validation
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_cakeys_file_mode_bool_failed | default(false)
+            fail_msg: >-
+              tasks/assert_role_vars.yml should reject
+              sshd_trustedusercakeys_file_mode when it is a boolean
+              instead of a string or integer
+
+        - name: Assert rejects sshd_authorizedprincipals_directory_mode as a boolean
+          block:
+            - name: Run role with sshd_authorizedprincipals_directory_mode as a boolean
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                sshd_authorizedprincipals_directory_mode: true
+          rescue:
+            - name: Mark sshd_authorizedprincipals_directory_mode boolean rejected
+              ansible.builtin.set_fact:
+                __invalid_input_principals_dir_mode_bool_failed: true
+              when: >-
+                'sshd_authorizedprincipals_directory_mode must be' in
+                (ansible_failed_result | default({}) | to_json)
+
+        - name: Assert sshd_authorizedprincipals_directory_mode as boolean failed validation
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_principals_dir_mode_bool_failed | default(false)
+            fail_msg: >-
+              tasks/assert_role_vars.yml should reject
+              sshd_authorizedprincipals_directory_mode when it is a
+              boolean instead of a string or integer
+
+        - name: Assert rejects sshd_authorizedprincipals_file_mode as a boolean
+          block:
+            - name: Run role with sshd_authorizedprincipals_file_mode as a boolean
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                sshd_authorizedprincipals_file_mode: true
+          rescue:
+            - name: Mark sshd_authorizedprincipals_file_mode boolean rejected
+              ansible.builtin.set_fact:
+                __invalid_input_principals_file_mode_bool_failed: true
+              when: >-
+                'sshd_authorizedprincipals_file_mode must be' in
+                (ansible_failed_result | default({}) | to_json)
+
+        - name: Assert sshd_authorizedprincipals_file_mode as boolean failed validation
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_principals_file_mode_bool_failed | default(false)
+            fail_msg: >-
+              tasks/assert_role_vars.yml should reject
+              sshd_authorizedprincipals_file_mode when it is a boolean
+              instead of a string or integer
+
+        - name: Assert rejects sshd_verify_hostkeys as an integer
+          block:
+            - name: Run role with sshd_verify_hostkeys as an integer
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                sshd_verify_hostkeys: 123
+          rescue:
+            - name: Mark sshd_verify_hostkeys integer rejected
+              ansible.builtin.set_fact:
+                __invalid_input_verify_hostkeys_int_failed: true
+              when: >-
+                'sshd_verify_hostkeys must be' in
+                (ansible_failed_result | default({}) | to_json)
+
+        - name: Assert sshd_verify_hostkeys as integer failed validation
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_verify_hostkeys_int_failed | default(false)
+            fail_msg: >-
+              tasks/assert_role_vars.yml should reject
+              sshd_verify_hostkeys when it is an integer instead of
+              'auto', false, or a list of strings
+
+        - name: Assert rejects sshd_verify_hostkeys as an arbitrary string
+          block:
+            - name: Run role with sshd_verify_hostkeys as an arbitrary string
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                sshd_verify_hostkeys: sometimes
+          rescue:
+            - name: Mark sshd_verify_hostkeys string rejected
+              ansible.builtin.set_fact:
+                __invalid_input_verify_hostkeys_string_failed: true
+              when: >-
+                'sshd_verify_hostkeys must be' in
+                (ansible_failed_result | default({}) | to_json)
+
+        - name: Assert sshd_verify_hostkeys as arbitrary string failed validation
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_verify_hostkeys_string_failed | default(false)
+            fail_msg: >-
+              tasks/assert_role_vars.yml should reject
+              sshd_verify_hostkeys when it is a string other than 'auto'
+
+        - name: Assert rejects sshd_hostkey_mode as a boolean
+          block:
+            - name: Run role with sshd_hostkey_mode as a boolean
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                sshd_hostkey_mode: true
+          rescue:
+            - name: Mark sshd_hostkey_mode boolean rejected
+              ansible.builtin.set_fact:
+                __invalid_input_hostkey_mode_bool_failed: true
+              when: >-
+                'sshd_hostkey_mode must be' in
+                (ansible_failed_result | default({}) | to_json)
+
+        - name: Assert sshd_hostkey_mode as boolean failed validation
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_hostkey_mode_bool_failed | default(false)
+            fail_msg: >-
+              tasks/assert_role_vars.yml should reject sshd_hostkey_mode
+              when it is a boolean instead of a string or integer
+
+        - name: Assert rejects sshd_principals value that is not a list of strings
+          block:
+            - name: Run role with sshd_principals value as a string
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                sshd_principals:
+                  alice: not-a-list
+          rescue:
+            - name: Mark sshd_principals string value rejected
+              ansible.builtin.set_fact:
+                __invalid_input_principals_value_failed: true
+              when: >-
+                'must be a list of strings' in
+                (ansible_failed_result | default({}) | to_json)
+
+        - name: Assert sshd_principals string value failed validation
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_principals_value_failed | default(false)
+            fail_msg: >-
+              tasks/assert_role_vars.yml should reject sshd_principals
+              values that are not lists of strings
+
+        - name: Assert rejects sshd_config_namespace as an integer
+          block:
+            - name: Run role with sshd_config_namespace as an integer
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                sshd_config_namespace: 123
+          rescue:
+            - name: Mark sshd_config_namespace integer rejected
+              ansible.builtin.set_fact:
+                __invalid_input_config_namespace_int_failed: true
+              when: >-
+                'sshd_config_namespace must be' in
+                (ansible_failed_result | default({}) | to_json)
+
+        - name: Assert sshd_config_namespace as integer failed validation
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_config_namespace_int_failed | default(false)
+            fail_msg: >-
+              tasks/assert_role_vars.yml should reject
+              sshd_config_namespace when it is an integer instead of
+              null or a string
+
+        - name: Assert rejects sshd_Port as a dict
+          block:
+            - name: Run role with sshd_Port as a dict
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                sshd_Port:  # noqa var-naming
+                  not: an_option
+          rescue:
+            - name: Mark sshd_Port dict rejected
+              ansible.builtin.set_fact:
+                __invalid_input_port_dict_failed: true
+              when: >-
+                'sshd_Port must be' in
+                (ansible_failed_result | default({}) | to_json)
+
+        - name: Assert sshd_Port as dict failed validation
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_port_dict_failed | default(false)
+            fail_msg: >-
+              tasks/assert_role_vars.yml should reject sshd_Port when
+              it is a dictionary
+
+        - name: Assert rejects sshd_match as a string
+          block:
+            - name: Run role with sshd_match as a string
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                sshd_match: not_a_match
+          rescue:
+            - name: Mark sshd_match string rejected
+              ansible.builtin.set_fact:
+                __invalid_input_match_string_failed: true
+              when: >-
+                'sshd_match must be' in
+                (ansible_failed_result | default({}) | to_json)
+
+        - name: Assert sshd_match as string failed validation
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_match_string_failed | default(false)
+            fail_msg: >-
+              tasks/assert_role_vars.yml should reject sshd_match when
+              it is a string instead of a dict or a list of dicts
+
+      always:
+        - name: Clear test facts
+          ansible.builtin.set_fact:
+            __valid_defaults_succeeded:
+            __invalid_input_backup_type_failed:
+            __invalid_input_strong_rng_type_failed:
+            __invalid_input_packages_type_failed:
+            __invalid_input_principals_type_failed:
+            __invalid_input_systemd_unit_choice_failed:
+            __invalid_input_strong_rng_range_failed:
+            __invalid_input_strong_rng_bool_failed:
+            __invalid_input_service_type_failed:
+            __invalid_input_config_mode_bool_failed:
+            __invalid_input_drop_in_dir_mode_bool_failed:
+            __invalid_input_main_config_file_int_failed:
+            __invalid_input_cakeys_dir_mode_bool_failed:
+            __invalid_input_cakeys_file_mode_bool_failed:
+            __invalid_input_principals_dir_mode_bool_failed:
+            __invalid_input_principals_file_mode_bool_failed:
+            __invalid_input_verify_hostkeys_int_failed:
+            __invalid_input_verify_hostkeys_string_failed:
+            __invalid_input_hostkey_mode_bool_failed:
+            __invalid_input_principals_value_failed:
+            __invalid_input_config_type_failed:
+            __invalid_input_config_namespace_int_failed:
+            __invalid_input_port_dict_failed:
+            __invalid_input_match_string_failed:
+          tags: tests::cleanup
+
+        - name: Restore configuration files
+          ansible.builtin.include_tasks: tasks/restore.yml
+          tags: tests::cleanup
+
+- name: Backup before keyword argument invocation
+  hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+  tasks:
+    - name: Backup configuration files
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+- name: Accept OpenSSH settings passed as role keyword arguments
+  hosts: all
+  roles:
+    - role: ansible-sshd
+      sshd_config_namespace: null
+      sshd_config:
+        PrintMotd: false
+      sshd:
+        PrintLastLog: false
+      sshd_PrintMotd: false  # noqa var-naming
+      sshd_match:
+        - Condition: "User nosuchuser"
+          X11Forwarding: false
+      sshd_match_1:
+        - Condition: "User nosuchuser"
+          PermitTTY: false
+
+- name: Restore after keyword argument invocation
+  hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+  tasks:
+    - name: Restore configuration files
+      ansible.builtin.include_tasks: tasks/restore.yml
