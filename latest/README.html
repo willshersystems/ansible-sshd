@@ -345,6 +345,7 @@ alt="Run tests on Alpine" /></a></li>
 <li>AIX 7.1, 7.2</li>
 <li>OpenWrt 21.03</li>
 <li>NetBSD 10.1</li>
+<li>SUSE Linux Enterprise 15 SP7 and 16, openSUSE Leap 16</li>
 </ul>
 <p>It will likely work on other flavours and more direct support via
 suitable <a href="vars/">vars/</a> files is welcome.</p>
@@ -354,14 +355,17 @@ configure firewall and selinux for you, which is mostly useful when
 custom port is used, the role requires additional collections which are
 specified in <code>meta/collection-requirements.yml</code>. These are
 not automatically installed. If you want to manage
-<code>rpm-ostree</code> systems, additional collections are required.
+<code>rpm-ostree</code> systems, additional collections are required. On
+SUSE, <code>community.general</code> is also needed to install packages.
 You must install them like this:</p>
 <div class="sourceCode" id="cb1"><pre
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ansible-galaxy</span> install <span class="at">-vv</span> <span class="at">-r</span> meta/collection-requirements.yml</span></code></pre></div>
 <p>For more information, see <code>sshd_manage_firewall</code> and
 <code>sshd_manage_selinux</code> options below, and the
 <code>rpm-ostree</code> section. This additional functionality is
-supported only on Red Hat based Linux.</p>
+supported only on Red Hat based Linux, and
+<code>sshd_manage_selinux</code> also on SLES 16 and openSUSE Leap
+16.</p>
 <h1 id="role-variables">Role variables</h1>
 <h2 id="primary-role-variables">Primary role variables</h2>
 <p>Unconfigured, this role will provide a <code>sshd_config</code> that
@@ -457,7 +461,8 @@ directly.</p>
 <h3 id="sshd_manage_selinux">sshd_manage_selinux</h3>
 <p>If set to <em>true</em>, the selinux will be configured to allow sshd
 listening on the given SSH port(s). Note, this works only on Red Hat
-based OS. The default is <em>false</em>.</p>
+based OS, SLES 16 and openSUSE Leap 16. The default is
+<em>false</em>.</p>
 <p>NOTE: <code>sshd_manage_selinux</code> is limited to <em>adding</em>
 policy. It cannot be used for <em>removing</em> policy. If you want to
 remove ports, you will need to use the selinux system role directly.</p>
@@ -602,6 +607,11 @@ the service file.</p>
 <code>sshd_config_file</code> is set outside of the drop in directory
 (its parent directory is not <code>sshd_main_config_file</code> ~ '.d'),
 this variable is ignored.</p>
+<p>On SLES 16 and openSUSE Leap 16, a missing
+<code>/etc/ssh/sshd_config</code> is created as a copy of
+<code>/usr/etc/ssh/sshd_config</code>; an existing one is kept. Package
+updates to <code>/usr/etc/ssh/sshd_config</code> do not reach the
+copy.</p>
 <h3 id="sshd_config_namespace">sshd_config_namespace</h3>
 <p>By default (<em>null</em>), the role defines whole content of the
 configuration file including system defaults. You can use this variable
