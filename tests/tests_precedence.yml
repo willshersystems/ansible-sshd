@@ -33,9 +33,7 @@
           ansible.builtin.meta: flush_handlers
 
         - name: List effective configuration using sshd -T
-          ansible.builtin.command: sshd -T
-          register: runtime
-          changed_when: false
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
 
         - name: Print current configuration file
           ansible.builtin.slurp:
@@ -43,7 +41,7 @@
           register: config
 
         - name: Check the sshd_* values are effective in runtime
-          # note, the options are in lower-case here
+          # sshd -T output option names are normalized to lowercase
           ansible.builtin.assert:
             that:
               - "'banner /etc/good-issue' in runtime.stdout"

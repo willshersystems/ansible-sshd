@@ -76,9 +76,7 @@
           ansible.builtin.meta: flush_handlers
 
         - name: List effective configuration using sshd -T
-          ansible.builtin.command: sshd -T
-          register: runtime
-          changed_when: false
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
 
         - name: Print current configuration file
           ansible.builtin.slurp:
@@ -86,7 +84,7 @@
           register: config
 
         - name: Check the comma- and space/comma-kind options are effective
-          # note, the options are in lower-case here
+          # sshd -T output option names are normalized to lowercase
           ansible.builtin.assert:
             that:
               - "'ciphers aes256-ctr,aes192-ctr,aes128-ctr' in runtime.stdout"
@@ -197,9 +195,7 @@
           ansible.builtin.meta: flush_handlers
 
         - name: List effective configuration using sshd -T
-          ansible.builtin.command: sshd -T
-          register: runtime
-          changed_when: false
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
 
         - name: Print current configuration file
           ansible.builtin.slurp:
@@ -207,7 +203,7 @@
           register: config
 
         - name: Check the options are effective
-          # note, the options are in lower-case here; sshd -T reports
+          # sshd -T reports
           # AllowUsers as one line per value, see the first play
           ansible.builtin.assert:
             that:
@@ -267,14 +263,16 @@
           ansible.builtin.meta: flush_handlers
 
         - name: List effective configuration using sshd -T for a user outside the Match block
-          ansible.builtin.command: sshd -T -C user=erin,addr=127.0.0.1,host=example.com
-          register: other_effective
-          changed_when: false
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
+          vars:
+            __sshd_connection_spec: user=erin,addr=127.0.0.1,host=example.com
+            __sshd_output_variable_name: other_effective
 
         - name: List effective configuration using sshd -T for carol
-          ansible.builtin.command: sshd -T -C user=carol,addr=127.0.0.1,host=example.com
-          register: carol_effective
-          changed_when: false
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
+          vars:
+            __sshd_connection_spec: user=carol,addr=127.0.0.1,host=example.com
+            __sshd_output_variable_name: carol_effective
 
         - name: Print current configuration file
           ansible.builtin.slurp:
@@ -335,14 +333,16 @@
           ansible.builtin.meta: flush_handlers
 
         - name: List effective configuration using sshd -T for a user outside the Match block
-          ansible.builtin.command: sshd -T -C user=erin,addr=127.0.0.1,host=example.com
-          register: other_effective
-          changed_when: false
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
+          vars:
+            __sshd_connection_spec: user=erin,addr=127.0.0.1,host=example.com
+            __sshd_output_variable_name: other_effective
 
         - name: List effective configuration using sshd -T for carol
-          ansible.builtin.command: sshd -T -C user=carol,addr=127.0.0.1,host=example.com
-          register: carol_effective
-          changed_when: false
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
+          vars:
+            __sshd_connection_spec: user=carol,addr=127.0.0.1,host=example.com
+            __sshd_output_variable_name: carol_effective
 
         - name: Print current configuration file
           ansible.builtin.slurp:
@@ -423,9 +423,7 @@
               ansible.builtin.meta: flush_handlers
 
             - name: List effective configuration using sshd -T
-              ansible.builtin.command: sshd -T
-              register: runtime
-              changed_when: false
+              ansible.builtin.include_tasks: tasks/get_sshd_options.yml
 
             - name: Print current configuration file
               ansible.builtin.slurp:
