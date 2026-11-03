@@ -63,6 +63,9 @@ __sshd_runtime_directory_mode: "0755"
 # drop-in directory is used
 __sshd_main_config_file: ~
 
+# the distribution's default main sshd_config, used when the main one is missing
+__sshd_vendor_main_config_file: ~
+
 __sshd_drop_in_dir_mode: "0755"
 
 # The list of hostkeys to check when there are none listed in configuration file.
@@ -73,6 +76,9 @@ __sshd_verify_hostkeys_default: []
 # This switch can control if the validate step is supported by the target OS.
 # This is useful for very old OpenSSH or for tests that generate invalid configurations
 __sshd_supports_validate: true
+
+# Whether sshd_manage_selinux is supported in addition to Red Hat based OS
+__sshd_supports_selinux: false
 
 # The path to an environment file for the SSHD service
 __sshd_environment_file: ~
@@ -94,6 +100,12 @@ __sshd_service_wants: ~
 
 # The systemd service RestartSec directive
 __sshd_service_restart_timeout: ~
+
+# The systemd service ExecStartPre commands; in sshd.service they replace the default config test
+__sshd_service_exec_start_pre: ~
+
+# The systemd service TasksMax directive
+__sshd_service_tasks_max: ~
 
 # Plug the systemd ephemeral authorized keys to the instantiated service file
 __sshd_service_ephemeral_authorized_keys: false

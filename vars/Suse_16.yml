@@ -1,0 +1,46 @@
+---
+__sshd_os_supported: true
+
+__sshd_packages:
+  - openssh
+  - openssh-server
+__sshd_sftp_server: /usr/libexec/ssh/sftp-server
+__sshd_config_file: /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+# the defaults here represent the defaults shipped in /usr/etc/ssh/sshd_config
+__sshd_defaults:
+  Include:
+    - /etc/ssh/sshd_config.d/*.conf
+    - /usr/etc/ssh/sshd_config.d/*.conf
+  AuthorizedKeysFile: .ssh/authorized_keys
+  UsePAM: true
+  X11Forwarding: true
+  PrintMotd: false
+  Subsystem: "sftp {{ __sshd_sftp_server }}"
+  AcceptEnv:
+    - LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
+    - LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
+    - LC_IDENTIFICATION LC_ALL
+    - LC_TERMINAL LC_TERMINAL_VERSION
+    - COLORTERM TERM_PROGRAM TERM_PROGRAM_VERSION
+
+__sshd_verify_hostkeys_default:
+  - /etc/ssh/ssh_host_rsa_key
+  - /etc/ssh/ssh_host_ecdsa_key
+  - /etc/ssh/ssh_host_ed25519_key
+__sshd_hostkeys_nofips:
+  - /etc/ssh/ssh_host_ed25519_key
+
+__sshd_drop_in_dir_mode: '0755'
+__sshd_main_config_file: /etc/ssh/sshd_config
+__sshd_vendor_main_config_file: /usr/etc/ssh/sshd_config
+__sshd_supports_selinux: true
+
+__sshd_environment_file: /etc/sysconfig/ssh
+__sshd_environment_variable:
+  - SSHD_OPTS
+__sshd_service_after: network.target
+__sshd_service_ephemeral_authorized_keys: "{{ ansible_facts['distribution_version'] is version('16.1', '>=') }}"
+__sshd_service_exec_start_pre:
+  - /usr/sbin/sshd-gen-keys-start
+  - "{{ sshd_binary }} -t $SSHD_OPTS"
+__sshd_service_tasks_max: infinity

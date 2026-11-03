@@ -60,3 +60,4 @@
   when:
     - sshd_main_config_file is not none
     - sshd_config_file | dirname == sshd_main_config_file ~ '.d'
+    - not (ansible_check_mode and __sshd_main_config_seed is changed)

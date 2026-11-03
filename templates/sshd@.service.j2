@@ -23,6 +23,11 @@ EnvironmentFile=-{{ __sshd_environment_file }}
 EnvironmentFile=-{{ file }}
 {%   endfor %}
 {% endif %}
+{% if __sshd_service_exec_start_pre is not none %}
+{%   for cmd in __sshd_service_exec_start_pre %}
+ExecStartPre={{ cmd }}
+{%   endfor %}
+{% endif %}
 ExecStart=-{{ sshd_binary }} -i
 {%- for var in __sshd_environment_variable %} ${{ var }}{% endfor -%}
 {# When the system is not supporting drop-in directory and the config file is different than default #}

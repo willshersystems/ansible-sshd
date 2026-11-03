@@ -28,6 +28,10 @@ jobs:
             req_file: tests/requirements.yml
           - os_image: fedora:latest
             req_file: tests/requirements.yml
+          - os_image: opensuse/leap:16.0
+            req_file: tests/requirements.yml
+          - os_image: registry.suse.com/bci/bci-base:16.0
+            req_file: tests/requirements.yml
           - os_image: ubuntu:22.04
             req_file: tests/requirements-no-fedora-lsr.yml
           - os_image: ubuntu:24.04
@@ -36,8 +40,6 @@ jobs:
             req_file: tests/requirements.yml
           # - os_image: opensuse/tumbleweed:latest # too odd
           #   req_file: tests/requirements.yml
-          # - os_image: opensuse/leap:latest  # can't find python3
-          #  req_file: tests/requirements-no-fedora-lsr.yml
 
     steps:
       - name: Checkout code
@@ -46,7 +48,7 @@ jobs:
           persist-credentials: false
 
       - name: Test Ansible SSHD Role
-        uses: Jakuje/check-ansible-action@f64d87a5598747f49294b37d7302083afbc15c76 # main
+        uses: Jakuje/check-ansible-action@7b9baca514be52ee483a1fb3df88bc15cd024f52 # main
         with:
           image: ${{ matrix.scenario.os_image }}
           group: local

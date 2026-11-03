@@ -5,6 +5,7 @@
     __sshd_test_backup_files:
       - /etc/dnf/dnf.conf
       - /etc/yum.conf
+      - /etc/zypp/zypp.conf
       - /tmp/sshd_config
     sshd_c: {}
   tasks:
@@ -20,15 +21,33 @@
         - ansible_facts['os_family'] == "RedHat"
         - not __sshd_is_ostree | d(false)
 
-    - name: Skip test on Tumbleweed as its not possible to install them
+    - name: Skip test on Tumbleweed and SUSE 16 as it is not possible to install the manual pages
       ansible.builtin.meta: end_play
-      when: ansible_facts['distribution'] == "openSUSE Tumbleweed"
+      when:
+        - ansible_facts['distribution'] == "openSUSE Tumbleweed" or
+          (ansible_facts['os_family'] == 'Suse' and ansible_facts['distribution_major_version'] == '16')
 
     - name: Reinstall manual pages for openssh-server on RHEL
       ansible.builtin.command: "{{ ansible_facts['pkg_mgr'] | quote }} reinstall -y openssh-server"
       when:
         - ansible_facts['os_family'] == "RedHat"
         - not __sshd_is_ostree | d(false)
+      changed_when: true
+
+    - name: Enable installation of manual pages on SUSE 15
+      ansible.builtin.lineinfile:
+        path: /etc/zypp/zypp.conf
+        regexp: '^rpm\.install\.excludedocs'
+        state: absent
+      when:
+        - ansible_facts['os_family'] == "Suse"
+        - ansible_facts['distribution_major_version'] == '15'
+
+    - name: Reinstall manual pages for openssh-server on SUSE 15
+      ansible.builtin.command: zypper --non-interactive install --force openssh-server
+      when:
+        - ansible_facts['os_family'] == "Suse"
+        - ansible_facts['distribution_major_version'] == '15'
       changed_when: true
 
     - name: Unminimize image on Debian. It looks like there is no simpler way to get manual pages

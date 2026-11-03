@@ -56,6 +56,7 @@ Tested on:
 * AIX 7.1, 7.2
 * OpenWrt 21.03
 * NetBSD 10.1
+* SUSE Linux Enterprise 15 SP7 and 16, openSUSE Leap 16
 
 It will likely work on other flavours and more direct support via suitable
 [vars/](vars/) files is welcome.
@@ -67,6 +68,7 @@ firewall and selinux for you, which is mostly useful when custom port is used,
 the role requires additional collections which are specified in
 `meta/collection-requirements.yml`. These are not automatically installed.
 If you want to manage `rpm-ostree` systems, additional collections are required.
+On SUSE, `community.general` is also needed to install packages.
 You must install them like this:
 
 ```bash
@@ -75,7 +77,8 @@ ansible-galaxy install -vv -r meta/collection-requirements.yml
 
 For more information, see `sshd_manage_firewall` and `sshd_manage_selinux`
 options below, and the `rpm-ostree` section.  This additional functionality is
-supported only on Red Hat based Linux.
+supported only on Red Hat based Linux, and `sshd_manage_selinux` also on
+SLES 16 and openSUSE Leap 16.
 
 ## Role variables
 
@@ -183,7 +186,8 @@ firewall system role directly.
 #### sshd_manage_selinux
 
 If set to *true*, the selinux will be configured to allow sshd listening
-on the given SSH port(s). Note, this works only on Red Hat based OS.
+on the given SSH port(s). Note, this works only on Red Hat based OS,
+SLES 16 and openSUSE Leap 16.
 The default is *false*.
 
 NOTE: `sshd_manage_selinux` is limited to *adding* policy. It cannot be used
@@ -378,6 +382,10 @@ On systems without drop-in directory, it defaults to `None`. Otherwise it
 defaults to `/etc/ssh/sshd_config`. When the `sshd_config_file` is set
 outside of the drop in directory (its parent directory is not
 `sshd_main_config_file` ~ '.d'), this variable is ignored.
+
+On SLES 16 and openSUSE Leap 16, a missing `/etc/ssh/sshd_config` is created
+as a copy of `/usr/etc/ssh/sshd_config`; an existing one is kept. Package
+updates to `/usr/etc/ssh/sshd_config` do not reach the copy.
 
 #### sshd_config_namespace
 

@@ -22,7 +22,13 @@ EnvironmentFile={{ __sshd_environment_file_mandatory | ternary('', '-')}}{{ __ss
 EnvironmentFile=-{{ file }}
 {%   endfor %}
 {% endif %}
+{% if __sshd_service_exec_start_pre is none %}
 ExecStartPre={{ sshd_binary }} -t
+{% else %}
+{%   for cmd in __sshd_service_exec_start_pre %}
+ExecStartPre={{ cmd }}
+{%   endfor %}
+{% endif %}
 ExecStart={{ sshd_binary }} -D
 {%- for var in __sshd_environment_variable %} ${{ var }}{% endfor %} -f
 {%- if sshd_main_config_file is not none and sshd_config_file | dirname == sshd_main_config_file ~ '.d' %}
@@ -38,6 +44,9 @@ Restart=on-failure
 RestartSec={{ __sshd_service_restart_timeout }}
 {% endif %}
 RestartPreventExitStatus=255
+{% if __sshd_service_tasks_max is not none %}
+TasksMax={{ __sshd_service_tasks_max }}
+{% endif %}
 {% if __sshd_runtime_directory is not none %}
 RuntimeDirectory={{ __sshd_runtime_directory }}
 RuntimeDirectoryMode={{ __sshd_runtime_directory_mode }}

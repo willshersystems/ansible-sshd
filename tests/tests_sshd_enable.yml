@@ -21,10 +21,16 @@
           Ciphers: aes256-ctr,aes128-ctr
         sshd_config_file: /etc/ssh/sshd_config
 
+    - name: Check the configuration file exists
+      ansible.builtin.stat:
+        path: /etc/ssh/sshd_config
+      register: config_stat
+
     - name: Print current configuration file
       ansible.builtin.slurp:
         src: /etc/ssh/sshd_config
       register: config
+      when: config_stat.stat.exists
 
     - name: Print effective configuration
       ansible.builtin.shell: |
@@ -43,9 +49,9 @@
       # note, the options are in lower-case here
       ansible.builtin.assert:
         that:
-          - "'Acceptenv XDG_*' not in config.content | b64decode"
-          - "'Banner /etc/issue' not in config.content | b64decode"
-          - "'Ciphers aes256-ctr,aes128-ctr' not in config.content | b64decode"
+          - "'Acceptenv XDG_*' not in config.content | d('') | b64decode"
+          - "'Banner /etc/issue' not in config.content | d('') | b64decode"
+          - "'Ciphers aes256-ctr,aes128-ctr' not in config.content | d('') | b64decode"
           - "'acceptenv XDG_*' not in runtime.stdout"
           - "'banner /etc/issue' not in runtime.stdout"
           - "'ciphers aes256-ctr,aes128-ctr' not in runtime.stdout"

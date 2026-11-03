@@ -17,8 +17,8 @@
 
     - name: Verify the options are correctly set
       when:
-        - ansible_facts['os_family'] == 'RedHat'
-        - ansible_facts['distribution_major_version'] | int > 6
+        - (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] | int > 6) or
+          (ansible_facts['os_family'] == 'Suse' and ansible_facts['distribution_major_version'] == '16')
       tags: tests::verify
       block:
         - name: Flush handlers
@@ -55,6 +55,14 @@
 
     - name: Fake FIPS mode
       block:
+        - name: Install the OpenSSL FIPS provider, without which libcrypto fails in FIPS mode
+          ansible.builtin.package:
+            name: libopenssl-3-fips-provider
+            state: present
+          when:
+            - ansible_facts['os_family'] == 'Suse'
+            - ansible_facts['distribution_major_version'] == '16'
+
         - name: Create temporary directory
           ansible.builtin.tempfile:
             state: directory
@@ -98,8 +106,8 @@
 
     - name: Verify the options are correctly set after reconfiguration
       when:
-        - ansible_facts['os_family'] == 'RedHat'
-        - ansible_facts['distribution_major_version'] | int > 6
+        - (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] | int > 6) or
+          (ansible_facts['os_family'] == 'Suse' and ansible_facts['distribution_major_version'] == '16')
       tags: tests::verify
       block:
         - name: Flush handlers

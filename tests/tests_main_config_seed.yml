@@ -1,0 +1,98 @@
+---
+- name: Test creating the main configuration file from the distribution default
+  hosts: all
+  vars:
+    __sshd_test_backup_files:
+      - /etc/ssh/sshd_config
+      - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+  tasks:
+    - name: Get the role variables
+      ansible.builtin.include_role:
+        name: ansible-sshd
+        tasks_from: variables.yml
+        public: true
+
+    - name: Skip test where the distribution has no default main configuration file
+      ansible.builtin.meta: end_play
+      when: __sshd_vendor_main_config_file is none
+
+    - name: "Backup configuration files"
+      ansible.builtin.include_tasks: tasks/backup.yml
+
+    - name: Remove the main configuration file
+      ansible.builtin.file:
+        path: "{{ __sshd_main_config_file }}"
+        state: absent
+
+    - name: "Configure sshd"
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+
+    - name: Read the main and the distribution default configuration file
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      register: __sshd_test_seed
+      loop:
+        - "{{ __sshd_main_config_file }}"
+        - "{{ __sshd_vendor_main_config_file }}"
+
+    - name: Check the main configuration file is a copy of the distribution default
+      ansible.builtin.assert:
+        that:
+          - __sshd_main_config_seed is changed
+          - __sshd_test_seed.results[0].stat.exists
+          - __sshd_test_seed.results[0].stat.checksum == __sshd_test_seed.results[1].stat.checksum
+
+    - name: Change the main configuration file
+      ansible.builtin.lineinfile:
+        path: "{{ __sshd_main_config_file }}"
+        line: "# changed by the test"
+
+    - name: Read the changed main configuration file
+      ansible.builtin.stat:
+        path: "{{ __sshd_main_config_file }}"
+      register: __sshd_test_changed
+
+    - name: "Configure sshd again"
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+
+    - name: Read the main configuration file again
+      ansible.builtin.stat:
+        path: "{{ __sshd_main_config_file }}"
+      register: __sshd_test_kept
+
+    - name: Check the existing main configuration file was not replaced
+      ansible.builtin.assert:
+        that:
+          - __sshd_main_config_seed is not skipped
+          - __sshd_main_config_seed is not changed
+          - __sshd_test_kept.stat.checksum == __sshd_test_changed.stat.checksum
+
+    - name: Remove the main configuration file again
+      ansible.builtin.file:
+        path: "{{ __sshd_main_config_file }}"
+        state: absent
+
+    - name: "Configure sshd with a namespace in the main configuration file"
+      ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+      vars:
+        sshd_config_file: "{{ __sshd_main_config_file }}"
+        sshd_config_namespace: seed
+        sshd_config:
+          PasswordAuthentication: true
+
+    - name: Read the main and the distribution default configuration file after the namespace run
+      ansible.builtin.slurp:
+        src: "{{ item }}"
+      register: __sshd_test_namespace
+      loop:
+        - "{{ __sshd_main_config_file }}"
+        - "{{ __sshd_vendor_main_config_file }}"
+
+    - name: Check the namespace block was added to a copy of the distribution default
+      ansible.builtin.assert:
+        that:
+          - __sshd_main_config_seed is changed
+          - (__sshd_test_namespace.results[1].content | b64decode) in (__sshd_test_namespace.results[0].content | b64decode)
+
+    - name: "Restore configuration files"
+      ansible.builtin.include_tasks: tasks/restore.yml

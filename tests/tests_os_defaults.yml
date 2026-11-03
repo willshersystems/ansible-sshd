@@ -45,7 +45,7 @@
 
     - name: Read drop in directory mode
       ansible.builtin.stat:
-        path: "{{ __sshd_defaults.Include | dirname }}"
+        path: "{{ [__sshd_defaults.Include] | flatten | first | dirname }}"
       register: drop_in_dir_stat
       when: __sshd_defaults.Include is defined
 
