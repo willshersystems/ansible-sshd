@@ -21,8 +21,9 @@
         __sshd_test_firewall: "{{ ansible_facts['os_family'] == 'RedHat' and
           ansible_facts['distribution_version'] is version('7', '>=') and
           ansible_facts['virtualization_type'] | d(None) not in __sshd_skip_virt_env }}"
-        __sshd_test_selinux: "{{ ansible_facts['os_family'] == 'RedHat' and
-          ansible_facts['distribution_version'] is version('6', '>=') and
+        __sshd_test_selinux: "{{ ((ansible_facts['os_family'] == 'RedHat' and
+          ansible_facts['distribution_version'] is version('6', '>=')) or
+          __sshd_supports_selinux) and
           ansible_facts['virtualization_type'] | d(None) not in __sshd_skip_virt_env }}"
 
     ##########

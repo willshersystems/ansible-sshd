@@ -144,8 +144,24 @@
       ansible.builtin.include_tasks: selinux.yml
       when:
         - sshd_manage_selinux | bool
-        - ansible_facts['os_family'] == 'RedHat'
+        - ansible_facts['os_family'] == 'RedHat' or __sshd_supports_selinux
         - ansible_facts['virtualization_type'] | default(None) not in __sshd_skip_virt_env
+
+    - name: Create the main configuration file from the distribution default
+      ansible.builtin.copy:
+        src: "{{ __sshd_vendor_main_config_file }}"
+        dest: "{{ sshd_main_config_file }}"
+        remote_src: true
+        force: false
+        owner: "{{ sshd_config_owner }}"
+        group: "{{ sshd_config_group }}"
+        mode: "{{ sshd_config_mode }}"
+      notify: sshd_reload
+      register: __sshd_main_config_seed
+      when:
+        - __sshd_vendor_main_config_file is not none
+        - sshd_main_config_file == __sshd_main_config_file
+        - sshd_config_namespace is not none or sshd_config_file | dirname == sshd_main_config_file ~ '.d'
 
     - name: Create the complete configuration file
       ansible.builtin.include_tasks: install_config.yml

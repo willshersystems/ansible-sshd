@@ -12,6 +12,7 @@
       - /etc/systemd/system/ssh@.service
       - /etc/systemd/system/ssh.socket
     __sshd_test_service_name: sshd
+    __sshd_test_unit_dir: /lib/systemd/system
     __sshd_service_list: []
     __sshd_service_inst_list: []
     __sshd_socket_list: []
@@ -21,6 +22,13 @@
         __sshd_test_service_name: ssh
       when:
         - ansible_facts['os_family'] == "Debian"
+
+    - name: Fix the unit directory on SUSE 15, where /lib is not merged into /usr
+      ansible.builtin.set_fact:
+        __sshd_test_unit_dir: /usr/lib/systemd/system
+      when:
+        - ansible_facts['os_family'] == "Suse"
+        - ansible_facts['distribution_major_version'] == '15'
 
     - name: Backup configuration files
       ansible.builtin.include_tasks: tasks/backup.yml
@@ -38,13 +46,15 @@
       block:
         - name: Read the distribution service file
           ansible.builtin.slurp:
-            src: "/lib/systemd/system/{{ __sshd_test_service_name }}.service"
+            src: "{{ __sshd_test_unit_dir }}/{{ __sshd_test_service_name }}.service"
           register: service_old
 
         - name: Read the distribution socket file
           ansible.builtin.slurp:
-            src: "/lib/systemd/system/{{ __sshd_test_service_name }}.socket"
+            src: "{{ __sshd_test_unit_dir }}/{{ __sshd_test_service_name }}.socket"
           register: socket_old
+          when:
+            - not (ansible_facts['os_family'] == 'Suse' and ansible_facts['distribution_major_version'] == '15')
 
         - name: Read the created service file
           ansible.builtin.slurp:
@@ -96,7 +106,9 @@
         # distribution's original socket options is meaningless, so skip
         # the comparison entirely.
         - name: Compare socket options when the socket unit is actually in use
-          when: __sshd_test_socket_stat.stat.lnk_source | default('') != '/dev/null'
+          when:
+            - not (ansible_facts['os_family'] == 'Suse' and ansible_facts['distribution_major_version'] == '15')
+            - __sshd_test_socket_stat.stat.lnk_source | default('') != '/dev/null'
           block:
             - name: Read the created socket file
               ansible.builtin.slurp:
@@ -140,10 +152,11 @@
           (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] == '7')
         - ansible_facts['distribution'] != "Debian" or ansible_facts['distribution_major_version'] | int < 12
         - not (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_version'] is version('24.04', '>='))
+        - not (ansible_facts['os_family'] == 'Suse' and ansible_facts['distribution_major_version'] == '15')
       block:
         - name: Read the distribution instantiated service file
           ansible.builtin.slurp:
-            src: "/lib/systemd/system/{{ __sshd_test_service_name }}@.service"
+            src: "{{ __sshd_test_unit_dir }}/{{ __sshd_test_service_name }}@.service"
           register: service_inst_old
 
         - name: Read the created instantiated service file
@@ -156,13 +169,15 @@
             service_inst_old: "{{ service_inst_old.content | b64decode }}"
 
         # quite basic, but it should do the job
-        #  * I do not think the Description needs to match verbatim either
+        #  * I do not think the Description and Documentation need to match verbatim either
         - name: Construct the options list from old instantiated service file
           ansible.builtin.set_fact:
             __sshd_service_inst_list: "{{ __sshd_service_inst_list + [item] }}"
           when:
+            - item | trim | length > 0
             - not item.startswith("#")
             - not item.startswith("Description=")
+            - not item.startswith("Documentation=")
           loop:
             "{{ service_inst_old.splitlines() }}"
 

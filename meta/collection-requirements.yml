@@ -1,4 +1,6 @@
 ---
 collections:
   - name: ansible.posix
+  # Required to install packages on openSUSE and SLES (zypper)
+  - name: community.general
   - name: fedora.linux_system_roles

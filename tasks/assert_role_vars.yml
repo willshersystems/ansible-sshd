@@ -1,0 +1,202 @@
+# SPDX-License-Identifier: MIT
+---
+- name: Assert sshd_sysconfig_use_strong_rng is 0 or at least 14
+  ansible.builtin.assert:
+    that:
+      - (sshd_sysconfig_use_strong_rng | type_debug) == 'int'
+      - >-
+        sshd_sysconfig_use_strong_rng == 0
+        or sshd_sysconfig_use_strong_rng >= 14
+    fail_msg: >-
+      sshd_sysconfig_use_strong_rng must be an integer equal to 0
+      or greater than or equal to 14,
+      got {{ sshd_sysconfig_use_strong_rng | type_debug }}
+  when: sshd_sysconfig_use_strong_rng is defined
+
+- name: Assert sshd_config_mode is a string or integer
+  ansible.builtin.assert:
+    that:
+      - >-
+        sshd_config_mode is string
+        or (sshd_config_mode | type_debug) == 'int'
+    fail_msg: >-
+      sshd_config_mode must be a string or integer,
+      got {{ sshd_config_mode | type_debug }}
+  when: sshd_config_mode is defined
+
+- name: Assert sshd_drop_in_dir_mode is a string or integer
+  ansible.builtin.assert:
+    that:
+      - >-
+        sshd_drop_in_dir_mode is string
+        or (sshd_drop_in_dir_mode | type_debug) == 'int'
+    fail_msg: >-
+      sshd_drop_in_dir_mode must be a string or integer,
+      got {{ sshd_drop_in_dir_mode | type_debug }}
+  when: sshd_drop_in_dir_mode is defined
+
+- name: Assert sshd_main_config_file is null or a string
+  ansible.builtin.assert:
+    that:
+      - >-
+        (sshd_main_config_file is none)
+        or (sshd_main_config_file is string)
+    fail_msg: >-
+      sshd_main_config_file must be null or a string,
+      got {{ sshd_main_config_file | type_debug }}
+  when: sshd_main_config_file is defined
+
+- name: Assert sshd_service is a string
+  ansible.builtin.assert:
+    that:
+      - sshd_service is string
+    fail_msg: >-
+      sshd_service must be a string,
+      got {{ sshd_service | type_debug }}
+  when: sshd_service is defined
+
+- name: Assert sshd_config_namespace is null or a string
+  ansible.builtin.assert:
+    that:
+      - >-
+        (sshd_config_namespace is none)
+        or (sshd_config_namespace is string)
+    fail_msg: >-
+      sshd_config_namespace must be null or a string,
+      got {{ sshd_config_namespace | type_debug }}
+  when: sshd_config_namespace is defined
+
+- name: Assert sshd_trustedusercakeys_directory_mode is a string or integer
+  ansible.builtin.assert:
+    that:
+      - >-
+        sshd_trustedusercakeys_directory_mode is string
+        or (sshd_trustedusercakeys_directory_mode | type_debug) == 'int'
+    fail_msg: >-
+      sshd_trustedusercakeys_directory_mode must be a string or integer,
+      got {{ sshd_trustedusercakeys_directory_mode | type_debug }}
+  when: sshd_trustedusercakeys_directory_mode is defined
+
+- name: Assert sshd_trustedusercakeys_file_mode is a string or integer
+  ansible.builtin.assert:
+    that:
+      - >-
+        sshd_trustedusercakeys_file_mode is string
+        or (sshd_trustedusercakeys_file_mode | type_debug) == 'int'
+    fail_msg: >-
+      sshd_trustedusercakeys_file_mode must be a string or integer,
+      got {{ sshd_trustedusercakeys_file_mode | type_debug }}
+  when: sshd_trustedusercakeys_file_mode is defined
+
+- name: Assert sshd_authorizedprincipals_directory_mode is a string or integer
+  ansible.builtin.assert:
+    that:
+      - >-
+        sshd_authorizedprincipals_directory_mode is string
+        or (sshd_authorizedprincipals_directory_mode | type_debug) == 'int'
+    fail_msg: >-
+      sshd_authorizedprincipals_directory_mode must be a string or integer,
+      got {{ sshd_authorizedprincipals_directory_mode | type_debug }}
+  when: sshd_authorizedprincipals_directory_mode is defined
+
+- name: Assert sshd_authorizedprincipals_file_mode is a string or integer
+  ansible.builtin.assert:
+    that:
+      - >-
+        sshd_authorizedprincipals_file_mode is string
+        or (sshd_authorizedprincipals_file_mode | type_debug) == 'int'
+    fail_msg: >-
+      sshd_authorizedprincipals_file_mode must be a string or integer,
+      got {{ sshd_authorizedprincipals_file_mode | type_debug }}
+  when: sshd_authorizedprincipals_file_mode is defined
+
+- name: Assert sshd_verify_hostkeys is 'auto', false, or a list of strings
+  ansible.builtin.assert:
+    that:
+      - >-
+        (sshd_verify_hostkeys == 'auto')
+        or (sshd_verify_hostkeys is sameas false)
+        or (sshd_verify_hostkeys is sequence and sshd_verify_hostkeys is not string
+            and sshd_verify_hostkeys is not mapping
+            and sshd_verify_hostkeys | reject('string') | list | length == 0)
+    fail_msg: >-
+      sshd_verify_hostkeys must be 'auto', false, or a list of strings,
+      got {{ sshd_verify_hostkeys | type_debug }}
+  when: sshd_verify_hostkeys is defined
+
+- name: Assert sshd_hostkey_mode is a string or integer
+  ansible.builtin.assert:
+    that:
+      - >-
+        sshd_hostkey_mode is string
+        or (sshd_hostkey_mode | type_debug) == 'int'
+    fail_msg: >-
+      sshd_hostkey_mode must be a string or integer,
+      got {{ sshd_hostkey_mode | type_debug }}
+  when: sshd_hostkey_mode is defined
+
+- name: Assert sshd_principals values are lists of strings
+  ansible.builtin.assert:
+    that:
+      - >-
+        item.value is sequence and item.value is not string
+        and item.value is not mapping
+        and item.value | reject('string') | list | length == 0
+    fail_msg: >-
+      sshd_principals['{{ item.key }}'] must be a list of strings,
+      got {{ item.value | type_debug }}
+  loop: "{{ sshd_principals | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  when: sshd_principals is mapping
+
+- name: Assert sshd_<OptionName> is null, bool, string, number, or list
+  vars:
+    __item_is_defined: "{{ query('varnames', '^' ~ (item | regex_escape) ~ '$') | length == 1 }}"
+    __item_val: "{{ lookup('vars', item) if (__item_is_defined | bool) else none }}"
+  ansible.builtin.assert:
+    that:
+      - >-
+        __item_val is none
+        or __item_val is sameas true
+        or __item_val is sameas false
+        or __item_val is string
+        or __item_val is number
+        or (__item_val is sequence and __item_val is not string
+            and __item_val is not mapping)
+    fail_msg: >-
+      {{ item }} must be null, a boolean, a string, a number, or a list,
+      got {{ __item_val | type_debug }}
+  loop: "{{ __sshd_option_vars }}"
+  loop_control:
+    label: "{{ item }}"
+  when: __item_is_defined | bool
+
+- name: Assert sshd_match parameters are a dict or a list of dicts
+  vars:
+    __item_is_defined: "{{ query('varnames', '^' ~ (item | regex_escape) ~ '$') | length == 1 }}"
+    __item_val: "{{ lookup('vars', item) if (__item_is_defined | bool) else none }}"
+  ansible.builtin.assert:
+    that:
+      - >-
+        __item_val is mapping
+        or (__item_val is sequence and __item_val is not string
+            and __item_val is not mapping
+            and __item_val | reject('mapping') | list | length == 0)
+    fail_msg: >-
+      {{ item }} must be a list of dictionaries or a single dictionary,
+      got {{ __item_val | type_debug }}
+  loop:
+    - sshd_match
+    - sshd_match_1
+    - sshd_match_2
+    - sshd_match_3
+    - sshd_match_4
+    - sshd_match_5
+    - sshd_match_6
+    - sshd_match_7
+    - sshd_match_8
+    - sshd_match_9
+  loop_control:
+    label: "{{ item }}"
+  when: __item_is_defined | bool

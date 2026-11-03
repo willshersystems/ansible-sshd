@@ -46,6 +46,10 @@ galaxy_info:
     - name: NetBSD
       versions:
         - all
+    - name: SLES
+      versions:
+        - "15SP7"
+        - "16"
   galaxy_tags:
     - networking
     - system
@@ -66,4 +70,7 @@ galaxy_info:
     - el8
     - el9
     - el10
+    - leap16
+    - sles
+    - sles16
 dependencies: []

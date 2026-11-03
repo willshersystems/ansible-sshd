@@ -1,3 +1,6 @@
+# The options that are allowed in a Match block. How a list value is rendered
+# is taken from the same option in options_body; a second column here
+# overrides it.
 Include
 AcceptEnv
 AllowAgentForwarding
@@ -65,4 +68,8 @@ UnusedConnectionTimeout
 X11DisplayOffset
 X11MaxDisplays
 X11Forwarding
+# X11UseLocalHost is a misspelling that has always been accepted here. It is
+# kept for compatibility, after the correct spelling: if both are given, sshd
+# uses the first.
+X11UseLocalhost
 X11UseLocalHost

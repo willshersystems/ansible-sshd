@@ -1,0 +1,1215 @@
+# SPDX-License-Identifier: MIT
+---
+argument_specs:
+  main:
+    short_description: The sshd role.
+    description: >
+      The sshd role allows you to configure the OpenSSH server
+      daemon. It installs the required packages and writes an
+      `sshd_config` file, or a namespaced snippet inside an existing
+      file, from the options given to the role.
+
+      The role can also manage the sshd service, systemd socket
+      activation, host keys, firewall and SELinux ports, and SSH
+      certificate authentication files.
+    options:
+      sshd_enable:
+        type: bool
+        default: true
+        description: >
+          Whether the role runs. When `false`, the role does nothing.
+      sshd_enable_fingerprint:
+        type: bool
+        default: false
+        description: >
+          Whether to record begin and success fingerprints in the
+          system log. The messages are written through syslog and
+          show up in `journalctl` on systemd hosts.
+      sshd_skip_defaults:
+        type: bool
+        default: false
+        description: >
+          Whether to omit OS default values from the generated
+          configuration. When `true`, every option that should appear
+          in the file must be supplied through `sshd_config` or an
+          `sshd_<OptionName>` variable.
+      sshd_manage_service:
+        type: bool
+        default: true
+        description: >
+          Whether to manage the sshd service, including enabling it
+          on boot and starting or reloading it.
+      sshd_allow_daemon_reload:
+        type: bool
+        default: true
+        description: >
+          Whether to reload the systemd manager configuration when a
+          service, socket, or listen change requires it.
+      sshd_allow_reload:
+        type: bool
+        default: true
+        description: >
+          Whether to reload sshd when the configuration changes.
+      sshd_allow_restart:
+        type: bool
+        default: true
+        description: >
+          Whether to restart sshd when a change requires a full
+          restart, such as an update of the sysconfig or environment
+          file.
+      sshd_socket_allow_restart:
+        type: bool
+        default: true
+        description: >
+          Whether to restart the sshd socket unit when the socket
+          unit or the configured ports and listen addresses change.
+      sshd_install_service:
+        type: bool
+        default: false
+        description: >
+          Whether to install systemd service and socket unit files
+          from the templates named by `sshd_service_template_service`,
+          `sshd_service_template_at_service`, and
+          `sshd_service_template_socket`.
+      sshd_service_template_service:
+        type: str
+        default: sshd.service.j2
+        description: >
+          The role template for the sshd systemd service unit,
+          installed when `sshd_install_service` is `true`.
+      sshd_service_template_at_service:
+        type: str
+        default: sshd@.service.j2
+        description: >
+          The role template for the instantiated sshd systemd service
+          unit, installed when `sshd_install_service` is `true`.
+      sshd_service_template_socket:
+        type: str
+        default: sshd.socket.j2
+        description: >
+          The role template for the sshd systemd socket unit,
+          installed when `sshd_install_service` is `true`.
+      sshd_backup:
+        type: bool
+        default: true
+        description: >
+          Whether to keep a backup of an existing file before the
+          role overwrites it.
+      sshd_sysconfig:
+        type: bool
+        default: false
+        description: >
+          Whether to manage `/etc/sysconfig/sshd` on RHEL-based
+          systems that support a sysconfig file for sshd.
+      sshd_sysconfig_override_crypto_policy:
+        type: bool
+        default: false
+        description: >
+          Whether `/etc/sysconfig/sshd` sets
+          `CRYPTO_POLICY=`. When `true`, sshd uses the ciphers,
+          MACs, and public key algorithms from its own configuration
+          instead of the system-wide crypto policy.
+      sshd_sysconfig_use_strong_rng:
+        type: int
+        default: 0
+        description: >
+          How many bytes sshd reads from the kernel random source to
+          reseed the OpenSSL random number generator. `0` disables
+          reseeding. Any other value must be at least `14`. Applies
+          on RHEL-based systems that support `SSH_USE_STRONG_RNG`.
+      sshd_config_file:
+        type: path
+        default: "{{ __sshd_config_file }}"
+        description: >
+          The path of the configuration file written by the role.
+          A path in the drop-in directory, such as
+          `/etc/ssh/sshd_config.d/00-custom.conf`, selects a snippet
+          instead of the main configuration file.
+      sshd_trusted_user_ca_keys_list:
+        type: list
+        elements: str
+        default: []
+        description: >
+          Trusted user CA public keys in OpenSSH one-line format.
+          Each item is one public key. The role writes them to the
+          `TrustedUserCAKeys` file.
+      sshd_principals:
+        type: dict
+        default: {}
+        description: >
+          Mapping of local user names to the certificate principals
+          accepted for that user. Each value is a list of principal
+          names, such as `frontend-admin`. The role writes one
+          authorized-principals file per user.
+      sshd_packages:
+        type: list
+        elements: str
+        default: "{{ __sshd_packages }}"
+        description: >
+          Package names to install for the OpenSSH server.
+      sshd_config_owner:
+        type: str
+        default: "{{ __sshd_config_owner }}"
+        description: >
+          The user name or user id that owns the generated
+          configuration file.
+      sshd_config_group:
+        type: str
+        default: "{{ __sshd_config_group }}"
+        description: >
+          The group name or group id that owns the generated
+          configuration file.
+      sshd_config_mode:
+        type: raw
+        default: "{{ __sshd_config_mode }}"
+        description: >
+          The file mode of the generated configuration file. Accepts
+          a string such as `0600` or an integer.
+      sshd_binary:
+        type: path
+        default: "{{ __sshd_binary }}"
+        description: >
+          The path to the sshd executable.
+      sshd_service:
+        type: str
+        default: "{{ __sshd_service }}"
+        description: >
+          The sshd service name. Also used as the unit name when
+          `sshd_install_service` installs custom unit files.
+      sshd_sftp_server:
+        type: path
+        default: "{{ __sshd_sftp_server }}"
+        description: >
+          The path to the sftp-server binary.
+      sshd_drop_in_dir_mode:
+        type: raw
+        default: "{{ __sshd_drop_in_dir_mode }}"
+        description: >
+          The file mode of the sshd drop-in configuration directory.
+          Accepts a string such as `0755` or an integer.
+      sshd_main_config_file:
+        type: raw
+        default: "{{ __sshd_main_config_file }}"
+        description: >
+          The path of the main `sshd_config` file that should contain
+          an `Include` directive when `sshd_config_file` points into
+          a drop-in directory. Accepts a path, or `null` when there
+          is no separate main file to update.
+      sshd_trustedusercakeys_directory_owner:
+        type: str
+        default: "{{ __sshd_trustedusercakeys_directory_owner }}"
+        description: >
+          The user name or user id that owns the trusted user CA keys
+          directory.
+      sshd_trustedusercakeys_directory_group:
+        type: str
+        default: "{{ __sshd_trustedusercakeys_directory_group }}"
+        description: >
+          The group name or group id that owns the trusted user CA
+          keys directory.
+      sshd_trustedusercakeys_directory_mode:
+        type: raw
+        default: "{{ __sshd_trustedusercakeys_directory_mode }}"
+        description: >
+          The file mode of the trusted user CA keys directory.
+          Accepts a string such as `0755` or an integer.
+      sshd_trustedusercakeys_file_owner:
+        type: str
+        default: "{{ __sshd_trustedusercakeys_file_owner }}"
+        description: >
+          The user name or user id that owns the trusted user CA keys
+          file.
+      sshd_trustedusercakeys_file_group:
+        type: str
+        default: "{{ __sshd_trustedusercakeys_file_group }}"
+        description: >
+          The group name or group id that owns the trusted user CA
+          keys file.
+      sshd_trustedusercakeys_file_mode:
+        type: raw
+        default: "{{ __sshd_trustedusercakeys_file_mode }}"
+        description: >
+          The file mode of the trusted user CA keys file. Accepts a
+          string such as `0640` or an integer.
+      sshd_authorizedprincipals_directory_owner:
+        type: str
+        default: "{{ __sshd_authorizedprincipals_directory_owner }}"
+        description: >
+          The user name or user id that owns the authorized
+          principals directory.
+      sshd_authorizedprincipals_directory_group:
+        type: str
+        default: "{{ __sshd_authorizedprincipals_directory_group }}"
+        description: >
+          The group name or group id that owns the authorized
+          principals directory.
+      sshd_authorizedprincipals_directory_mode:
+        type: raw
+        default: "{{ __sshd_authorizedprincipals_directory_mode }}"
+        description: >
+          The file mode of the authorized principals directory.
+          Accepts a string such as `0755` or an integer.
+      sshd_authorizedprincipals_file_owner:
+        type: str
+        default: "{{ __sshd_authorizedprincipals_file_owner }}"
+        description: >
+          The user name or user id that owns each authorized
+          principals file.
+      sshd_authorizedprincipals_file_group:
+        type: str
+        default: "{{ __sshd_authorizedprincipals_file_group }}"
+        description: >
+          The group name or group id that owns each authorized
+          principals file.
+      sshd_authorizedprincipals_file_mode:
+        type: raw
+        default: "{{ __sshd_authorizedprincipals_file_mode }}"
+        description: >
+          The file mode of each authorized principals file. Accepts a
+          string such as `0644` or an integer.
+      sshd_verify_hostkeys:
+        type: raw
+        default: "auto"
+        description: >
+          Which host private keys the role checks and creates before
+          starting sshd. Accepts `auto` to use the keys rendered into
+          the configuration, or the platform default set when none
+          are configured. Accepts `false` or an empty list to skip
+          the check, or a list of host key paths such as
+          `/etc/ssh/ssh_host_rsa_key`.
+      sshd_hostkey_owner:
+        type: str
+        default: "{{ __sshd_hostkey_owner }}"
+        description: >
+          The user name or user id that owns the host private keys
+          checked by `sshd_verify_hostkeys`.
+      sshd_hostkey_group:
+        type: str
+        default: "{{ __sshd_hostkey_group }}"
+        description: >
+          The group name or group id that owns the host private keys
+          checked by `sshd_verify_hostkeys`.
+      sshd_hostkey_mode:
+        type: raw
+        default: "{{ __sshd_hostkey_mode }}"
+        description: >
+          The file mode of the host private keys checked by
+          `sshd_verify_hostkeys`. Accepts a string such as `0600` or
+          an integer.
+      sshd_config_namespace:
+        type: raw
+        default: null
+        description: >
+          The namespace under which configuration snippets are
+          inserted into an existing configuration file. Accepts a
+          string, or `null` to write the whole configuration file.
+          Each invocation has its own namespace when the role runs
+          more than once.
+      sshd_manage_firewall:
+        type: bool
+        default: false
+        description: >
+          Whether to open the configured SSH ports in the firewall.
+          This only adds ports, and only on Red Hat based systems.
+      sshd_manage_selinux:
+        type: bool
+        default: false
+        description: >
+          Whether to allow sshd to bind the configured ports in
+          SELinux. This only adds policy, and only on Red Hat based
+          systems.
+      sshd_systemd_unit:
+        type: str
+        default: "{{ __sshd_systemd_unit }}"
+        choices:
+          - service
+          - socket
+        description: >
+          Which systemd unit handles incoming SSH connections.
+          `service` runs sshd as a long-running service. `socket`
+          uses socket activation. Only one of the two can be active.
+
+      sshd:
+        type: dict
+        description: >
+          Deprecated dict of OpenSSH options. Same shape as
+          `sshd_config`. Use `sshd_config` instead.
+      sshd_config:
+        type: dict
+        description: >
+          OpenSSH options keyed by the name documented in
+          `sshd_config(5)`, such as `PermitRootLogin` or
+          `ListenAddress`. A value can be a boolean, a string, a
+          number, a list, or `null`. The `Match` key accepts one
+          dict or a list of dicts, and each dict must contain a
+          `Condition` key.
+      sshd_Include:
+        type: raw
+        description: >
+          Value of the OpenSSH `Include` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_Port:
+        type: raw
+        description: >
+          Value of the OpenSSH `Port` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_AddressFamily:
+        type: raw
+        description: >
+          Value of the OpenSSH `AddressFamily` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_ListenAddress:
+        type: raw
+        description: >
+          Value of the OpenSSH `ListenAddress` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_Protocol:
+        type: raw
+        description: >
+          Value of the OpenSSH `Protocol` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_HostKey:
+        type: raw
+        description: >
+          Value of the OpenSSH `HostKey` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_AcceptEnv:
+        type: raw
+        description: >
+          Value of the OpenSSH `AcceptEnv` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_AllowAgentForwarding:
+        type: raw
+        description: >
+          Value of the OpenSSH `AllowAgentForwarding` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_AllowGroups:
+        type: raw
+        description: >
+          Value of the OpenSSH `AllowGroups` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_AllowStreamLocalForwarding:
+        type: raw
+        description: >
+          Value of the OpenSSH `AllowStreamLocalForwarding` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_AllowTcpForwarding:
+        type: raw
+        description: >
+          Value of the OpenSSH `AllowTcpForwarding` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_AllowUsers:
+        type: raw
+        description: >
+          Value of the OpenSSH `AllowUsers` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_AuthenticationMethods:
+        type: raw
+        description: >
+          Value of the OpenSSH `AuthenticationMethods` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_AuthorizedKeysCommand:
+        type: raw
+        description: >
+          Value of the OpenSSH `AuthorizedKeysCommand` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_AuthorizedKeysCommandUser:
+        type: raw
+        description: >
+          Value of the OpenSSH `AuthorizedKeysCommandUser` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_AuthorizedKeysFile:
+        type: raw
+        description: >
+          Value of the OpenSSH `AuthorizedKeysFile` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_AuthorizedPrincipalsCommand:
+        type: raw
+        description: >
+          Value of the OpenSSH `AuthorizedPrincipalsCommand` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_AuthorizedPrincipalsCommandUser:
+        type: raw
+        description: >
+          Value of the OpenSSH `AuthorizedPrincipalsCommandUser` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_AuthorizedPrincipalsFile:
+        type: raw
+        description: >
+          Value of the OpenSSH `AuthorizedPrincipalsFile` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_Banner:
+        type: raw
+        description: >
+          Value of the OpenSSH `Banner` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_CanonicalMatchUser:
+        type: raw
+        description: >
+          Value of the OpenSSH `CanonicalMatchUser` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_CASignatureAlgorithms:
+        type: raw
+        description: >
+          Value of the OpenSSH `CASignatureAlgorithms` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_ChallengeResponseAuthentication:
+        type: raw
+        description: >
+          Value of the OpenSSH `ChallengeResponseAuthentication` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_ChannelTimeout:
+        type: raw
+        description: >
+          Value of the OpenSSH `ChannelTimeout` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_ChrootDirectory:
+        type: raw
+        description: >
+          Value of the OpenSSH `ChrootDirectory` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_Ciphers:
+        type: raw
+        description: >
+          Value of the OpenSSH `Ciphers` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_ClientAliveCountMax:
+        type: raw
+        description: >
+          Value of the OpenSSH `ClientAliveCountMax` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_ClientAliveInterval:
+        type: raw
+        description: >
+          Value of the OpenSSH `ClientAliveInterval` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_Compression:
+        type: raw
+        description: >
+          Value of the OpenSSH `Compression` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_DebianBanner:
+        type: raw
+        description: >
+          Value of the OpenSSH `DebianBanner` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_DenyGroups:
+        type: raw
+        description: >
+          Value of the OpenSSH `DenyGroups` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_DenyUsers:
+        type: raw
+        description: >
+          Value of the OpenSSH `DenyUsers` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_DisableForwarding:
+        type: raw
+        description: >
+          Value of the OpenSSH `DisableForwarding` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_ExposeAuthenticationMethods:
+        type: raw
+        description: >
+          Value of the OpenSSH `ExposeAuthenticationMethods` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_ExposeAuthInfo:
+        type: raw
+        description: >
+          Value of the OpenSSH `ExposeAuthInfo` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_FingerprintHash:
+        type: raw
+        description: >
+          Value of the OpenSSH `FingerprintHash` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_ForceCommand:
+        type: raw
+        description: >
+          Value of the OpenSSH `ForceCommand` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_GatewayPorts:
+        type: raw
+        description: >
+          Value of the OpenSSH `GatewayPorts` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_GSSAPIAllowS4U2Self:
+        type: raw
+        description: >
+          Value of the OpenSSH `GSSAPIAllowS4U2Self` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_GSSAPIAuthentication:
+        type: raw
+        description: >
+          Value of the OpenSSH `GSSAPIAuthentication` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_GSSAPICleanupCredentials:
+        type: raw
+        description: >
+          Value of the OpenSSH `GSSAPICleanupCredentials` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_GSSAPIDelegateCredentials:
+        type: raw
+        description: >
+          Value of the OpenSSH `GSSAPIDelegateCredentials` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_GSSAPIEnablek5users:
+        type: raw
+        description: >
+          Value of the OpenSSH `GSSAPIEnablek5users` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_GSSAPIIndicators:
+        type: raw
+        description: >
+          Value of the OpenSSH `GSSAPIIndicators` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_GSSAPIKeyExchange:
+        type: raw
+        description: >
+          Value of the OpenSSH `GSSAPIKeyExchange` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_GSSAPIKexAlgorithms:
+        type: raw
+        description: >
+          Value of the OpenSSH `GSSAPIKexAlgorithms` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_GSSAPIProxyS4U2Services:
+        type: raw
+        description: >
+          Value of the OpenSSH `GSSAPIProxyS4U2Services` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_GSSAPIStoreCredentialsOnRekey:
+        type: raw
+        description: >
+          Value of the OpenSSH `GSSAPIStoreCredentialsOnRekey` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_GSSAPIStrictAcceptorCheck:
+        type: raw
+        description: >
+          Value of the OpenSSH `GSSAPIStrictAcceptorCheck` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_HPNBufferSize:
+        type: raw
+        description: >
+          Value of the OpenSSH `HPNBufferSize` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_HPNDisabled:
+        type: raw
+        description: >
+          Value of the OpenSSH `HPNDisabled` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_HostCertificate:
+        type: raw
+        description: >
+          Value of the OpenSSH `HostCertificate` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_HostKeyAgent:
+        type: raw
+        description: >
+          Value of the OpenSSH `HostKeyAgent` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_HostKeyAlgorithms:
+        type: raw
+        description: >
+          Value of the OpenSSH `HostKeyAlgorithms` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_HostbasedAcceptedKeyTypes:
+        type: raw
+        description: >
+          Value of the OpenSSH `HostbasedAcceptedKeyTypes` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_HostbasedAcceptedAlgorithms:
+        type: raw
+        description: >
+          Value of the OpenSSH `HostbasedAcceptedAlgorithms` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_HostbasedAuthentication:
+        type: raw
+        description: >
+          Value of the OpenSSH `HostbasedAuthentication` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_HostbasedUsesNameFromPacketOnly:
+        type: raw
+        description: >
+          Value of the OpenSSH `HostbasedUsesNameFromPacketOnly` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_IPQoS:
+        type: raw
+        description: >
+          Value of the OpenSSH `IPQoS` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_IgnoreRhosts:
+        type: raw
+        description: >
+          Value of the OpenSSH `IgnoreRhosts` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_IgnoreUserKnownHosts:
+        type: raw
+        description: >
+          Value of the OpenSSH `IgnoreUserKnownHosts` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_KbdInteractiveAuthentication:
+        type: raw
+        description: >
+          Value of the OpenSSH `KbdInteractiveAuthentication` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_KerberosAuthentication:
+        type: raw
+        description: >
+          Value of the OpenSSH `KerberosAuthentication` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_KerberosGetAFSToken:
+        type: raw
+        description: >
+          Value of the OpenSSH `KerberosGetAFSToken` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_KerberosOrLocalPasswd:
+        type: raw
+        description: >
+          Value of the OpenSSH `KerberosOrLocalPasswd` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_KerberosTicketCleanup:
+        type: raw
+        description: >
+          Value of the OpenSSH `KerberosTicketCleanup` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_KerberosUniqueTicket:
+        type: raw
+        description: >
+          Value of the OpenSSH `KerberosUniqueTicket` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_KerberosUniqueCCache:
+        type: raw
+        description: >
+          Value of the OpenSSH `KerberosUniqueCCache` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_KerberosUseKuserok:
+        type: raw
+        description: >
+          Value of the OpenSSH `KerberosUseKuserok` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_KexAlgorithms:
+        type: raw
+        description: >
+          Value of the OpenSSH `KexAlgorithms` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_KeyRegenerationInterval:
+        type: raw
+        description: >
+          Value of the OpenSSH `KeyRegenerationInterval` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_LogLevel:
+        type: raw
+        description: >
+          Value of the OpenSSH `LogLevel` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_LogVerbose:
+        type: raw
+        description: >
+          Value of the OpenSSH `LogVerbose` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_LoginGraceTime:
+        type: raw
+        description: >
+          Value of the OpenSSH `LoginGraceTime` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_MACs:
+        type: raw
+        description: >
+          Value of the OpenSSH `MACs` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_MaxAuthTries:
+        type: raw
+        description: >
+          Value of the OpenSSH `MaxAuthTries` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_MaxSessions:
+        type: raw
+        description: >
+          Value of the OpenSSH `MaxSessions` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_MaxStartups:
+        type: raw
+        description: >
+          Value of the OpenSSH `MaxStartups` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_ModuliFile:
+        type: raw
+        description: >
+          Value of the OpenSSH `ModuliFile` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_NoneEnabled:
+        type: raw
+        description: >
+          Value of the OpenSSH `NoneEnabled` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PAMServiceName:
+        type: raw
+        description: >
+          Value of the OpenSSH `PAMServiceName` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PasswordAuthentication:
+        type: raw
+        description: >
+          Value of the OpenSSH `PasswordAuthentication` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PermitEmptyPasswords:
+        type: raw
+        description: >
+          Value of the OpenSSH `PermitEmptyPasswords` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PermitListen:
+        type: raw
+        description: >
+          Value of the OpenSSH `PermitListen` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PermitOpen:
+        type: raw
+        description: >
+          Value of the OpenSSH `PermitOpen` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PermitRootLogin:
+        type: raw
+        description: >
+          Value of the OpenSSH `PermitRootLogin` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PermitTTY:
+        type: raw
+        description: >
+          Value of the OpenSSH `PermitTTY` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PermitTunnel:
+        type: raw
+        description: >
+          Value of the OpenSSH `PermitTunnel` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PermitUserEnvironment:
+        type: raw
+        description: >
+          Value of the OpenSSH `PermitUserEnvironment` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PermitUserRC:
+        type: raw
+        description: >
+          Value of the OpenSSH `PermitUserRC` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PerSourcePenalties:
+        type: raw
+        description: >
+          Value of the OpenSSH `PerSourcePenalties` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PerSourcePenaltyExemptList:
+        type: raw
+        description: >
+          Value of the OpenSSH `PerSourcePenaltyExemptList` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PerSourceMaxStartups:
+        type: raw
+        description: >
+          Value of the OpenSSH `PerSourceMaxStartups` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PerSourceNetBlockSize:
+        type: raw
+        description: >
+          Value of the OpenSSH `PerSourceNetBlockSize` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PidFile:
+        type: raw
+        description: >
+          Value of the OpenSSH `PidFile` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PrintLastLog:
+        type: raw
+        description: >
+          Value of the OpenSSH `PrintLastLog` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PrintMotd:
+        type: raw
+        description: >
+          Value of the OpenSSH `PrintMotd` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PubkeyAcceptedKeyTypes:
+        type: raw
+        description: >
+          Value of the OpenSSH `PubkeyAcceptedKeyTypes` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PubkeyAcceptedAlgorithms:
+        type: raw
+        description: >
+          Value of the OpenSSH `PubkeyAcceptedAlgorithms` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PubkeyAuthOptions:
+        type: raw
+        description: >
+          Value of the OpenSSH `PubkeyAuthOptions` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_PubkeyAuthentication:
+        type: raw
+        description: >
+          Value of the OpenSSH `PubkeyAuthentication` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_RSAAuthentication:
+        type: raw
+        description: >
+          Value of the OpenSSH `RSAAuthentication` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_RSAMinSize:
+        type: raw
+        description: >
+          Value of the OpenSSH `RSAMinSize` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_RefuseConnection:
+        type: raw
+        description: >
+          Value of the OpenSSH `RefuseConnection` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_RekeyLimit:
+        type: raw
+        description: >
+          Value of the OpenSSH `RekeyLimit` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_RequiredRSASize:
+        type: raw
+        description: >
+          Value of the OpenSSH `RequiredRSASize` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_RevokedKeys:
+        type: raw
+        description: >
+          Value of the OpenSSH `RevokedKeys` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_RDomain:
+        type: raw
+        description: >
+          Value of the OpenSSH `RDomain` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_RhostsRSAAuthentication:
+        type: raw
+        description: >
+          Value of the OpenSSH `RhostsRSAAuthentication` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_SecurityKeyProvider:
+        type: raw
+        description: >
+          Value of the OpenSSH `SecurityKeyProvider` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_SetEnv:
+        type: raw
+        description: >
+          Value of the OpenSSH `SetEnv` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_ServerKeyBits:
+        type: raw
+        description: >
+          Value of the OpenSSH `ServerKeyBits` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_ShowPatchLevel:
+        type: raw
+        description: >
+          Value of the OpenSSH `ShowPatchLevel` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_SshdAuthPath:
+        type: raw
+        description: >
+          Value of the OpenSSH `SshdAuthPath` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_SshdSessionPath:
+        type: raw
+        description: >
+          Value of the OpenSSH `SshdSessionPath` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_StreamLocalBindMask:
+        type: raw
+        description: >
+          Value of the OpenSSH `StreamLocalBindMask` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_StreamLocalBindUnlink:
+        type: raw
+        description: >
+          Value of the OpenSSH `StreamLocalBindUnlink` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_StrictModes:
+        type: raw
+        description: >
+          Value of the OpenSSH `StrictModes` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_Subsystem:
+        type: raw
+        description: >
+          Value of the OpenSSH `Subsystem` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_SyslogFacility:
+        type: raw
+        description: >
+          Value of the OpenSSH `SyslogFacility` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_TCPKeepAlive:
+        type: raw
+        description: >
+          Value of the OpenSSH `TCPKeepAlive` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_TcpRcvBufPoll:
+        type: raw
+        description: >
+          Value of the OpenSSH `TcpRcvBufPoll` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_TrustedUserCAKeys:
+        type: raw
+        description: >
+          Value of the OpenSSH `TrustedUserCAKeys` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_UnusedConnectionTimeout:
+        type: raw
+        description: >
+          Value of the OpenSSH `UnusedConnectionTimeout` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_UseDNS:
+        type: raw
+        description: >
+          Value of the OpenSSH `UseDNS` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_UseLogin:
+        type: raw
+        description: >
+          Value of the OpenSSH `UseLogin` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_UsePAM:
+        type: raw
+        description: >
+          Value of the OpenSSH `UsePAM` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_UsePAMCheckLocks:
+        type: raw
+        description: >
+          Value of the OpenSSH `UsePAMCheckLocks` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_UsePrivilegeSeparation:
+        type: raw
+        description: >
+          Value of the OpenSSH `UsePrivilegeSeparation` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_VersionAddendum:
+        type: raw
+        description: >
+          Value of the OpenSSH `VersionAddendum` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_X11DisplayOffset:
+        type: raw
+        description: >
+          Value of the OpenSSH `X11DisplayOffset` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_X11MaxDisplays:
+        type: raw
+        description: >
+          Value of the OpenSSH `X11MaxDisplays` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_X11Forwarding:
+        type: raw
+        description: >
+          Value of the OpenSSH `X11Forwarding` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_X11UseLocalhost:
+        type: raw
+        description: >
+          Value of the OpenSSH `X11UseLocalhost` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_XAuthLocation:
+        type: raw
+        description: >
+          Value of the OpenSSH `XAuthLocation` option. Accepts a boolean,
+          a string, a number, a list, or `null`. When set, it
+          overrides the same key in `sshd_config`.
+      sshd_match:
+        type: raw
+        description: >
+          Match blocks written after the main options. Accepts one
+          dict or a list of dicts. Each dict must contain a
+          `Condition` key plus any OpenSSH option keys.
+      sshd_match_1:
+        type: raw
+        description: >
+          Deprecated form of `sshd_match`. Accepts one dict or a
+          list of dicts, and each dict must contain a `Condition`
+          key. Prefer `sshd_match`.
+      sshd_match_2:
+        type: raw
+        description: >
+          Deprecated form of `sshd_match`. Accepts one dict or a
+          list of dicts, and each dict must contain a `Condition`
+          key. Prefer `sshd_match`.
+      sshd_match_3:
+        type: raw
+        description: >
+          Deprecated form of `sshd_match`. Accepts one dict or a
+          list of dicts, and each dict must contain a `Condition`
+          key. Prefer `sshd_match`.
+      sshd_match_4:
+        type: raw
+        description: >
+          Deprecated form of `sshd_match`. Accepts one dict or a
+          list of dicts, and each dict must contain a `Condition`
+          key. Prefer `sshd_match`.
+      sshd_match_5:
+        type: raw
+        description: >
+          Deprecated form of `sshd_match`. Accepts one dict or a
+          list of dicts, and each dict must contain a `Condition`
+          key. Prefer `sshd_match`.
+      sshd_match_6:
+        type: raw
+        description: >
+          Deprecated form of `sshd_match`. Accepts one dict or a
+          list of dicts, and each dict must contain a `Condition`
+          key. Prefer `sshd_match`.
+      sshd_match_7:
+        type: raw
+        description: >
+          Deprecated form of `sshd_match`. Accepts one dict or a
+          list of dicts, and each dict must contain a `Condition`
+          key. Prefer `sshd_match`.
+      sshd_match_8:
+        type: raw
+        description: >
+          Deprecated form of `sshd_match`. Accepts one dict or a
+          list of dicts, and each dict must contain a `Condition`
+          key. Prefer `sshd_match`.
+      sshd_match_9:
+        type: raw
+        description: >
+          Deprecated form of `sshd_match`. Accepts one dict or a
+          list of dicts, and each dict must contain a `Condition`
+          key. Prefer `sshd_match`.

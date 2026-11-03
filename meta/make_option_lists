@@ -5,9 +5,13 @@ fragment files in this directory.
 options_match / options_body: one option per line, optionally followed by a
 "kind" saying how a list value is rendered:
 
-    Ciphers                      (kind from DEFAULT_KINDS, else default)
+    Ciphers comma
     AuthenticationMethods space/comma
-    HostKey lines
+    HostKey                      (no kind: one line per list item)
+
+The kind of an option in options_body is also used for the same option (the
+case does not matter) in options_match. A kind given in options_match
+overrides it.
 
 Kind syntax: separators from outermost to innermost, joined with "/":
     comma          -> one line, items joined by ","
@@ -18,42 +22,11 @@ Kind syntax: separators from outermost to innermost, joined with "/":
 import argparse
 import difflib
 import json
+import re
 import sys
 from pathlib import Path
 
 SEPARATORS = {"comma": ",", "space": " ", "colon": ":"}
-
-# Kinds applied when the options file gives none. An explicit second column
-# in options_match / options_body always wins.
-DEFAULT_KINDS = {
-    # comma separated
-    "Ciphers": "comma",
-    "MACs": "comma",
-    "KexAlgorithms": "comma",
-    "HostKeyAlgorithms": "comma",
-    "HostbasedAcceptedAlgorithms": "comma",
-    "PerSourcePenaltyExemptList": "comma",
-    "PubkeyAcceptedAlgorithms": "comma",
-    "PubkeyAcceptedKeyTypes": "comma",
-    "HostbasedAcceptedKeyTypes": "comma",
-    "CASignatureAlgorithms": "comma",
-    "GSSAPIKexAlgorithms": "comma",
-    "LogVerbose": "comma",
-    # space separated
-    "AllowUsers": "space",
-    "DenyUsers": "space",
-    "AllowGroups": "space",
-    "DenyGroups": "space",
-    "AuthorizedKeysFile": "space",
-    "PermitOpen": "space",
-    "PermitListen": "space",
-    "SetEnv": "space",
-    "ChannelTimeout": "space",
-    "PubkeyAuthOptions": "space",
-    "PerSourcePenalties": "space",
-    # space separated list of comma separated lists
-    "AuthenticationMethods": "space/comma",
-}
 
 
 def parse_kind(spec):
@@ -66,14 +39,26 @@ def parse_kind(spec):
         raise ValueError(f"unknown separator {exc} in kind {spec!r}") from None
 
 
-def read_options(path):
+def read_specs(path):
+    """Return [(line number, option, kind)] of an options file. The kind is
+    None for a line that does not give one."""
+    specs = []
     for lineno, line in enumerate(path.read_text().splitlines(), 1):
         line = line.split("#", 1)[0].strip()
         if not line:
             continue
         fields = line.split()
-        name = fields[0]
-        spec = fields[1] if len(fields) > 1 else DEFAULT_KINDS.get(name, "")
+        specs.append((lineno, fields[0], fields[1] if len(fields) > 1 else None))
+    return specs
+
+
+def read_options(path, specs, inherited=None):
+    """Yield (option, separators) for the specs read from path. An option
+    without a kind of its own gets the one it has in inherited (by lower case
+    option name), and is rendered as lines if it has none."""
+    for lineno, name, spec in specs:
+        if spec is None:
+            spec = (inherited or {}).get(name.lower(), "")
         try:
             yield name, parse_kind(spec)
         except ValueError as exc:
@@ -105,8 +90,13 @@ def generate(src):
     def frag(name):
         return (src / name).read_text()
 
-    match = match_lines(read_options(src / "options_match"))
-    body = body_lines(read_options(src / "options_body"))
+    body_specs = read_specs(src / "options_body")
+    body = body_lines(read_options(src / "options_body", body_specs))
+    # a kind given in options_body is also the kind in options_match
+    inherited = {name.lower(): spec for _, name, spec in body_specs
+                 if spec is not None}
+    match = match_lines(read_options(
+        src / "options_match", read_specs(src / "options_match"), inherited))
     top = frag("10_top.j2")
 
     full = (frag("01_ansible_head.j2") + top + match
@@ -128,10 +118,118 @@ def check(outdir, generated):
         sys.stdout.writelines(difflib.unified_diff(
             current.splitlines(keepends=True), text.splitlines(keepends=True),
             fromfile=f"{path} (checked in)", tofile=f"{path} (generated)"))
+    return ok
+
+
+BEGIN_MARKER = "# BEGIN GENERATED __sshd_option_vars - do not edit by hand\n"
+END_MARKER = "# END GENERATED __sshd_option_vars\n"
+
+
+def generate_option_vars(srcdir):
+    """Return the YAML block for __sshd_option_vars from options_body."""
+    options = list(read_options(srcdir / "options_body"))
+    lines = [BEGIN_MARKER, "__sshd_option_vars:\n"]
+    for name, _seps in options:
+        lines.append(f"  - sshd_{name}\n")
+    lines.append(END_MARKER)
+    return "".join(lines)
+
+
+def check_option_vars(vars_path, generated_block):
+    """Check that __sshd_option_vars in vars/main.yml matches generated."""
+    content = vars_path.read_text()
+    begin = content.find(BEGIN_MARKER)
+    end = content.find(END_MARKER)
+    if begin < 0 or end < 0:
+        print(f"{vars_path}: missing BEGIN/END markers for "
+              "__sshd_option_vars", file=sys.stderr)
+        return False
+    current = content[begin:end + len(END_MARKER)]
+    if current == generated_block:
+        return True
+    sys.stdout.writelines(difflib.unified_diff(
+        current.splitlines(keepends=True),
+        generated_block.splitlines(keepends=True),
+        fromfile=f"{vars_path} (checked in)",
+        tofile=f"{vars_path} (generated)"))
+    return False
+
+
+def update_vars_file(vars_path, block_text):
+    """Replace the marker-delimited block in vars/main.yml."""
+    content = vars_path.read_text()
+    begin = content.find(BEGIN_MARKER)
+    end = content.find(END_MARKER)
+    if begin < 0 or end < 0:
+        sys.exit(f"{vars_path}: missing BEGIN/END markers for "
+                 "__sshd_option_vars")
+    return content[:begin] + block_text + content[end + len(END_MARKER):]
+
+
+def check_argument_specs(srcdir):
+    """Verify every options_body entry has sshd_<Name> in argument_specs."""
+    specs_path = srcdir / "argument_specs.yml"
+    if not specs_path.exists():
+        print(f"{specs_path}: file not found", file=sys.stderr)
+        return False
+    body_names = {name for name, _ in read_options(srcdir / "options_body")}
+    specs_text = specs_path.read_text()
+    ok = True
+    for opt in sorted(body_names):
+        if f"sshd_{opt}:" not in specs_text:
+            print(f"{specs_path}: missing entry for sshd_{opt}")
+            ok = False
+    for m in re.finditer(r"^      (sshd_[A-Z]\w+):", specs_text,
+                         re.MULTILINE):
+        opt = m.group(1)[5:]
+        if opt not in body_names:
+            print(f"{specs_path}: extra entry sshd_{opt} "
+                  "not in options_body")
+            ok = False
     if not ok:
-        print("\nThe generated templates are out of date. Run\n"
-              "    meta/make_option_lists\n"
-              "and commit the result.", file=sys.stderr)
+        print(f"\n{specs_path} is out of sync with options_body.",
+              file=sys.stderr)
+    return ok
+
+
+def assigns_param(param, text):
+    """True when text assigns param, not a longer name that contains it."""
+    return re.search(rf"^\s+{re.escape(param)}:", text, re.MULTILINE) is not None
+
+
+def check_test_coverage(srcdir):
+    """Check that validated params are tested in tests_invalid_input.yml."""
+    assert_path = srcdir.parent / "tasks" / "assert_role_vars.yml"
+    test_path = srcdir.parent / "tests" / "tests_invalid_input.yml"
+    for p in (assert_path, test_path):
+        if not p.exists():
+            print(f"{p}: file not found", file=sys.stderr)
+            return False
+    assert_text = assert_path.read_text()
+    test_text = test_path.read_text()
+    validated = set()
+    for m in re.finditer(r"\bsshd_[a-z]\w*", assert_text):
+        validated.add(m.group(0))
+    match_params = {p for p in validated if p.startswith("sshd_match")}
+    validated -= match_params
+    if match_params:
+        validated.add("sshd_match")
+    ok = True
+    for param in sorted(validated):
+        if not assigns_param(param, test_text):
+            print(f"{test_path}: {param} (validated in "
+                  f"tasks/assert_role_vars.yml) is not tested")
+            ok = False
+    body_opts = [f"sshd_{name}" for name, _ in
+                 read_options(srcdir / "options_body")]
+    if not any(assigns_param(opt, test_text) for opt in body_opts):
+        print(f"{test_path}: no sshd_<OptionName> from options_body "
+              "is tested")
+        ok = False
+    if not ok:
+        print(f"\n{test_path} has incomplete coverage for parameters "
+              "validated in tasks/assert_role_vars.yml.",
+              file=sys.stderr)
     return ok
 
 
@@ -141,17 +239,32 @@ def main():
     ap.add_argument("--srcdir", type=Path, default=here)
     ap.add_argument("--outdir", type=Path, default=here.parent / "templates")
     ap.add_argument("--check", action="store_true",
-                    help="write nothing; show a diff and exit 1 if the "
-                         "templates in outdir differ from the generated ones")
+                    help="write nothing; show a diff and exit 1 if "
+                         "generated content is out of date")
     args = ap.parse_args()
 
+    vars_path = args.srcdir.parent / "vars" / "main.yml"
     generated = generate(args.srcdir)
+    option_vars_block = generate_option_vars(args.srcdir)
+
     if args.check:
-        sys.exit(0 if check(args.outdir, generated) else 1)
+        ok = check(args.outdir, generated)
+        if vars_path.exists():
+            ok = check_option_vars(vars_path, option_vars_block) and ok
+        ok = check_argument_specs(args.srcdir) and ok
+        ok = check_test_coverage(args.srcdir) and ok
+        if not ok:
+            print("\nGenerated content is out of date or checks failed."
+                  " Run\n    meta/make_option_lists\n"
+                  "and commit the result.", file=sys.stderr)
+        sys.exit(0 if ok else 1)
 
     args.outdir.mkdir(parents=True, exist_ok=True)
     for name, text in generated.items():
         (args.outdir / name).write_text(text)
+
+    if vars_path.exists():
+        vars_path.write_text(update_vars_file(vars_path, option_vars_block))
 
 
 if __name__ == "__main__":
