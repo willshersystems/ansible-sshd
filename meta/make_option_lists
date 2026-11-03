@@ -127,7 +127,8 @@ END_MARKER = "# END GENERATED __sshd_option_vars\n"
 
 def generate_option_vars(srcdir):
     """Return the YAML block for __sshd_option_vars from options_body."""
-    options = list(read_options(srcdir / "options_body"))
+    body_path = srcdir / "options_body"
+    options = list(read_options(body_path, read_specs(body_path)))
     lines = [BEGIN_MARKER, "__sshd_option_vars:\n"]
     for name, _seps in options:
         lines.append(f"  - sshd_{name}\n")
@@ -172,7 +173,9 @@ def check_argument_specs(srcdir):
     if not specs_path.exists():
         print(f"{specs_path}: file not found", file=sys.stderr)
         return False
-    body_names = {name for name, _ in read_options(srcdir / "options_body")}
+    body_path = srcdir / "options_body"
+    body_names = {name for name, _ in
+                  read_options(body_path, read_specs(body_path))}
     specs_text = specs_path.read_text()
     ok = True
     for opt in sorted(body_names):
@@ -220,8 +223,9 @@ def check_test_coverage(srcdir):
             print(f"{test_path}: {param} (validated in "
                   f"tasks/assert_role_vars.yml) is not tested")
             ok = False
+    body_path = srcdir / "options_body"
     body_opts = [f"sshd_{name}" for name, _ in
-                 read_options(srcdir / "options_body")]
+                 read_options(body_path, read_specs(body_path))]
     if not any(assigns_param(opt, test_text) for opt in body_opts):
         print(f"{test_path}: no sshd_<OptionName> from options_body "
               "is tested")
