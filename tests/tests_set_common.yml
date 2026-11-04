@@ -26,9 +26,7 @@
           ansible.builtin.meta: flush_handlers
 
         - name: List effective configuration using sshd -T
-          ansible.builtin.command: sshd -T
-          register: runtime
-          changed_when: false
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
 
         - name: Print current configuration file
           ansible.builtin.slurp:
@@ -36,7 +34,7 @@
           register: config
 
         - name: Check the options are effective
-          # note, the options are in lower-case here
+          # sshd -T output option names are normalized to lowercase
           ansible.builtin.assert:
             that:
               - "'acceptenv LANG' in runtime.stdout"

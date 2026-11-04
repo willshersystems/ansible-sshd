@@ -1,0 +1,49 @@
+---
+# Inputs:
+#   __sshd_gen_hostkey: boolean, optional (default false); generate the RSA
+#     host key if it is missing before running sshd -T.
+#   __sshd_connection_spec: string, optional (default ""); passed as -C<spec>.
+#   __sshd_output_variable_name: string, optional (default "runtime"); name of the result variable.
+# Output:
+#   Host variable named by __sshd_output_variable_name containing the
+#   registered sshd -T result, including stdout and stdout_lines.
+- name: Ensure the SSH host key exists when requested
+  when: __sshd_gen_hostkey | default(false) | bool
+  block:
+    - name: Check for the SSH host key
+      ansible.builtin.stat:
+        path: /etc/ssh/ssh_host_rsa_key
+      register: __sshd_hostkey_stat
+
+    - name: Generate the SSH host key if missing
+      ansible.builtin.command:
+        argv:
+          - ssh-keygen
+          - -q
+          - -t
+          - rsa
+          - -f
+          - /etc/ssh/ssh_host_rsa_key
+          - -C
+          - ""
+          - -N
+          - ""
+      changed_when: true
+      when: not __sshd_hostkey_stat.stat.exists
+
+- name: Get effective SSH server options
+  ansible.builtin.shell:
+    cmd: |
+      set -euo pipefail
+      sshd -T {% if __sshd_connection_spec | default('') %}-C{{ __sshd_connection_spec | quote }}{% endif %} | \
+      while IFS= read -r line || [ -n "$line" ]; do
+        option_name=${line%%[[:space:]]*}
+        printf '%s%s\n' "${option_name,,}" "${line#"$option_name"}"
+      done
+    executable: /bin/bash
+  register: __sshd_options
+  changed_when: false
+
+- name: Save effective SSH server options to output variable
+  ansible.builtin.set_fact:
+    "{{ __sshd_output_variable_name | default('runtime') }}": "{{ __sshd_options }}"

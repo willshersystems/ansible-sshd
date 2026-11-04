@@ -38,24 +38,28 @@
           ansible.builtin.meta: flush_handlers
 
         - name: List effective configuration using sshd -T for xusers
-          ansible.builtin.command: sshd -T -C user=xusers,addr=127.0.0.1,host=example.com
-          register: xusers_effective
-          changed_when: false
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
+          vars:
+            __sshd_connection_spec: user=xusers,addr=127.0.0.1,host=example.com
+            __sshd_output_variable_name: xusers_effective
 
         - name: List effective configuration using sshd -T for bot
-          ansible.builtin.command: sshd -T -C user=bot,addr=127.0.0.1,host=example.com
-          register: bot_effective
-          changed_when: false
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
+          vars:
+            __sshd_connection_spec: user=bot,addr=127.0.0.1,host=example.com
+            __sshd_output_variable_name: bot_effective
 
         - name: List effective configuration using sshd -T for sftponly
-          ansible.builtin.command: sshd -T -C user=sftponly,addr=127.0.0.1,host=example.com
-          register: sftponly_effective
-          changed_when: false
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
+          vars:
+            __sshd_connection_spec: user=sftponly,addr=127.0.0.1,host=example.com
+            __sshd_output_variable_name: sftponly_effective
 
         - name: List effective configuration using sshd -T for root
-          ansible.builtin.command: sshd -T -C user=root,addr=127.0.0.1,host=example.com
-          register: root_effective
-          changed_when: false
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
+          vars:
+            __sshd_connection_spec: user=root,addr=127.0.0.1,host=example.com
+            __sshd_output_variable_name: root_effective
 
         - name: Print current configuration file
           ansible.builtin.slurp:
@@ -63,7 +67,7 @@
           register: config
 
         - name: Check the options are effective
-          # note, the options are in lower-case here
+          # sshd -T output option names are normalized to lowercase
           ansible.builtin.assert:
             that:
               - "'x11forwarding yes' in xusers_effective.stdout"

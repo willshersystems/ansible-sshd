@@ -40,24 +40,28 @@
           ansible.builtin.meta: flush_handlers
 
         - name: List effective configuration using sshd -T for xusers
-          ansible.builtin.command: sshd -T -C user=xusers,addr=127.0.0.1,host=example.com
-          register: xusers_effective
-          changed_when: false
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
+          vars:
+            __sshd_connection_spec: user=xusers,addr=127.0.0.1,host=example.com
+            __sshd_output_variable_name: xusers_effective
 
         - name: List effective configuration using sshd -T for bot
-          ansible.builtin.command: sshd -T -C user=bot,addr=127.0.0.1,host=example.com
-          register: bot_effective
-          changed_when: false
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
+          vars:
+            __sshd_connection_spec: user=bot,addr=127.0.0.1,host=example.com
+            __sshd_output_variable_name: bot_effective
 
         - name: List effective configuration using sshd -T for sftponly
-          ansible.builtin.command: sshd -T -C user=sftponly,addr=127.0.0.1,host=example.com
-          register: sftponly_effective
-          changed_when: false
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
+          vars:
+            __sshd_connection_spec: user=sftponly,addr=127.0.0.1,host=example.com
+            __sshd_output_variable_name: sftponly_effective
 
         - name: List effective configuration using sshd -T for root
-          ansible.builtin.command: sshd -T -C user=root,addr=127.0.0.1,host=example.com
-          register: root_effective
-          changed_when: false
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
+          vars:
+            __sshd_connection_spec: user=root,addr=127.0.0.1,host=example.com
+            __sshd_output_variable_name: root_effective
 
         - name: Print current configuration file
           ansible.builtin.slurp:
@@ -65,7 +69,7 @@
           register: config
 
         - name: Check the options are effective
-          # note, the options are in lower-case here
+          # sshd -T output option names are normalized to lowercase
           ansible.builtin.assert:
             that:
               - "'x11forwarding yes' in xusers_effective.stdout"
@@ -125,25 +129,49 @@
         - name: Flush handlers
           ansible.builtin.meta: flush_handlers
 
-        - name: List effective configuration using sshd -T for each user
-          ansible.builtin.command: "sshd -T -C user={{ item }},addr=127.0.0.1,host=example.com"
-          register: effective
-          changed_when: false
-          loop:
-            - carol
-            - dave
-            - erin
-            - frank
-
-        - name: Check the effective setting of each user
+        - name: List effective configuration using sshd -T for carol
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
           vars:
-            __by_user: "{{ dict(effective.results | map(attribute='item') | zip(effective.results | map(attribute='stdout_lines'))) }}"
+            __sshd_connection_spec: user=carol,addr=127.0.0.1,host=example.com
+            __sshd_output_variable_name: carol_effective
+
+        - name: Check the effective setting for carol
           ansible.builtin.assert:
             that:
-              - "'x11uselocalhost no' in __by_user.carol"
-              - "'x11uselocalhost no' in __by_user.dave"
-              - "'x11uselocalhost no' in __by_user.erin"
-              - "'x11uselocalhost yes' in __by_user.frank"
+              - "'x11uselocalhost no' in carol_effective.stdout_lines"
+
+        - name: List effective configuration using sshd -T for dave
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
+          vars:
+            __sshd_connection_spec: user=dave,addr=127.0.0.1,host=example.com
+            __sshd_output_variable_name: dave_effective
+
+        - name: Check the effective setting for dave
+          ansible.builtin.assert:
+            that:
+              - "'x11uselocalhost no' in dave_effective.stdout_lines"
+
+        - name: List effective configuration using sshd -T for erin
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
+          vars:
+            __sshd_connection_spec: user=erin,addr=127.0.0.1,host=example.com
+            __sshd_output_variable_name: erin_effective
+
+        - name: Check the effective setting for erin
+          ansible.builtin.assert:
+            that:
+              - "'x11uselocalhost no' in erin_effective.stdout_lines"
+
+        - name: List effective configuration using sshd -T for frank
+          ansible.builtin.include_tasks: tasks/get_sshd_options.yml
+          vars:
+            __sshd_connection_spec: user=frank,addr=127.0.0.1,host=example.com
+            __sshd_output_variable_name: frank_effective
+
+        - name: Check the effective setting for frank
+          ansible.builtin.assert:
+            that:
+              - "'x11uselocalhost yes' in frank_effective.stdout_lines"
 
     - name: "Restore configuration files"
       ansible.builtin.include_tasks: tasks/restore.yml
