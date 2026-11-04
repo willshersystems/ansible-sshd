@@ -6,6 +6,12 @@
     __sshd_test_backup_files:
       - /etc/ssh/sshd_config
       - /etc/ssh/sshd_config.d/00-ansible_system_role.conf
+    __invalid_input_failure_messages: >-
+      {{ ([ansible_failed_result.msg | default('') | string,
+           ansible_failed_result.msg.msg | default('') | string]
+          + (ansible_failed_result.results | default([])
+             | map(attribute='msg') | map('default', '') | list))
+         | join(' ') }}
   tasks:
     - name: Backup configuration files
       ansible.builtin.include_tasks: tasks/backup.yml
@@ -46,8 +52,10 @@
                   ansible.builtin.set_fact:
                     __invalid_input_backup_type_failed: true
                   when: >-
-                    'Validation of arguments failed' in
-                    (ansible_failed_result | default({}) | to_json)
+                    "argument 'sshd_backup'" in
+                    __invalid_input_failure_messages and
+                    'convert to bool' in
+                    __invalid_input_failure_messages
 
             - name: Assert invalid sshd_backup type failed validation
               ansible.builtin.assert:
@@ -68,8 +76,10 @@
                   ansible.builtin.set_fact:
                     __invalid_input_strong_rng_type_failed: true
                   when: >-
-                    'Validation of arguments failed' in
-                    (ansible_failed_result | default({}) | to_json)
+                    "argument 'sshd_sysconfig_use_strong_rng'" in
+                    __invalid_input_failure_messages and
+                    'convert to int' in
+                    __invalid_input_failure_messages
 
             - name: Assert invalid sshd_sysconfig_use_strong_rng type failed validation
               ansible.builtin.assert:
@@ -91,8 +101,10 @@
                   ansible.builtin.set_fact:
                     __invalid_input_packages_type_failed: true
                   when: >-
-                    'Validation of arguments failed' in
-                    (ansible_failed_result | default({}) | to_json)
+                    "argument 'sshd_packages'" in
+                    __invalid_input_failure_messages and
+                    'convert to list' in
+                    __invalid_input_failure_messages
 
             - name: Assert invalid sshd_packages type failed validation
               ansible.builtin.assert:
@@ -114,8 +126,10 @@
                   ansible.builtin.set_fact:
                     __invalid_input_principals_type_failed: true
                   when: >-
-                    'Validation of arguments failed' in
-                    (ansible_failed_result | default({}) | to_json)
+                    "argument 'sshd_principals'" in
+                    __invalid_input_failure_messages and
+                    'convert to dict' in
+                    __invalid_input_failure_messages
 
             - name: Assert invalid sshd_principals type failed validation
               ansible.builtin.assert:
@@ -136,8 +150,10 @@
                   ansible.builtin.set_fact:
                     __invalid_input_systemd_unit_choice_failed: true
                   when: >-
-                    'Validation of arguments failed' in
-                    (ansible_failed_result | default({}) | to_json)
+                    'value of sshd_systemd_unit must be one of' in
+                    __invalid_input_failure_messages and
+                    'got: not_a_unit' in
+                    __invalid_input_failure_messages
 
             - name: Assert invalid sshd_systemd_unit choice failed validation
               ansible.builtin.assert:
@@ -158,8 +174,10 @@
                   ansible.builtin.set_fact:
                     __invalid_input_config_type_failed: true
                   when: >-
-                    'Validation of arguments failed' in
-                    (ansible_failed_result | default({}) | to_json)
+                    "argument 'sshd_config'" in
+                    __invalid_input_failure_messages and
+                    'convert to dict' in
+                    __invalid_input_failure_messages
 
             - name: Assert invalid sshd_config type failed validation
               ansible.builtin.assert:
@@ -183,8 +201,10 @@
               ansible.builtin.set_fact:
                 __invalid_input_strong_rng_range_failed: true
               when: >-
-                'sshd_sysconfig_use_strong_rng must be' in
-                (ansible_failed_result | default({}) | to_json)
+                'sshd_sysconfig_use_strong_rng must be an integer equal to 0' in
+                __invalid_input_failure_messages and
+                'got int' in
+                __invalid_input_failure_messages
 
         - name: Assert sshd_sysconfig_use_strong_rng below 14 failed validation
           ansible.builtin.assert:
@@ -205,8 +225,10 @@
               ansible.builtin.set_fact:
                 __invalid_input_strong_rng_bool_failed: true
               when: >-
-                'sshd_sysconfig_use_strong_rng must be' in
-                (ansible_failed_result | default({}) | to_json)
+                'sshd_sysconfig_use_strong_rng must be an integer equal to 0' in
+                __invalid_input_failure_messages and
+                'got bool' in
+                __invalid_input_failure_messages
 
         - name: Assert sshd_sysconfig_use_strong_rng as boolean failed validation
           ansible.builtin.assert:
@@ -228,8 +250,8 @@
               ansible.builtin.set_fact:
                 __invalid_input_service_type_failed: true
               when: >-
-                'sshd_service must be' in
-                (ansible_failed_result | default({}) | to_json)
+                'sshd_service must be a string, got list' in
+                __invalid_input_failure_messages
 
         - name: Assert sshd_service as list failed validation
           ansible.builtin.assert:
@@ -250,8 +272,8 @@
               ansible.builtin.set_fact:
                 __invalid_input_config_mode_bool_failed: true
               when: >-
-                'sshd_config_mode must be' in
-                (ansible_failed_result | default({}) | to_json)
+                'sshd_config_mode must be a string or integer, got bool' in
+                __invalid_input_failure_messages
 
         - name: Assert sshd_config_mode as boolean failed validation
           ansible.builtin.assert:
@@ -272,8 +294,8 @@
               ansible.builtin.set_fact:
                 __invalid_input_drop_in_dir_mode_bool_failed: true
               when: >-
-                'sshd_drop_in_dir_mode must be' in
-                (ansible_failed_result | default({}) | to_json)
+                'sshd_drop_in_dir_mode must be a string or integer, got bool' in
+                __invalid_input_failure_messages
 
         - name: Assert sshd_drop_in_dir_mode as boolean failed validation
           ansible.builtin.assert:
@@ -295,8 +317,8 @@
               ansible.builtin.set_fact:
                 __invalid_input_main_config_file_int_failed: true
               when: >-
-                'sshd_main_config_file must be' in
-                (ansible_failed_result | default({}) | to_json)
+                'sshd_main_config_file must be null or a string, got int' in
+                __invalid_input_failure_messages
 
         - name: Assert sshd_main_config_file as integer failed validation
           ansible.builtin.assert:
@@ -318,8 +340,8 @@
               ansible.builtin.set_fact:
                 __invalid_input_cakeys_dir_mode_bool_failed: true
               when: >-
-                'sshd_trustedusercakeys_directory_mode must be' in
-                (ansible_failed_result | default({}) | to_json)
+                'sshd_trustedusercakeys_directory_mode must be a string or integer, got bool' in
+                __invalid_input_failure_messages
 
         - name: Assert sshd_trustedusercakeys_directory_mode as boolean failed validation
           ansible.builtin.assert:
@@ -341,8 +363,8 @@
               ansible.builtin.set_fact:
                 __invalid_input_cakeys_file_mode_bool_failed: true
               when: >-
-                'sshd_trustedusercakeys_file_mode must be' in
-                (ansible_failed_result | default({}) | to_json)
+                'sshd_trustedusercakeys_file_mode must be a string or integer, got bool' in
+                __invalid_input_failure_messages
 
         - name: Assert sshd_trustedusercakeys_file_mode as boolean failed validation
           ansible.builtin.assert:
@@ -364,8 +386,8 @@
               ansible.builtin.set_fact:
                 __invalid_input_principals_dir_mode_bool_failed: true
               when: >-
-                'sshd_authorizedprincipals_directory_mode must be' in
-                (ansible_failed_result | default({}) | to_json)
+                'sshd_authorizedprincipals_directory_mode must be a string or integer, got bool' in
+                __invalid_input_failure_messages
 
         - name: Assert sshd_authorizedprincipals_directory_mode as boolean failed validation
           ansible.builtin.assert:
@@ -387,8 +409,8 @@
               ansible.builtin.set_fact:
                 __invalid_input_principals_file_mode_bool_failed: true
               when: >-
-                'sshd_authorizedprincipals_file_mode must be' in
-                (ansible_failed_result | default({}) | to_json)
+                'sshd_authorizedprincipals_file_mode must be a string or integer, got bool' in
+                __invalid_input_failure_messages
 
         - name: Assert sshd_authorizedprincipals_file_mode as boolean failed validation
           ansible.builtin.assert:
@@ -410,8 +432,8 @@
               ansible.builtin.set_fact:
                 __invalid_input_verify_hostkeys_int_failed: true
               when: >-
-                'sshd_verify_hostkeys must be' in
-                (ansible_failed_result | default({}) | to_json)
+                "sshd_verify_hostkeys must be 'auto', false, or a list of strings, got int" in
+                __invalid_input_failure_messages
 
         - name: Assert sshd_verify_hostkeys as integer failed validation
           ansible.builtin.assert:
@@ -433,8 +455,9 @@
               ansible.builtin.set_fact:
                 __invalid_input_verify_hostkeys_string_failed: true
               when: >-
-                'sshd_verify_hostkeys must be' in
-                (ansible_failed_result | default({}) | to_json)
+                "sshd_verify_hostkeys must be 'auto', false, or a list of strings" in
+                __invalid_input_failure_messages and
+                'got ' in __invalid_input_failure_messages
 
         - name: Assert sshd_verify_hostkeys as arbitrary string failed validation
           ansible.builtin.assert:
@@ -455,8 +478,8 @@
               ansible.builtin.set_fact:
                 __invalid_input_hostkey_mode_bool_failed: true
               when: >-
-                'sshd_hostkey_mode must be' in
-                (ansible_failed_result | default({}) | to_json)
+                'sshd_hostkey_mode must be a string or integer, got bool' in
+                __invalid_input_failure_messages
 
         - name: Assert sshd_hostkey_mode as boolean failed validation
           ansible.builtin.assert:
@@ -478,8 +501,8 @@
               ansible.builtin.set_fact:
                 __invalid_input_principals_value_failed: true
               when: >-
-                'must be a list of strings' in
-                (ansible_failed_result | default({}) | to_json)
+                "sshd_principals['alice'] must be a list of strings, got " in
+                __invalid_input_failure_messages
 
         - name: Assert sshd_principals string value failed validation
           ansible.builtin.assert:
@@ -500,8 +523,8 @@
               ansible.builtin.set_fact:
                 __invalid_input_config_namespace_int_failed: true
               when: >-
-                'sshd_config_namespace must be' in
-                (ansible_failed_result | default({}) | to_json)
+                'sshd_config_namespace must be null or a string, got int' in
+                __invalid_input_failure_messages
 
         - name: Assert sshd_config_namespace as integer failed validation
           ansible.builtin.assert:
@@ -524,8 +547,8 @@
               ansible.builtin.set_fact:
                 __invalid_input_port_dict_failed: true
               when: >-
-                'sshd_Port must be' in
-                (ansible_failed_result | default({}) | to_json)
+                'sshd_Port must be null, a boolean, a string, a number, or a list, got dict' in
+                __invalid_input_failure_messages
 
         - name: Assert sshd_Port as dict failed validation
           ansible.builtin.assert:
@@ -546,8 +569,9 @@
               ansible.builtin.set_fact:
                 __invalid_input_match_string_failed: true
               when: >-
-                'sshd_match must be' in
-                (ansible_failed_result | default({}) | to_json)
+                'sshd_match must be a list of dictionaries or a single dictionary' in
+                __invalid_input_failure_messages and
+                'got ' in __invalid_input_failure_messages
 
         - name: Assert sshd_match as string failed validation
           ansible.builtin.assert:
