@@ -1,6 +1,37 @@
 Changelog
 =========
 
+[v0.35.0] - 2026-11-23
+--------------------
+
+### New Features
+
+- feat: simpler patchset to allow sshd list options to be expressed as yaml lists (#390)
+- feat: Argument spec implementation for ansible-sshd role (#392)
+- feat: Add SLE16 support and keep the SLE15 crypto policy (#393)
+
+### Bug Fixes
+
+- fix: Change systemd unit status according to sshd_systemd_unit (#378)
+- fix: testsuite failures following !378 (#386)
+- fix: eliminate second instance of option list (#391)
+
+### Other Changes
+
+- build(deps): bump ad-m/github-push-action from 1.0.0 to 1.3.0 (#368)
+- test: Add better support for Debian testing/unstable (#376)
+- ci: use commit hash for github action, add persist-credentials false (#383)
+- build(deps): bump ansible/ansible-lint from 26.6.0 to 26.8.0 (#384)
+- ci: Remove EOL debian:bullseye image (#385)
+- build(deps): bump mathieudutour/github-tag-action from 6.2 to 7 (#388)
+- build(deps): bump ansible/ansible-lint from 26.8.0 to 26.9.0 (#389)
+- build(deps): bump actions/upload-artifact from 7.0.1 to 7.0.2 (#394)
+- build(deps): bump ansible/ansible-lint from 26.9.0 to 26.10.1 (#395)
+- build(deps): bump Jakuje/check-ansible-action (#396)
+- test: check invalid inputs for correct error message (#397)
+- test: normalize sshd runtime option names before assertions (#398)
+- ci: fix make_options_list to use the spec parameter to read_options (#399)
+
 [v0.34.0] - 2026-08-10
 --------------------
 
